@@ -1,0 +1,85 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#00555555"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_layout_otp"
+        android:orientation="vertical"
+        android:paddingHorizontal="5dp"
+        android:paddingBottom="20dp">
+
+        <ImageView
+            android:id="@+id/img_close"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/ic_close" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/img_close"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_account_delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginVertical="10dp"
+                android:background="@drawable/edittext_border_shape"
+                android:text="@string/delete_only_accounnt"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_title_delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginVertical="10dp"
+                android:background="@drawable/edittext_border_shape"
+                android:text="@string/delete_account_title"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_delete_both"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginVertical="10dp"
+                android:background="@drawable/edittext_border_shape"
+                android:text="@string/delete_both"
+                android:textAllCaps="false" />
+
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black" />
+
+            <Button
+                android:id="@+id/btn_schedule_transfer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginVertical="10dp"
+                android:background="@drawable/edittext_border_shape"
+                android:text="@string/str_schedule_transfer"
+                android:textAllCaps="false" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</LinearLayout>

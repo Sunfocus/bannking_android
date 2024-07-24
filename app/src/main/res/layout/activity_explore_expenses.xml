@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.ExploreExpensesActivity">
+
+    <ImageView
+        android:id="@+id/img_back"
+        android:layout_width="wrap_content"
+        android:layout_height="?actionBarSize"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/ic_back" />
+
+    <!--    <ScrollView-->
+    <!--        android:id="@+id/scrollView"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:layout_above="@+id/txt_upgrade"-->
+    <!--        android:layout_below="@+id/img_back"-->
+    <!--        android:overScrollMode="never">-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/txt_upgrade"
+        android:layout_below="@+id/img_back"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/source_sans_regular"
+            android:text="@string/str_explore_your_expenses"
+            android:textColor="@color/clr_text_blu"
+            android:textDirection="anyRtl"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <!--            <ImageView-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:src="@drawable/ic_chart" />-->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/chart1"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:id="@+id/txt_no_data_found"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/str_no_data_found"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_explore_expenses"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="10dp"
+            android:nestedScrollingEnabled="false"
+            android:orientation="vertical"
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_explore_expenses" />
+
+    </LinearLayout>
+
+    <!--    </ScrollView>-->
+
+
+    <TextView
+        android:id="@+id/txt_upgrade"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/edittext_border_shape"
+        android:backgroundTint="@color/clr_pink_upgrade"
+        android:fontFamily="@font/source_sans_regular"
+        android:gravity="center"
+        android:text="@string/str_upgrade"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+
+</RelativeLayout>

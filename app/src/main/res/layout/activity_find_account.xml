@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_gradiant"
+    tools:context=".ui.activity.FindAccountActivity">
+    <ImageView
+        android:id="@+id/img_back"
+        android:layout_width="wrap_content"
+        android:layout_height="?actionBarSize"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_back_white" />
+    <LinearLayout
+        android:id="@+id/ll_logos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_back">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="180dp"
+            android:layout_height="70dp"
+            android:src="@drawable/logo_text" />
+
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivLock"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/baseline_lock_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_logos" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvEnterEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="@string/enter_your_email_or_username"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@+id/ivLock" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/edt_find_account_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="70dp"
+        android:background="@drawable/edittext_border_shape"
+        android:backgroundTint="@color/white"
+        android:hint="@string/enter_your_username"
+        android:minHeight="45dp"
+        android:textSize="13sp"
+        android:paddingHorizontal="10dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/clr_dark_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvEnterEmail" />
+
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_next"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/btn_first_bg"
+        android:text="@string/submit"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/edt_find_account_email" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btnSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:text="@string/don_t_have_an_account_sign_up"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!--  <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_below="@+id/ll_logos"
+          android:gravity="center"
+          android:orientation="vertical">
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:fontFamily="@font/source_sans_regular"
+              android:text="@string/str_find_your_account"
+              android:textColor="@color/clr_text"
+              android:textSize="22sp"
+              android:textStyle="bold" />
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginHorizontal="30dp"
+              android:layout_marginTop="20dp"
+              android:fontFamily="@font/source_sans_regular"
+              android:text="@string/str_enter_your_email_address_to_reset_your_password_we_ll_send_you_a_verification_code_to_your_email_address"
+              android:textAlignment="center" />
+
+          <EditText
+              android:id="@+id/edt_find_account_email"
+              android:layout_width="match_parent"
+              android:layout_height="55dp"
+              android:layout_marginHorizontal="25dp"
+              android:layout_marginTop="25dp"
+              android:background="@drawable/edittext_border_shape"
+              android:hint="@string/str_email"
+              android:maxLines="1"
+              android:paddingHorizontal="10dp"
+              android:singleLine="true"
+              android:textAlignment="viewStart"
+              android:textColor="@color/black"
+              android:textColorHint="@color/black"
+              android:textDirection="anyRtl"
+              android:textSize="13sp" />
+
+      </LinearLayout>
+
+      <Button
+          android:id="@+id/btn_next"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_alignParentBottom="true"
+          android:layout_marginHorizontal="30dp"
+          android:layout_marginTop="20dp"
+          android:layout_marginBottom="40dp"
+          android:background="@drawable/edittext_border_shape"
+          android:text="@string/next"
+          android:textAllCaps="false" />
+  -->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

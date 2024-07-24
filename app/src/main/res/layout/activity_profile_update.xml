@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingStart="10dp"
+    android:paddingEnd="20dp"
+    tools:context=".ui.activity.ProfileUpdateActivity">
+
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <ImageView
+            android:id="@+id/img_back"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:padding="5dp"
+            android:src="@drawable/ic_back" />
+
+        <TextView
+            android:id="@+id/txt_frag_header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_weight="0.9"
+            android:paddingStart="20dp"
+            android:text="@string/str_edit_profile"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            tools:ignore="RtlSymmetry" />
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="10dp"
+        tools:ignore="RtlSymmetry">
+
+        <LinearLayout
+            android:id="@+id/linear_edit_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="@string/upload_profile_picture"
+                android:textAlignment="viewStart"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textDirection="anyRtl"
+                android:textSize="10sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/rl_edit_profile"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/img_user_photo"
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:src="@drawable/ic_avatar" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_edit_pen"
+                        app:tint="@color/black" />
+
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/img_load_image"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Change First name"
+                android:textAlignment="viewStart"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textDirection="anyRtl"
+                android:textSize="10sp" />
+
+            <EditText
+                android:id="@+id/etFirstNameUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/edittext_border_shape"
+                android:hint="@string/first_name"
+                android:padding="16dp"
+                android:textAlignment="viewStart"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textDirection="anyRtl"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/change_user_name"
+                android:textAlignment="viewStart"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textDirection="anyRtl"
+                android:textSize="10sp" />
+
+            <EditText
+                android:id="@+id/edt_user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/edittext_border_shape"
+                android:hint="@string/str_username"
+                android:padding="16dp"
+                android:textAlignment="viewStart"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textDirection="anyRtl"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/change_email"
+                android:textAlignment="viewStart"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textDirection="anyRtl"
+                android:textSize="10sp" />
+
+            <EditText
+                android:id="@+id/edt_user_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/edittext_border_shape"
+                android:hint="@string/str_email"
+                android:padding="16dp"
+                android:textAlignment="viewStart"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textDirection="anyRtl"
+                android:textSize="16sp" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/btn_first_bg"
+                android:text="@string/str_submit"
+                android:textColor="@color/white"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

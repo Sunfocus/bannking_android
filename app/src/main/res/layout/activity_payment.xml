@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/clr_blue"
+    tools:context=".ui.activity.PaymentActivity">
+
+    <RelativeLayout
+        android:id="@+id/rl_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:orientation="horizontal"
+        android:paddingHorizontal="25dp">
+
+
+        <ImageView
+            android:id="@+id/img_back"
+            android:layout_width="wrap_content"
+            android:layout_height="?actionBarSize"
+            android:src="@drawable/ic_back"
+            app:tint="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/source_sans_regular"
+            android:text="@string/str_payment"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rl_bar"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/source_sans_regular"
+            android:text="@string/str_amount"
+            android:textAlignment="viewStart"
+            android:textColor="@color/clr_gray_blue"
+            android:textDirection="anyRtl"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/source_sans_regular"
+                android:text="@string/str_dollar"
+                android:textColor="@color/white"
+                android:textSize="54sp"
+                android:textStyle="bold" />
+
+            <com.bannking.app.utils.EasyMoneyEditText
+                android:id="@+id/txt_pay_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@null"
+                android:hint="@string/_0_00"
+                android:inputType="numberDecimal"
+                android:textAlignment="viewStart"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textDirection="anyRtl"
+                android:textLocale="en-US"
+                android:textSize="54sp"
+                android:textStyle="bold"
+                app:show_commas="true"
+                app:show_currency="false" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ll_amount"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/top_corner_shape"
+        android:backgroundTint="@color/white"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/source_sans_regular"
+                    android:text="@string/str_transfer_from"
+                    android:textAlignment="viewStart"
+                    android:textDirection="anyRtl" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_border_shape"
+                    android:orientation="vertical">
+
+
+                    <Spinner
+                        android:id="@+id/spin_transfer_from"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:background="@drawable/spinner_background"
+                        android:paddingHorizontal="10dp"
+                        android:spinnerMode="dropdown"
+                        android:textDirection="locale"
+                        android:theme="@style/ThemeOverlay.AppCompat.Light"
+                        tools:listitem="@layout/support_simple_spinner_dropdown_item" />
+
+                    <TextView
+                        android:id="@+id/txt_transfer_from"
+                        style="?android:attr/spinnerDropDownItemStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:paddingHorizontal="10dp"
+                        android:textAlignment="viewStart"
+                        android:textDirection="anyRtl"
+                        android:visibility="gone"
+                        tools:text="@string/str_test"
+                        tools:visibility="visible" />
+
+                </LinearLayout>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/source_sans_regular"
+                    android:text="@string/str_transfer_to"
+                    android:textAlignment="viewStart"
+                    android:textDirection="anyRtl" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_stroke_blue"
+                    android:orientation="vertical">
+
+                    <Spinner
+                        android:id="@+id/spin_transfer_to"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:background="@drawable/spinner_background"
+                        android:paddingHorizontal="10dp"
+                        android:spinnerMode="dropdown"
+                        android:textDirection="locale"
+                        android:theme="@style/ThemeOverlay.AppCompat.Light"
+                        tools:listitem="@layout/support_simple_spinner_dropdown_item" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/source_sans_regular"
+                    android:text="@string/str_transfer_on"
+                    android:textAlignment="viewStart"
+                    android:textDirection="anyRtl" />
+
+                <LinearLayout
+                    android:id="@+id/ll_pay_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="?actionBarSize"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_border_shape">
+
+                    <TextView
+                        android:id="@+id/txt_payment_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:drawablePadding="10dp"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="10dp"
+                        android:text="@string/str_today"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/black"
+                        android:textDirection="anyRtl"
+                        app:drawableStartCompat="@drawable/ic_calendar"
+                        app:drawableTint="@color/colorPrimary" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <Button
+            android:id="@+id/btn_pay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="53dp"
+            android:background="@drawable/edittext_border_shape"
+            android:text="@string/str_pay"
+            android:textAllCaps="false" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/top_corner_shape"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical"
+        android:paddingBottom="30dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/source_sans_regular"
+            android:text="@string/str_languages"
+            android:textAlignment="center"
+            android:textColor="@color/clr_text_blu"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_language"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_language" />
+
+        <!--        <LinearLayout-->
+        <!--            android:id="@+id/ll_eng"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="30dp"-->
+        <!--            android:gravity="center_vertical"-->
+        <!--            android:orientation="horizontal"-->
+        <!--            android:weightSum="1">-->
+
+
+        <!--            <ImageView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="25dp"-->
+        <!--                android:layout_weight="0.2"-->
+        <!--                android:src="@drawable/ic_us_flag" />-->
+
+        <!--            <TextView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_marginStart="10dp"-->
+        <!--                android:layout_weight="0.6"-->
+        <!--                android:text="@string/str_english"-->
+        <!--                android:textColor="@color/black"-->
+        <!--                android:textSize="17sp" />-->
+
+        <!--            <CheckBox-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_gravity="center|end"-->
+        <!--                android:layout_weight="0.2"-->
+        <!--                android:button="@drawable/radio_button_shape"-->
+        <!--                android:buttonTint="@android:color/transparent"-->
+        <!--                android:buttonTintMode="src_over"-->
+        <!--                android:checked="true"-->
+        <!--                android:clickable="true"-->
+        <!--                android:focusable="true"-->
+        <!--                android:minHeight="0dp"-->
+        <!--                android:scaleX="1"-->
+        <!--                android:scaleY="1" />-->
+
+
+        <!--        </LinearLayout>-->
+
+        <!--        <LinearLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="20dp"-->
+        <!--            android:gravity="center_vertical"-->
+        <!--            android:orientation="horizontal"-->
+        <!--            android:weightSum="1">-->
+
+        <!--            <ImageView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="25dp"-->
+        <!--                android:layout_weight="0.2"-->
+        <!--                android:src="@drawable/ic_spanish_flag" />-->
+
+        <!--            <TextView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_marginStart="10dp"-->
+        <!--                android:layout_weight="0.6"-->
+        <!--                android:text="@string/str_spanish"-->
+        <!--                android:textColor="@color/black"-->
+        <!--                android:textSize="17sp" />-->
+
+        <!--            <CheckBox-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_gravity="center|end"-->
+        <!--                android:layout_weight="0.2"-->
+        <!--                android:button="@drawable/radio_button_shape"-->
+        <!--                android:buttonTint="@android:color/transparent"-->
+        <!--                android:buttonTintMode="src_over"-->
+        <!--                android:clickable="true"-->
+        <!--                android:focusable="true"-->
+        <!--                android:minHeight="0dp"-->
+        <!--                android:scaleX="1"-->
+        <!--                android:scaleY="1" />-->
+
+        <!--        </LinearLayout>-->
+
+        <!--        <LinearLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="20dp"-->
+        <!--            android:gravity="center_vertical"-->
+        <!--            android:orientation="horizontal"-->
+        <!--            android:weightSum="1">-->
+
+        <!--            <ImageView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="25dp"-->
+        <!--                android:layout_weight="0.2"-->
+        <!--                android:src="@drawable/ic_french_flag" />-->
+
+        <!--            <TextView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_marginStart="10dp"-->
+        <!--                android:layout_weight="0.6"-->
+        <!--                android:text="@string/str_french"-->
+        <!--                android:textColor="@color/black"-->
+        <!--                android:textSize="17sp" />-->
+
+        <!--            <CheckBox-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_gravity="center|end"-->
+        <!--                android:layout_weight="0.2"-->
+        <!--                android:button="@drawable/radio_button_shape"-->
+        <!--                android:buttonTint="@android:color/transparent"-->
+        <!--                android:buttonTintMode="src_over"-->
+        <!--                android:clickable="true"-->
+        <!--                android:focusable="true"-->
+        <!--                android:minHeight="0dp"-->
+        <!--                android:scaleX="1"-->
+        <!--                android:scaleY="1" />-->
+        <!--        </LinearLayout>-->
+
+        <!--        <LinearLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="20dp"-->
+        <!--            android:gravity="center_vertical"-->
+        <!--            android:orientation="horizontal"-->
+        <!--            android:weightSum="1">-->
+
+        <!--            <ImageView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="25dp"-->
+        <!--                android:layout_weight="0.2"-->
+        <!--                android:src="@drawable/ic_arabic_flag" />-->
+
+        <!--            <TextView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_marginStart="10dp"-->
+        <!--                android:layout_weight="0.6"-->
+        <!--                android:text="@string/str_arabic"-->
+        <!--                android:textColor="@color/black"-->
+        <!--                android:textSize="17sp" />-->
+
+        <!--            <CheckBox-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_gravity="center|end"-->
+        <!--                android:layout_weight="0.2"-->
+        <!--                android:button="@drawable/radio_button_shape"-->
+        <!--                android:buttonTint="@android:color/transparent"-->
+        <!--                android:buttonTintMode="src_over"-->
+        <!--                android:clickable="true"-->
+        <!--                android:focusable="true"-->
+        <!--                android:minHeight="0dp"-->
+        <!--                android:scaleX="1"-->
+        <!--                android:scaleY="1" />-->
+        <!--        </LinearLayout>-->
+
+        <!--        <LinearLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="20dp"-->
+        <!--            android:gravity="center_vertical"-->
+        <!--            android:orientation="horizontal"-->
+        <!--            android:weightSum="1">-->
+
+        <!--            <ImageView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="25dp"-->
+        <!--                android:layout_weight="0.2"-->
+        <!--                android:src="@drawable/ic_russian_flag" />-->
+
+        <!--            <TextView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_marginStart="10dp"-->
+        <!--                android:layout_weight="0.6"-->
+        <!--                android:text="@string/str_russia"-->
+        <!--                android:textColor="@color/black"-->
+        <!--                android:textSize="17sp" />-->
+
+        <!--            <CheckBox-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_gravity="center|end"-->
+        <!--                android:layout_weight="0.2"-->
+        <!--                android:button="@drawable/radio_button_shape"-->
+        <!--                android:buttonTint="@android:color/transparent"-->
+        <!--                android:buttonTintMode="src_over"-->
+        <!--                android:clickable="true"-->
+        <!--                android:focusable="true"-->
+        <!--                android:minHeight="0dp"-->
+        <!--                android:scaleX="1"-->
+        <!--                android:scaleY="1" />-->
+        <!--        </LinearLayout>-->
+
+        <!--        <LinearLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="20dp"-->
+        <!--            android:gravity="center_vertical"-->
+        <!--            android:orientation="horizontal"-->
+        <!--            android:weightSum="1">-->
+
+        <!--            <ImageView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="25dp"-->
+        <!--                android:layout_weight="0.2"-->
+        <!--                android:src="@drawable/ic_china_flag" />-->
+
+        <!--            <TextView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_marginStart="10dp"-->
+        <!--                android:layout_weight="0.6"-->
+        <!--                android:text="@string/str_portuguese"-->
+        <!--                android:textColor="@color/black"-->
+        <!--                android:textSize="17sp" />-->
+
+        <!--            <CheckBox-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_gravity="center|end"-->
+        <!--                android:layout_weight="0.2"-->
+        <!--                android:button="@drawable/radio_button_shape"-->
+        <!--                android:buttonTint="@android:color/transparent"-->
+        <!--                android:buttonTintMode="src_over"-->
+        <!--                android:clickable="true"-->
+        <!--                android:focusable="true"-->
+        <!--                android:minHeight="0dp"-->
+        <!--                android:scaleX="1"-->
+        <!--                android:scaleY="1" />-->
+        <!--        </LinearLayout>-->
+
+        <!--        <LinearLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="20dp"-->
+        <!--            android:gravity="center_vertical"-->
+        <!--            android:orientation="horizontal"-->
+        <!--            android:weightSum="1">-->
+
+        <!--            <ImageView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="25dp"-->
+        <!--                android:layout_weight="0.2"-->
+        <!--                android:src="@drawable/ic_japan_flag" />-->
+
+        <!--            <TextView-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_marginStart="10dp"-->
+        <!--                android:layout_weight="0.6"-->
+        <!--                android:text="@string/str_dutch"-->
+        <!--                android:textColor="@color/black"-->
+        <!--                android:textSize="17sp" />-->
+
+        <!--            <CheckBox-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_gravity="center|end"-->
+        <!--                android:layout_weight="0.2"-->
+        <!--                android:button="@drawable/radio_button_shape"-->
+        <!--                android:buttonTint="@android:color/transparent"-->
+        <!--                android:buttonTintMode="src_over"-->
+        <!--                android:clickable="true"-->
+        <!--                android:focusable="true"-->
+        <!--                android:minHeight="0dp"-->
+        <!--                android:scaleX="1"-->
+        <!--                android:scaleY="1" />-->
+        <!--        </LinearLayout>-->
+
+    </LinearLayout>
+
+</RelativeLayout>

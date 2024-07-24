@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/clr_blue"
+    tools:context=".ui.activity.MainActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/rl_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+        <!--        tools:viewBindingIgnore="true"-->
+
+        <ImageView
+            android:layout_width="152dp"
+            android:layout_height="60dp"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/todo"
+            android:src="@drawable/ic_logo_text" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_profile"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_avatar" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rl_toolbar"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txt_greeting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/source_sans_regular"
+            android:textAlignment="viewStart"
+            android:textColor="@color/white"
+            android:textDirection="anyRtl"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="@string/str_good_morning_john" />
+
+        <TextView
+            android:id="@+id/txt_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/source_sans_regular"
+            android:textAlignment="viewStart"
+            android:textColor="@color/white"
+            android:textDirection="anyRtl"
+            android:textSize="16sp"
+            tools:text="@string/str_time" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ll_data"
+        android:layout_marginTop="10dp" />
+
+    <!--    android:layout_above="@+id/bottom_navigation_bar"-->
+    <!--    android:layout_marginBottom="-30dp"-->
+
+    <!--    android:backgroundTint="@android:color/white"-->
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/nav_shape"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:elevation="10dp"
+        android:outlineProvider="paddedBounds"
+        android:padding="7dp"
+        app:elevation="20dp"
+        app:itemBackground="@drawable/top_corner_shape"
+        app:itemIconTint="@color/active_tab_color"
+        app:itemTextAppearanceActive="@style/BottomNavigationView"
+        app:itemTextAppearanceInactive="@style/BottomNavigationView"
+        app:itemTextColor="@color/active_tab_color"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/nav_menu" />
+
+</RelativeLayout>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="15dp"
+    android:background="@color/white"
+    app:cardCornerRadius="8dp"
+    app:cardUseCompatPadding="true">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.02"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.98"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/txt_transaction_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/source_sans_regular"
+                android:paddingBottom="3dp"
+                android:textAlignment="viewStart"
+                android:textColor="@color/clr_text"
+                android:textDirection="anyRtl"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="transaction_title" />
+
+            <TextView
+                android:id="@+id/txt_transaction_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/source_sans_regular"
+                android:paddingBottom="3dp"
+                android:textAlignment="viewStart"
+                android:textColor="@color/clr_text"
+                android:textDirection="anyRtl"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="transaction_description" />
+
+            <TextView
+                android:id="@+id/txt_orig_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/source_sans_regular"
+                android:paddingBottom="3dp"
+                android:textAlignment="viewStart"
+                android:textColor="@color/clr_text"
+                android:textDirection="anyRtl"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="ORIG ID:" />
+
+            <TextView
+                android:id="@+id/txt_transaction_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/source_sans_regular"
+                android:paddingBottom="3dp"
+                android:textAlignment="viewStart"
+                android:textColor="@color/clr_text"
+                android:textDirection="anyRtl"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="Transaction ID:" />
+
+
+            <TextView
+                android:id="@+id/txt_transaction_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/source_sans_regular"
+                android:paddingBottom="3dp"
+                android:textAlignment="viewStart"
+                android:textColor="@color/clr_text"
+                android:textDirection="anyRtl"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="@string/str_date" />
+
+            <TextView
+                android:id="@+id/txt_transaction_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/source_sans_regular"
+                android:paddingBottom="3dp"
+                android:text="Pending"
+                android:textAlignment="viewStart"
+                android:textColor="@color/color_pending_State"
+                android:textDirection="anyRtl"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="@string/str_status" />
+
+            <TextView
+                android:id="@+id/txt_total_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/source_sans_regular"
+                android:textAlignment="viewStart"
+                android:textColor="@color/colorPrimary"
+                android:textDirection="anyRtl"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="total amount" />
+
+            <TextView
+                android:id="@+id/txt_transaction_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/source_sans_regular"
+                android:textAlignment="textEnd"
+                android:textColor="@color/clr_text"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="@string/str_amount" />
+
+
+        </LinearLayout>
+
+    </TableRow>
+
+
+</androidx.cardview.widget.CardView>

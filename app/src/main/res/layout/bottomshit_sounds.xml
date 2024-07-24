@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/top_corner_shape"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical"
+        android:paddingBottom="30dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/source_sans_regular"
+            android:text="@string/str_sound"
+            android:textAlignment="center"
+            android:textColor="@color/clr_text_blu"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioGroup
+                android:id="@+id/radiogrp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/img_close">
+
+
+                <RadioButton
+                    android:id="@+id/btn_maleVoice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10dp"
+                    android:button="@null"
+                    android:layout_gravity="right"
+                    android:drawablePadding="30dp"
+                    android:paddingLeft="20dp"
+                    android:layoutDirection="rtl"
+                    android:drawableRight="?android:attr/listChoiceIndicatorSingle"
+                    android:background="@drawable/edittext_border_shape"
+                    android:text="@string/male_sound"
+                    android:textAllCaps="false" />
+
+                <RadioButton
+                    android:id="@+id/btn_femaleVoice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10dp"
+                    android:button="@null"
+                    android:layout_gravity="right"
+                    android:drawablePadding="30dp"
+                    android:paddingLeft="20dp"
+                    android:layoutDirection="rtl"
+                    android:background="@drawable/edittext_border_shape"
+                    android:drawableRight="?android:attr/listChoiceIndicatorSingle"
+                    android:text="@string/female_sound"
+                    android:textAllCaps="false" />
+
+                <RadioButton
+                    android:id="@+id/btn_otherVoice"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10dp"
+                    android:button="@null"
+                    android:layout_gravity="right"
+                    android:drawablePadding="30dp"
+                    android:paddingLeft="20dp"
+                    android:layoutDirection="rtl"
+                    android:background="@drawable/edittext_border_shape"
+                    android:drawableRight="?android:attr/listChoiceIndicatorSingle"
+                    android:text="Other Voice"
+                    android:textAllCaps="false" />
+            </RadioGroup>
+
+            <View
+                android:id="@+id/divider"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black" />
+
+            <Button
+                android:id="@+id/btn_schedule_Voice"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:background="@drawable/edittext_border_shape"
+                android:text="@string/str_done"
+                android:textAllCaps="false" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

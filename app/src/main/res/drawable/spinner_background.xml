@@ -1,0 +1,8 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <layer-list android:autoMirrored="true">
+
+            <item android:width="10dp" android:height="8dp" android:drawable="@drawable/ic_down" android:gravity="end|center_vertical" android:right="20dp" />
+        </layer-list>
+    </item>
+</selector>

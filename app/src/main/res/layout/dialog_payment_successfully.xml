@@ -1,0 +1,289 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#00555555"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:background="@drawable/round_layout_otp"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="15dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:text="@string/str_you_completed_a_transfer_of"
+                    android:textAlignment="center"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:layoutDirection="locale">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:text="@string/str_dollar"
+                        android:textColor="@color/clr_text_blu"
+                        android:textSize="30sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txt_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:textColor="@color/clr_text_blu"
+                        android:textSize="30sp"
+                        android:textStyle="bold"
+                        tools:text="1.00" />
+
+                </TableRow>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="11dp"
+                    android:background="#F3F4F6" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:src="@drawable/ic_right"
+                        android:text="@string/str_transaction_number"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txt_transaction_number"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/clr_text_blu"
+                        android:textDirection="anyRtl"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="14790727827" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="7dp"
+                    android:background="#F3F4F6" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:src="@drawable/ic_right"
+                        android:text="@string/str_transfer_from"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txt_transfer_from"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/clr_text_blu"
+                        android:textDirection="anyRtl"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="Chase Bus Total (...1107)" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="7dp"
+                    android:background="#F3F4F6" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:src="@drawable/ic_right"
+                        android:text="@string/str_transfer_to"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txt_transfer_to"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/clr_text_blu"
+                        android:textDirection="anyRtl"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="Bus Complete Chk (...2092)" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="7dp"
+                    android:background="#F3F4F6" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:src="@drawable/ic_right"
+                        android:text="@string/str_transfer_on"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txt_transfer_on"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/clr_text_blu"
+                        android:textDirection="anyRtl"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="Jul 12, 2022" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="7dp"
+                    android:background="#F3F4F6" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:src="@drawable/ic_right"
+                        android:text="@string/str_status"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txt_transfer_status"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/clr_text_blu"
+                        android:textDirection="anyRtl"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="Completed" />
+
+                </LinearLayout>
+
+
+                <Button
+                    android:id="@+id/btn_re_transfer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_marginTop="33dp"
+                    android:background="@drawable/edittext_border_shape"
+                    android:text="@string/str_make_another_transfer"
+                    android:textAllCaps="false" />
+
+                <TextView
+                    android:id="@+id/txt_done"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_stroke_blue"
+                    android:gravity="center"
+                    android:text="@string/str_done"
+                    android:textAllCaps="false"
+                    android:textColor="@color/clr_text_blu"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </ScrollView>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_payment_done" />
+</RelativeLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="teal_200">#105CA8</color><!--#FF03DAC5-->
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="colorPrimary">#105CA8</color>
+    <color name="first_screen">#5271ff</color>
+
+
+    <color name="clr_blue">#105CA8</color>
+    <color name="clr_dark_gray">#D1D1D1</color>
+    <color name="clr_semi_dark_gray">#EDECEC</color>
+    <color name="clr_text">#2A3532</color>
+    <color name="clr_card_background">#FBFBFB</color>
+    <color name="clr_text_blu">#105CA8</color>
+    <color name="clr_pink_upgrade">#B5004C</color>
+    <color name="btn_first_orange">#FC6E18</color>
+    <color name="clr_valencia_text">#D7484A</color>
+    <color name="clr_tab_frag">#F5F5F5</color>
+    <color name="clr_green">#0D9D01</color>
+    <color name="clr_gray_blue">#96b6d4</color>
+    <color name="clr_table_divider">#E9E9E9</color>
+    <color name="clr_wild_sand">#F5F5F5</color>
+
+    <color name="notification_1">#02D182</color>
+    <color name="notification_2">#9C8AF4</color>
+    <color name="notification_3">#61DCF8</color>
+    <color name="clr_red">#EC0000</color>
+    <color name="str_orange">#DD3804</color>
+    <color name="color_pending_State">#F49304</color>
+    <color name="clr_yellow">#FFBA00</color>
+
+    <!--    Color Array For expenses-->
+
+</resources>

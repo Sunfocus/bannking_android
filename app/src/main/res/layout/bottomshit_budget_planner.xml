@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/top_corner_shape"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical">
+
+    <!--
+    Inspired By :- https://stackoverflow.com/questions/40708865/cannot-add-vertical-divider-to-tablelayout-android
+    -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:showDividers="middle">
+
+            <TableRow
+                android:background="@drawable/top_corner_shape"
+                android:backgroundTint="@color/clr_table_divider"
+                android:divider="@color/white"
+                android:dividerPadding="1dp"
+                android:paddingVertical="10dp"
+                android:showDividers="middle"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/source_sans_regular"
+                    android:text="@string/str_account_type"
+                    android:textAlignment="center"
+                    android:textColor="@color/clr_text"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/source_sans_regular"
+                    android:text="@string/str_business_or_personal"
+                    android:textAlignment="center"
+                    android:textColor="@color/clr_text"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/source_sans_regular"
+                    android:paddingEnd="5dp"
+                    android:text="@string/str_edit"
+                    android:textAlignment="center"
+                    android:textColor="@color/clr_text"
+                    android:textStyle="bold"
+                    tools:ignore="RtlSymmetry" />
+
+            </TableRow>
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:divider="@drawable/table_divider"
+                android:gravity="center"
+                android:showDividers="middle|end"
+                android:shrinkColumns="*">
+                <!--        android:background="@drawable/rounded_corners_table"-->
+
+                <TableRow
+                    android:divider="@drawable/table_divider"
+                    android:showDividers="middle"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:padding="3dp"
+                        android:text="@string/str_account_name"
+                        android:textAlignment="center"
+                        android:textColor="@color/black" />
+
+                    <EditText
+                        android:id="@+id/edt_account"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:enabled="false"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:hint="@string/str_account_name"
+                        android:paddingHorizontal="5dp"
+                        android:paddingVertical="3dp"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/black"
+                        android:textDirection="anyRtl"
+                        android:textSize="14sp" />
+
+
+                    <CheckBox
+                        android:id="@+id/chk_account"
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:button="@drawable/checkbox_blue_shape"
+                        android:buttonTint="@android:color/transparent"
+                        android:buttonTintMode="src_over"
+                        android:textAlignment="center" />
+                </TableRow>
+
+                <TableRow
+                    android:divider="@drawable/table_divider"
+                    android:showDividers="middle"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:padding="3dp"
+                        android:text="@string/str_account_code_men"
+                        android:textAlignment="center"
+                        android:textColor="@color/black" />
+
+                    <EditText
+                        android:id="@+id/edt_account_code"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:enabled="true"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:inputType="number"
+                        android:maxLength="4"
+                        android:paddingHorizontal="5dp"
+                        android:paddingVertical="3dp"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/black"
+                        android:textDirection="anyRtl"
+                        android:textSize="14sp"
+                        tools:text="@string/str_8099" />
+
+
+                    <CheckBox
+                        android:id="@+id/chk_account_code"
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:button="@drawable/checkbox_blue_shape"
+                        android:buttonTint="@android:color/transparent"
+                        android:buttonTintMode="src_over"
+                        android:checked="true"
+                        android:textAlignment="center" />
+                </TableRow>
+
+
+                <TableRow
+                    android:divider="@drawable/table_divider"
+                    android:showDividers="middle"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:padding="3dp"
+                        android:text="@string/str_amount"
+                        android:textAlignment="center"
+                        android:textColor="@color/black" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:background="@color/white"
+                            android:fontFamily="@font/source_sans_regular"
+                            android:text="$"
+                            android:textAlignment="viewStart"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/black"
+                            android:textDirection="anyRtl" />
+
+                        <com.bannking.app.utils.EasyMoneyEditText
+                            android:id="@+id/edt_amount"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:enabled="true"
+                            android:fontFamily="@font/source_sans_regular"
+                            android:hint="@string/str_enter_amount"
+                            android:inputType="number|text"
+                            android:digits="-0123456789."
+                            android:padding="3dp"
+                            android:textAlignment="viewStart"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/black"
+                            android:textDirection="anyRtl"
+                            android:textSize="14sp"
+                            app:drawableEndCompat="@drawable/ic_next"
+                            app:show_commas="true"
+                            app:show_currency="false" />
+
+                    </LinearLayout>
+
+
+                    <CheckBox
+                        android:id="@+id/chk_amount"
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:button="@drawable/checkbox_blue_shape"
+                        android:buttonTint="@android:color/transparent"
+                        android:buttonTintMode="src_over"
+                        android:checked="true"
+                        android:textAlignment="center" />
+                </TableRow>
+
+            </TableLayout>
+
+        </TableLayout>
+
+        <Button
+            android:id="@+id/btn_done"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/edittext_border_shape"
+            android:text="@string/str_create"
+            android:textAllCaps="true" />
+
+    </LinearLayout>
+
+
+    <!--    <TableRow-->
+    <!--        android:background="@color/clr_table_divider"-->
+    <!--        android:weightSum="1">-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginStart="1dp"-->
+    <!--            android:layout_marginTop="1dp"-->
+    <!--            android:layout_marginBottom="1dp"-->
+    <!--            android:layout_weight="0.3"-->
+    <!--            android:background="@color/white"-->
+    <!--            android:fontFamily="@font/source_sans_regular"-->
+    <!--            android:text="@string/str_account"-->
+    <!--            android:textAlignment="center"-->
+    <!--            android:textStyle="" />-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginStart="1dp"-->
+    <!--            android:layout_marginTop="1dp"-->
+    <!--            android:layout_marginBottom="1dp"-->
+    <!--            android:layout_weight="0.4"-->
+    <!--            android:background="@color/white"-->
+    <!--            android:text="@string/str_personal_amp_medical"-->
+    <!--            android:textAlignment="center" />-->
+
+    <!--        <CheckBox-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="20dp"-->
+    <!--            android:layout_marginStart="1dp"-->
+    <!--            android:layout_marginTop="1dp"-->
+    <!--            android:layout_marginBottom="1dp"-->
+    <!--            android:layout_weight="0.3"-->
+    <!--            android:background="@color/white"-->
+    <!--            android:button="@drawable/checkbox_blue_shape"-->
+    <!--            android:buttonTint="@android:color/transparent"-->
+    <!--            android:buttonTintMode="src_over"-->
+    <!--            android:textAlignment="center" />-->
+
+    <!--    </TableRow>-->
+
+    <!--    <TableRow-->
+    <!--        android:background="@color/clr_table_divider"-->
+    <!--        android:weightSum="1">-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginStart="1dp"-->
+    <!--            android:layout_marginTop="1dp"-->
+    <!--            android:layout_marginBottom="1dp"-->
+    <!--            android:layout_weight="0.3"-->
+    <!--            android:background="@color/white"-->
+    <!--            android:text="@string/str_account_code"-->
+    <!--            android:textAlignment="center" />-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginStart="1dp"-->
+    <!--            android:layout_marginTop="1dp"-->
+    <!--            android:layout_marginBottom="1dp"-->
+    <!--            android:layout_weight="0.4"-->
+    <!--            android:background="@color/white"-->
+    <!--            android:text="@string/str_8099"-->
+    <!--            android:textAlignment="center" />-->
+
+    <!--        <CheckBox-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="20dp"-->
+    <!--            android:layout_marginStart="1dp"-->
+    <!--            android:layout_marginTop="1dp"-->
+    <!--            android:layout_marginBottom="1dp"-->
+    <!--            android:layout_weight="0.3"-->
+    <!--            android:background="@color/white"-->
+    <!--            android:button="@drawable/checkbox_blue_shape"-->
+    <!--            android:buttonTint="@android:color/transparent"-->
+    <!--            android:buttonTintMode="src_over"-->
+    <!--            android:textAlignment="center" />-->
+
+    <!--    </TableRow>-->
+
+    <!--    <TableRow-->
+    <!--        android:background="@color/clr_table_divider"-->
+    <!--        android:weightSum="1">-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginStart="1dp"-->
+    <!--            android:layout_marginTop="1dp"-->
+    <!--            android:layout_marginBottom="1dp"-->
+    <!--            android:layout_weight="0.3"-->
+    <!--            android:background="@color/white"-->
+    <!--            android:text="@string/str_amount"-->
+    <!--            android:textAlignment="center" />-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginStart="1dp"-->
+    <!--            android:layout_marginTop="1dp"-->
+    <!--            android:layout_marginBottom="1dp"-->
+    <!--            android:layout_weight="0.4"-->
+    <!--            android:background="@color/white"-->
+    <!--            android:text="@string/str_2_866_10"-->
+    <!--            android:textAlignment="center" />-->
+
+    <!--        <CheckBox-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="20dp"-->
+    <!--            android:layout_marginStart="1dp"-->
+    <!--            android:layout_marginTop="1dp"-->
+    <!--            android:layout_marginBottom="1dp"-->
+    <!--            android:layout_weight="0.3"-->
+    <!--            android:background="@color/white"-->
+    <!--            android:button="@drawable/checkbox_blue_shape"-->
+    <!--            android:buttonTint="@android:color/transparent"-->
+    <!--            android:buttonTintMode="src_over"-->
+    <!--            android:textAlignment="center" />-->
+
+    <!--    </TableRow>-->
+
+</RelativeLayout>

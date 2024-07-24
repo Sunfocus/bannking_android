@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imageSlide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:src="@drawable/ic_6_month" />
+
+    <!--    <RelativeLayout-->
+    <!--        android:id="@+id/rl_gradiant"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content">-->
+
+    <!--    -->
+
+    <!--        <TextView-->
+    <!--            android:id="@+id/txt_month"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_centerInParent="true"-->
+    <!--            android:layout_centerHorizontal="true"-->
+    <!--            android:fontFamily="@font/timmana_regular"-->
+    <!--            android:text="@string/str_1_months"-->
+    <!--            android:textAlignment="center"-->
+    <!--            android:textColor="@color/white"-->
+    <!--            android:textSize="50sp"-->
+    <!--            android:textStyle="bold" />-->
+    <!--    </RelativeLayout>-->
+
+
+    <!--    <TextView-->
+    <!--        android:id="@+id/txt_month_price"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_below="@+id/rl_gradiant"-->
+    <!--        android:layout_centerHorizontal="true"-->
+    <!--        android:fontFamily="@font/source_sans_regular"-->
+    <!--        android:text="$9.99 Month"-->
+    <!--        android:textColor="#4DBE2E"-->
+    <!--        android:textSize="50sp" />-->
+
+
+    <!--    <LinearLayout-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_below="@+id/txt_month_price"-->
+    <!--        android:orientation="vertical"-->
+    <!--        android:padding="10dp">-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginTop="15dp"-->
+    <!--            android:gravity="center_vertical"-->
+    <!--            android:orientation="horizontal"-->
+    <!--            android:weightSum="1">-->
+
+    <!--            <ImageView-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_weight="0.1"-->
+    <!--                android:src="@drawable/ic_green_tick" />-->
+
+    <!--            <TextView-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_weight="0.9"-->
+    <!--                android:text="@string/str_stay_focused_on_your_financial_goals"-->
+    <!--                android:textColor="@color/clr_text" />-->
+
+    <!--        </LinearLayout>-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginTop="15dp"-->
+    <!--            android:gravity="center_vertical"-->
+    <!--            android:orientation="horizontal"-->
+    <!--            android:weightSum="1">-->
+
+    <!--            <ImageView-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_weight="0.1"-->
+    <!--                android:src="@drawable/ic_green_tick" />-->
+
+    <!--            <TextView-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_weight="0.9"-->
+    <!--                android:text="@string/str_a_better_way_to_add_expenses_income_debts_and_transfers"-->
+    <!--                android:textColor="@color/clr_text" />-->
+
+    <!--        </LinearLayout>-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginTop="15dp"-->
+    <!--            android:gravity="center_vertical"-->
+    <!--            android:orientation="horizontal"-->
+    <!--            android:weightSum="1">-->
+
+    <!--            <ImageView-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_weight="0.1"-->
+    <!--                android:src="@drawable/ic_green_tick" />-->
+
+    <!--            <TextView-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_weight="0.9"-->
+    <!--                android:text="@string/str_control_your_finances_in_pleasure"-->
+    <!--                android:textColor="@color/clr_text" />-->
+
+    <!--        </LinearLayout>-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginTop="15dp"-->
+    <!--            android:gravity="center_vertical"-->
+    <!--            android:orientation="horizontal"-->
+    <!--            android:weightSum="1">-->
+
+    <!--            <ImageView-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_weight="0.1"-->
+    <!--                android:src="@drawable/ic_green_tick" />-->
+
+    <!--            <TextView-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_weight="0.9"-->
+    <!--                android:text="@string/str_track_your_daily_expenses_track_your_spending"-->
+    <!--                android:textColor="@color/clr_text" />-->
+
+    <!--        </LinearLayout>-->
+
+
+    <!--        <Button-->
+    <!--            android:id="@+id/btn_ok"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginHorizontal="30dp"-->
+    <!--            android:layout_marginVertical="10dp"-->
+    <!--            android:background="@drawable/edittext_border_shape"-->
+    <!--            android:text="@string/str_ok"-->
+    <!--            android:textAllCaps="false" />-->
+
+    <!--    </LinearLayout>-->
+
+</RelativeLayout>

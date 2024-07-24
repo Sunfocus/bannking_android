@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/ll_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+
+        <ImageView
+            android:id="@+id/img_flag"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_weight="0.2"
+            android:src="@drawable/ic_us_flag" />
+
+        <TextView
+            android:id="@+id/txt_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="0.6"
+            android:textAlignment="viewStart"
+            android:textColor="@color/black"
+            android:textDirection="anyRtl"
+            android:textSize="17sp"
+            tools:text="@string/str_english" />
+
+        <!--        <ImageView-->
+        <!--            android:id="@+id/img_check_box"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_weight="0.2"-->
+        <!--            android:src="@drawable/radio_button_shape" />-->
+
+
+        <!--        <RadioButton-->
+        <!--            android:id="@+id/radio_button"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:padding="12dp"-->
+        <!--            android:layout_weight="0.2"-->
+        <!--            android:textColor="@android:color/darker_gray"-->
+        <!--            android:textSize="18sp" />-->
+
+
+        <RadioButton
+            android:id="@+id/radio_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end"
+            android:layout_weight="0.2"
+            android:button="@drawable/radio_button_shape"
+            android:buttonTint="@android:color/transparent"
+            android:buttonTintMode="src_over"
+            android:checked="false"
+            android:minHeight="0dp"
+            android:scaleX="1"
+            android:scaleY="1" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>

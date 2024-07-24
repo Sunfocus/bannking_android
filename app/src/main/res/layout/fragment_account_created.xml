@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/clr_blue"
+    tools:context=".ui.fragment.AccountCreatedFragment">
+
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tablayout"
+        style="@style/TabLayoutStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="30dp"
+        android:background="@drawable/tab_background_new"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabBackground="@drawable/tab_selector"
+        app:tabGravity="fill"
+        app:tabIndicatorHeight="0dp"
+        app:tabMode="auto"
+        app:tabPaddingEnd="16dp"
+        app:tabPaddingStart="16dp"
+        app:tabRippleColor="@null"
+        app:tabSelectedTextColor="@color/clr_text_blu"
+        app:tabTextColor="@color/white" />
+    <!--    app:tabTextAppearance="@style/TabTextAppearance"-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/top_corner_shape"
+        android:backgroundTint="@color/clr_wild_sand"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tablayout">
+
+        <RelativeLayout
+            android:id="@+id/rl_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/txt_information"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/img_filter"
+                android:drawablePadding="10dp"
+                android:fontFamily="@font/source_sans_regular"
+                android:textAlignment="viewStart"
+                android:textColor="@color/clr_text"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_information"
+                tools:text="@string/str_business_and_personal_accounts" />
+
+            <ImageView
+                android:id="@+id/img_filter"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="2dp"
+                android:padding="2dp"
+                android:src="@drawable/ic_filter"
+                app:tint="@color/colorPrimary" />
+        </RelativeLayout>
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp" />
+
+    </LinearLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_account_create"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="80dp"
+        android:background="@drawable/circle_shape"
+        android:backgroundTint="@color/white"
+        android:src="@drawable/ic_floating"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

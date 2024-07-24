@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/top_corner_shape"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical"
+        android:paddingBottom="30dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/source_sans_regular"
+            android:text="@string/str_create_own_budget_planner"
+            android:textAlignment="center"
+            android:textColor="@color/clr_text_blu"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="25dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/edittext_border_shape"
+                android:gravity="center_vertical">
+
+                <com.skydoves.colorpickerview.AlphaTileView
+                    android:id="@+id/alphaTileView"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:background="@android:color/white"
+                    android:orientation="horizontal"
+                    app:tileSize="20" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_color_choose"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/otp_edit_ext_shape"
+                    android:backgroundTint="@color/clr_blue"
+                    android:text="@string/str_choose_color"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/edt_budget_title"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/edittext_border_shape"
+                android:hint="@string/str_enter_budget_planner_name"
+                android:maxLines="1"
+                android:paddingHorizontal="10dp"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="13sp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginVertical="20dp"
+                android:background="?android:attr/listDivider" />
+
+            <Button
+                android:id="@+id/btn_submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/edittext_border_shape"
+                android:text="@string/str_submit"
+                android:textAllCaps="false" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/edittext_border_shape"
+                android:backgroundTint="@color/clr_pink_upgrade"
+                android:text="@string/str_cancel"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

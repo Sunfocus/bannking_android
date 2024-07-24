@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingVertical="10dp"
+    android:weightSum="1">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="0.2"
+        android:gravity="center">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_notification"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/circle_shape"
+            android:padding="14dp"
+            android:src="@drawable/ic_notification" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txt_notification_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/source_sans_pro"
+            android:justificationMode="inter_word"
+            android:singleLine="true"
+            android:textAlignment="viewStart"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:targetApi="o"
+            tools:text="Title" />
+
+        <TextView
+            android:id="@+id/txt_notification_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/source_sans_pro"
+            android:justificationMode="inter_word"
+            android:textAlignment="viewStart"
+            android:textColor="@color/black"
+            android:textDirection="anyRtl"
+            android:textSize="14sp"
+            tools:targetApi="o"
+            tools:text="Lorem Ipsum is simply dummy text \n of the printing and" />
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/txt_notification_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.2"
+        android:fontFamily="@font/source_sans_pro"
+        android:lineSpacingExtra="4dp"
+        android:textAlignment="viewStart"
+        android:textColor="@color/black"
+        android:textDirection="anyRtl"
+        tools:text="9.24 Am" />
+
+</LinearLayout>

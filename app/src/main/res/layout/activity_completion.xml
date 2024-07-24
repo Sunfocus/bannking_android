@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.CompletionActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btn_get_started"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="125dp"
+            android:layout_height="180dp"
+            android:contentDescription="@string/todo"
+            android:src="@drawable/ic_trophy" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/source_sans_regular"
+            android:text="@string/str_welcome_to_banking"
+            android:textAlignment="viewStart"
+            android:textColor="@color/clr_text"
+            android:textDirection="anyRtl"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/source_sans_regular"
+            android:text="@string/str_you_re_on_your_way_to_taking_control_of_your_finances"
+            android:textAlignment="viewStart"
+            android:textDirection="anyRtl" />
+
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_get_started"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="40dp"
+        android:textColor="@color/white"
+        android:background="@drawable/btn_first_bg"
+        android:text="@string/str_get_started"
+        android:textAllCaps="false" />
+
+
+</RelativeLayout>

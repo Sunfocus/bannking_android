@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginVertical="10dp"
+    android:background="@color/white"
+    android:clipToPadding="false"
+    android:outlineSpotShadowColor="@android:color/transparent"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="16dp"
+    tools:ignore="UnusedAttribute">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:paddingVertical="12dp"
+        android:paddingStart="12dp"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/txt_transaction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:fontFamily="@font/source_sans_regular"
+                    android:maxEms="10"
+                    android:singleLine="true"
+                    android:textColor="@color/clr_text"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    tools:text="Transaction Name" />
+
+                <TextView
+                    android:id="@+id/txt_astric"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/txt_transaction"
+                    android:fontFamily="@font/source_sans_regular"
+                    android:singleLine="true"
+                    android:text="@string/str_dot"
+                    android:textColor="@color/clr_text"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_account_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/txt_astric"
+                    android:fontFamily="@font/source_sans_regular"
+                    android:singleLine="true"
+                    android:textColor="@color/clr_text"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    tools:text="Transaction code" />
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/txt_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/source_sans_regular"
+                android:singleLine="true"
+                android:textColor="@color/clr_text_blu"
+                android:textSize="28sp"
+                tools:text="$445.49" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/source_sans_regular"
+                android:singleLine="true"
+                android:text="@string/str_available_balance"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/img_more"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:src="@drawable/ic_more" />
+
+            <ImageView
+                android:id="@+id/img_announce"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:src="@drawable/ic_announce" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

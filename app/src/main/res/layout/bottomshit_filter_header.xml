@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/top_corner_shape"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="clip_vertical"
+            android:background="@drawable/top_corner_shape"
+            android:backgroundTint="@color/clr_table_divider"
+            android:fontFamily="@font/source_sans_regular"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="14dp"
+            android:text="@string/str_filter_header_title"
+            android:textColor="@color/clr_text"
+            android:textStyle="bold" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_header_sample" />
+
+        <!--        <TableLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_gravity="center"-->
+        <!--            android:divider="@drawable/table_divider"-->
+        <!--            android:gravity="center"-->
+        <!--            android:showDividers="middle|end"-->
+        <!--            android:shrinkColumns="*">-->
+
+        <!--            <TableRow-->
+        <!--                android:divider="@drawable/table_divider"-->
+        <!--                android:paddingHorizontal="10dp"-->
+        <!--                android:showDividers="middle"-->
+        <!--                android:weightSum="2">-->
+
+        <!--                <TextView-->
+        <!--                    android:layout_width="0dp"-->
+        <!--                    android:layout_gravity="center"-->
+        <!--                    android:layout_weight="0.6"-->
+        <!--                    android:background="@color/white"-->
+        <!--                    android:fontFamily="@font/source_sans_regular"-->
+        <!--                    android:padding="3dp"-->
+        <!--                    android:paddingHorizontal="10dp"-->
+        <!--                    android:paddingVertical="8dp"-->
+        <!--                    android:text="@string/str_transaction_title"-->
+        <!--                    android:textColor="@color/clr_text" />-->
+
+        <!--                <EditText-->
+        <!--                    android:id="@+id/transition_title"-->
+        <!--                    android:layout_width="0dp"-->
+        <!--                    android:layout_weight="1.4"-->
+        <!--                    android:background="@color/white"-->
+        <!--                    android:fontFamily="@font/source_sans_regular"-->
+        <!--                    android:padding="3dp"-->
+        <!--                    android:paddingHorizontal="10dp"-->
+        <!--                    android:paddingVertical="8dp"-->
+        <!--                    android:textAlignment="textStart"-->
+        <!--                    android:textColor="@color/clr_text"-->
+        <!--                    android:textSize="14sp"-->
+        <!--                    app:drawableEndCompat="@drawable/ic_next"-->
+        <!--                    tools:text="GOOGLE MULTIPLE_s us31055aK" />-->
+
+
+        <!--            </TableRow>-->
+
+
+        <!--            <TableRow-->
+        <!--                android:divider="@drawable/table_divider"-->
+        <!--                android:paddingHorizontal="10dp"-->
+        <!--                android:showDividers="middle"-->
+        <!--                android:weightSum="2">-->
+
+        <!--                <TextView-->
+        <!--                    android:layout_width="0dp"-->
+        <!--                    android:layout_gravity="center"-->
+        <!--                    android:layout_weight="0.6"-->
+        <!--                    android:background="@color/white"-->
+        <!--                    android:fontFamily="@font/source_sans_regular"-->
+        <!--                    android:padding="3dp"-->
+        <!--                    android:paddingHorizontal="10dp"-->
+        <!--                    android:paddingVertical="8dp"-->
+        <!--                    android:text="@string/str_date"-->
+        <!--                    android:textColor="@color/clr_text" />-->
+
+        <!--                <TextView-->
+        <!--                    android:id="@+id/txt_date_picker"-->
+        <!--                    android:layout_width="0dp"-->
+        <!--                    android:layout_weight="1.4"-->
+        <!--                    android:background="@color/white"-->
+        <!--                    android:fontFamily="@font/source_sans_regular"-->
+        <!--                    android:padding="3dp"-->
+        <!--                    android:paddingHorizontal="10dp"-->
+        <!--                    android:paddingVertical="8dp"-->
+        <!--                    android:text="@string/str_date_format"-->
+        <!--                    android:textAlignment="textStart"-->
+        <!--                    android:textColor="@color/clr_text"-->
+        <!--                    app:drawableEndCompat="@drawable/ic_next" />-->
+
+        <!--            </TableRow>-->
+
+        <!--            <TableRow-->
+        <!--                android:divider="@drawable/table_divider"-->
+        <!--                android:paddingHorizontal="10dp"-->
+        <!--                android:showDividers="middle"-->
+        <!--                android:weightSum="2">-->
+
+        <!--                <TextView-->
+        <!--                    android:layout_width="0dp"-->
+        <!--                    android:layout_gravity="center"-->
+        <!--                    android:layout_weight="0.6"-->
+        <!--                    android:background="@color/white"-->
+        <!--                    android:fontFamily="@font/source_sans_regular"-->
+        <!--                    android:padding="3dp"-->
+        <!--                    android:paddingHorizontal="10dp"-->
+        <!--                    android:paddingVertical="8dp"-->
+        <!--                    android:text="@string/str_amount"-->
+        <!--                    android:textColor="@color/clr_text" />-->
+
+        <!--                <EditText-->
+        <!--                    android:id="@+id/txt_transaction_amount"-->
+        <!--                    android:layout_width="0dp"-->
+        <!--                    android:layout_weight="1.4"-->
+        <!--                    android:background="@color/white"-->
+        <!--                    android:fontFamily="@font/source_sans_regular"-->
+        <!--                    android:inputType="number"-->
+        <!--                    android:padding="3dp"-->
+        <!--                    android:paddingHorizontal="10dp"-->
+        <!--                    android:paddingVertical="8dp"-->
+        <!--                    android:text="0"-->
+        <!--                    android:textAlignment="textStart"-->
+        <!--                    android:textColor="@color/clr_text"-->
+        <!--                    android:textSize="14sp"-->
+        <!--                    app:drawableEndCompat="@drawable/ic_next"-->
+        <!--                    tools:text="0" />-->
+
+
+        <!--            </TableRow>-->
+
+        <!--        </TableLayout>-->
+
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/edittext_border_shape"
+            android:text="@string/str_submit"
+            android:textAllCaps="true" />
+    </LinearLayout>
+</RelativeLayout>

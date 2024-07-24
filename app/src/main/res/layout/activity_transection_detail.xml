@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/clr_tab_frag"
+    tools:context=".ui.activity.TranSectionDetailActivity">
+
+    <ImageView
+        android:id="@+id/img_back"
+        android:layout_width="wrap_content"
+        android:layout_height="?actionBarSize"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_back" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_profile"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/ic_avatar" />
+
+    <TextView
+        android:id="@+id/txt_transaction_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/img_profile"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="25dp"
+        android:fontFamily="@font/source_sans_regular"
+        android:textAlignment="center"
+        android:textColor="@color/clr_text"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        tools:text="@string/str_transaction_name" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_transaction_name"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:weightSum="1">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.9"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txt_transaction_name_small"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:singleLine="true"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/clr_text"
+                        android:textDirection="anyRtl"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        tools:text="@string/str_transaction_name" />
+
+                    <TextView
+                        android:id="@+id/txt_transaction_amount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:singleLine="true"
+                        android:textColor="@color/clr_text_blu"
+                        android:textSize="28sp"
+                        tools:text="$445.49" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:singleLine="true"
+                        android:text="@string/str_available_balance"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+
+                <ImageView
+                    android:id="@+id/img_more"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="0.1"
+                    android:src="@drawable/ic_three_dot" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/txt_pay"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.319"
+                    android:text="@string/str_pay"
+                    android:textAlignment="center"
+                    android:textColor="@color/clr_text_blu" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:layout_weight="0.00325"
+                    android:background="?android:attr/listDivider" />
+
+
+                <TextView
+                    android:id="@+id/txt_transfer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.319"
+                    android:text="@string/str_transfer"
+                    android:textAlignment="center"
+                    android:textColor="@color/clr_text_blu" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="20dp"
+                    android:layout_weight="0.00325"
+                    android:background="?android:attr/listDivider" />
+
+                <TextView
+                    android:id="@+id/txt_create_payment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.319"
+                    android:text="@string/str_create"
+                    android:textAlignment="center"
+                    android:textColor="@color/clr_text_blu" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/txt_recent_transaction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/card_details"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:fontFamily="@font/source_sans_regular"
+        android:text="@string/str_recent_transactions"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_transaction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_recent_transaction"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical"
+        android:overScrollMode="never"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_transaction" />
+
+</RelativeLayout>

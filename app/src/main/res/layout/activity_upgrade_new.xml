@@ -1,0 +1,748 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.UpgradeActivity">
+
+    <ImageView
+        android:id="@+id/img_back"
+        android:layout_width="wrap_content"
+        android:layout_height="?actionBarSize"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/ic_back" />
+
+    <!--    <com.google.android.material.tabs.TabLayout-->
+    <!--        android:id="@+id/into_tab_layout"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="18dp"-->
+    <!--        android:layout_below="@+id/txt_premium"-->
+    <!--        android:layout_gravity="bottom"-->
+    <!--        android:layout_marginTop="40dp"-->
+    <!--        app:tabBackground="@drawable/tab_pager_selector"-->
+    <!--        app:tabGravity="center"-->
+    <!--        app:tabIndicatorHeight="0dp" />-->
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/img_back"
+        android:scrollbars="none">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/upgrade_gradiant" />
+
+                <LinearLayout
+                    android:id="@+id/ll_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/ic_rectangle_gradiant"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:orientation="vertical"
+                            android:paddingVertical="20dp">
+                            <!--android:background="@drawable/shape_upgrade_red_bg"-->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:paddingVertical="1dp"
+                                android:paddingStart="10dp"
+                                android:text="@string/str_hide_all_ads"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:drawableStartCompat="@drawable/ic_upgrade_tick" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:paddingVertical="1dp"
+                                android:paddingStart="10dp"
+                                android:text="@string/str_track_daily_expenses"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:drawableStartCompat="@drawable/ic_upgrade_tick" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:paddingVertical="1dp"
+                                android:paddingStart="10dp"
+                                android:text="@string/str_unlimited_income_creation"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:drawableStartCompat="@drawable/ic_upgrade_tick" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:paddingVertical="1dp"
+                                android:paddingStart="10dp"
+                                android:text="@string/str_change_language"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:drawableStartCompat="@drawable/ic_upgrade_tick" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:paddingVertical="1dp"
+                                android:paddingStart="10dp"
+                                android:text="@string/str_change_currency"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:drawableStartCompat="@drawable/ic_upgrade_tick" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:paddingVertical="1dp"
+                                android:paddingStart="10dp"
+                                android:text="@string/str_hide_all_ads"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:drawableStartCompat="@drawable/ic_upgrade_tick" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="top"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:gravity="top"
+                                android:paddingVertical="1dp"
+                                android:paddingStart="10dp"
+                                android:text="@string/str_control_your_profile_picture_skin"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:drawableStartCompat="@drawable/ic_upgrade_tick" />
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+
+                    <View
+                        android:layout_width="3px"
+                        android:layout_height="match_parent"
+                        android:background="#C0C0C0" />
+
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+                        <!--android:background="@drawable/shape_upgrade_gray_bg"-->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingVertical="20dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:paddingVertical="1dp"
+                                android:paddingStart="10dp"
+                                android:text="@string/str_personal_amp_business_acc"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:drawableStartCompat="@drawable/ic_upgrade_tick" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:paddingVertical="1dp"
+                                android:paddingStart="10dp"
+                                android:text="@string/str_analytics_or_pie_chat"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:drawableStartCompat="@drawable/ic_upgrade_tick" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:paddingVertical="1dp"
+                                android:paddingStart="10dp"
+                                android:text="@string/str_forward_amp_backtrack_expenses"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:drawableStartCompat="@drawable/ic_upgrade_tick" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:paddingVertical="1dp"
+                                android:paddingStart="10dp"
+                                android:text="@string/str_accounts_reconciliation"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:drawableStartCompat="@drawable/ic_upgrade_tick" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:paddingVertical="1dp"
+                                android:paddingStart="10dp"
+                                android:text="@string/str_spending_tracker"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:drawableStartCompat="@drawable/ic_upgrade_tick" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:paddingVertical="1dp"
+                                android:paddingStart="10dp"
+                                android:text="@string/str_bill_organizer"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:drawableStartCompat="@drawable/ic_upgrade_tick" />
+
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/txt_premium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/img_back"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/shape_upgrade_title_bg"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="10dp"
+                    android:text="@string/str_upgrade_include"
+                    android:textColor="@color/clr_text"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_anchor="@id/ll_description"
+                    app:layout_anchorGravity="center_horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_upgrade_include" />
+
+                </RelativeLayout>
+
+
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal">
+
+                <androidx.coordinatorlayout.widget.CoordinatorLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="6dp">
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_one_month"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/shape_upgrade_background"
+                        android:orientation="vertical"
+                        android:paddingTop="30dp"
+                        android:paddingBottom="10dp">
+
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_trophy_new" />
+
+
+                            <TextView
+                                android:id="@+id/txt_one_month_amount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:textColor="@color/black"
+                                android:textSize="30sp"
+                                android:textStyle="bold"
+                                tools:targetApi="p"
+                                tools:text="$9.99" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:text="@string/str_month"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/shape_upgrade_item"
+                        android:fontFamily="@font/source_sans_pro"
+                        android:paddingHorizontal="18dp"
+                        android:paddingVertical="5dp"
+                        android:text="@string/str_one_month"
+                        android:textAllCaps="true"
+                        android:textColor="@color/clr_red"
+                        android:textFontWeight="900"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_anchor="@id/ll_one_month"
+                        app:layout_anchorGravity="center_horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.33"
+                        tools:ignore="UnusedAttribute" />
+
+                    <!--     <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_buy_one"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:background="@drawable/gradiant_one_month"
+                        android:text="@string/str_buy_now"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        app:layout_anchor="@id/ll_one_month"
+                        app:layout_anchorGravity="bottom|center_horizontal"
+                        tools:ignore="SmallSp" />-->
+
+
+                </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+                <androidx.coordinatorlayout.widget.CoordinatorLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="6dp">
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_three_month"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/background_gradiant_subs"
+                        android:orientation="vertical"
+                        android:paddingTop="30dp"
+                        android:paddingBottom="10dp">
+
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_trophy_new" />
+
+
+                            <TextView
+                                android:id="@+id/txt_three_month_amount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:textColor="@color/black"
+                                android:textSize="30sp"
+                                android:textStyle="bold"
+                                tools:targetApi="p"
+                                tools:text="$19.99" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:text="@string/str_three_month"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/shape_upgrade_item"
+                        android:fontFamily="@font/source_sans_pro"
+                        android:paddingHorizontal="18dp"
+                        android:paddingVertical="5dp"
+                        android:text="@string/str_three_month"
+                        android:textAllCaps="true"
+                        android:textColor="@color/clr_red"
+                        android:textFontWeight="900"
+                        android:textSize="18sp"
+                        app:layout_anchor="@id/ll_three_month"
+                        app:layout_anchorGravity="center_horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.33"
+                        tools:ignore="UnusedAttribute" />
+
+                    <!--     <androidx.appcompat.widget.AppCompatButton
+                             android:id="@+id/btn_buy_one"
+                             android:layout_width="wrap_content"
+                             android:layout_height="20dp"
+                             android:background="@drawable/gradiant_one_month"
+                             android:text="@string/str_buy_now"
+                             android:textAllCaps="false"
+                             android:textColor="@color/white"
+                             android:textSize="10sp"
+                             app:layout_anchor="@id/ll_one_month"
+                             app:layout_anchorGravity="bottom|center_horizontal"
+                             tools:ignore="SmallSp" />-->
+
+
+                </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:orientation="horizontal">
+
+                <androidx.coordinatorlayout.widget.CoordinatorLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="6dp">
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_six_month"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/shape_upgrade_background"
+                        android:orientation="vertical"
+                        android:paddingTop="30dp"
+                        android:paddingBottom="10dp">
+
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_trophy_new" />
+
+
+                            <TextView
+                                android:id="@+id/txt_six_month_amount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:textColor="@color/black"
+                                android:textSize="30sp"
+                                android:textStyle="bold"
+                                tools:targetApi="p"
+                                tools:text="$29.99" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:text="@string/str_six_month"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/shape_upgrade_item"
+                        android:fontFamily="@font/source_sans_pro"
+                        android:paddingHorizontal="18dp"
+                        android:paddingVertical="5dp"
+                        android:text="@string/str_six_month"
+                        android:textAllCaps="true"
+                        android:textColor="@color/clr_red"
+                        android:textFontWeight="900"
+                        android:textSize="18sp"
+                        app:layout_anchor="@id/ll_six_month"
+                        app:layout_anchorGravity="center_horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.33"
+                        tools:ignore="UnusedAttribute" />
+
+                    <!--     <androidx.appcompat.widget.AppCompatButton
+                             android:id="@+id/btn_buy_one"
+                             android:layout_width="wrap_content"
+                             android:layout_height="20dp"
+                             android:background="@drawable/gradiant_one_month"
+                             android:text="@string/str_buy_now"
+                             android:textAllCaps="false"
+                             android:textColor="@color/white"
+                             android:textSize="10sp"
+                             app:layout_anchor="@id/ll_one_month"
+                             app:layout_anchorGravity="bottom|center_horizontal"
+                             tools:ignore="SmallSp" />-->
+
+
+                </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+                <androidx.coordinatorlayout.widget.CoordinatorLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="6dp">
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_life_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/shape_upgrade_background"
+                        android:orientation="vertical"
+                        android:paddingTop="30dp"
+                        android:paddingBottom="10dp">
+
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_trophy_new" />
+
+
+                            <TextView
+                                android:id="@+id/txt_lifetime_amount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:textColor="@color/black"
+                                android:textSize="30sp"
+                                android:textStyle="bold"
+                                tools:targetApi="p"
+                                tools:text="$99.99" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:text="@string/str_lifetime"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/shape_upgrade_item"
+                        android:fontFamily="@font/source_sans_pro"
+                        android:paddingHorizontal="18dp"
+                        android:paddingVertical="5dp"
+                        android:text="@string/str_lifetime"
+                        android:textAllCaps="true"
+                        android:textColor="@color/clr_red"
+                        android:textFontWeight="900"
+                        android:textSize="18sp"
+                        app:layout_anchor="@id/ll_life_time"
+                        app:layout_anchorGravity="center_horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.33"
+                        tools:ignore="UnusedAttribute" />
+
+                    <!--     <androidx.appcompat.widget.AppCompatButton
+                             android:id="@+id/btn_buy_one"
+                             android:layout_width="wrap_content"
+                             android:layout_height="20dp"
+                             android:background="@drawable/gradiant_one_month"
+                             android:text="@string/str_buy_now"
+                             android:textAllCaps="false"
+                             android:textColor="@color/white"
+                             android:textSize="10sp"
+                             app:layout_anchor="@id/ll_one_month"
+                             app:layout_anchorGravity="bottom|center_horizontal"
+                             tools:ignore="SmallSp" />-->
+
+
+                </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/btnThreeDayTrial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:background="@drawable/background_gradiant_subs"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="@string/_3_days_free_trial"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/source_sans_pro"
+                android:text="Start 3-day Free Trial, cancel Anytime"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_purchase_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="40dp"
+                android:fontFamily="@font/source_sans_pro"
+                android:gravity="center"
+                android:text="@string/str_purchase_description"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
+</RelativeLayout>

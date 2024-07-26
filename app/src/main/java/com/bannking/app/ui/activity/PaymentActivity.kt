@@ -227,7 +227,6 @@ class PaymentActivity :
 
             }
 
-
             txtPaymentDate.text = utils.getCurrentDateForTransfer()
 
             llPayDate.setOnClickListener {

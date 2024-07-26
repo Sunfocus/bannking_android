@@ -17,9 +17,16 @@ import com.bannking.app.google_iab.enums.*
 import com.bannking.app.google_iab.models.BillingResponse
 import com.bannking.app.google_iab.models.ProductInfo
 import com.bannking.app.google_iab.models.PurchaseInfo
+import com.bannking.app.google_iab.models.PurchaseResponse
+import com.bannking.app.network.GooglePlayApiService
+import com.bannking.app.network.GooglePlayResponse
+import com.bannking.app.network.RetrofitClients
+import com.bannking.app.network.okhttploginterceptor.LoggingInterceptor.Companion.gson
 import com.google.common.collect.ImmutableList
 import java.util.stream.Collectors
-
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 class BillingConnector(context: Context, base64Key: String) {
     private val base64Key: String
     private val allProductList: MutableList<Product> = ArrayList()
@@ -305,7 +312,27 @@ class BillingConnector(context: Context, base64Key: String) {
                         BillingResponseCode.OK -> {
                             isConnected = true
                             Log("Billing service: connected")
+                            billingClient!!.queryPurchaseHistoryAsync(BillingClient.SkuType.SUBS) { result, purchasesList ->
+                                if (result.responseCode == BillingClient.BillingResponseCode.OK && purchasesList != null) {
 
+                                    Log.d("dsfjdghsfdhs",purchasesList.toString())
+
+                                    /*for (purchase in purchasesList) {
+                                        // process the purchase here
+                                        val purchaseResponse =
+                                            gson.fromJson(purchase?.originalJson, PurchaseResponse::class.java)
+                                        val packageName = "com.bannking.app"
+                                        val subscriptionId = purchaseResponse.productId
+                                        val accessToken = "AIzaSyBqM7p-qVzWqSxDtg2nwM36RLU9UtZ3ZS0" // Obtain this from OAuth 2.0
+                                        val purchaseToken = purchase.purchaseToken
+
+                                        Log.d("PurchaseValidation",subscriptionId!!)
+                                        Log.d("PurchaseValidation",purchaseToken)
+                                        validatePurchaseToken(packageName, subscriptionId!!, purchaseToken, accessToken)
+                                    }*/
+                                }
+                            }
+                            Log.d("dsfjdghsfdhs","yesss".toString())
                             //query consumable and non-consumable product details
                             if (productInAppList.isNotEmpty()) {
                                 queryProductDetails(
@@ -338,6 +365,36 @@ class BillingConnector(context: Context, base64Key: String) {
      * Retries the billing client connection with exponential backoff
      * Max out at the time specified by RECONNECT_TIMER_MAX_TIME_MILLISECONDS (15 minutes)
      */
+
+    fun validatePurchaseToken(
+        packageName: String,
+        subscriptionId: String,
+        purchaseToken: String,
+        accessToken: String
+    ) {
+        val apiService = RetrofitClients.instance.create(GooglePlayApiService::class.java)
+        val authHeader = "Bearer $accessToken"
+
+        apiService.validatePurchaseToken(packageName, subscriptionId, purchaseToken).enqueue(object : Callback<GooglePlayResponse> {
+            override fun onResponse(call: Call<GooglePlayResponse>, response: Response<GooglePlayResponse>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        Log.d("PurchaseValidation", "Valid purchase: $responseBody")
+                        // Handle the valid response
+                    }
+                } else {
+                    Log.e("PurchaseValidation", "Unsuccessful response: ${response.errorBody()}")
+                    // Handle the unsuccessful response
+                }
+            }
+
+            override fun onFailure(call: Call<GooglePlayResponse>, t: Throwable) {
+                Log.e("PurchaseValidation", "Network call failed: ${t.message}")
+                // Handle request failure
+            }
+        })
+    }
     private fun retryBillingClientConnection() {
         findUiHandler().postDelayed({ connect() }, reconnectMilliseconds)
         reconnectMilliseconds =

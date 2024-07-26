@@ -5,9 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
+import android.widget.Toast
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
+import androidx.biometric.BiometricPrompt
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bannking.app.BuildConfig
@@ -29,13 +35,13 @@ import org.json.JSONException
 import retrofit2.Call
 import retrofit2.Response
 import java.util.Locale
+import java.util.concurrent.Executor
 
 class SignInActivity :
     BaseActivity<SignInViewModel, ActivitySigninBinding>(SignInViewModel::class.java) {
     lateinit var viewModel: SignInViewModel
     private var isShowPassword = false
     private lateinit var savedSessionManager: SessionManager
-
 
     override fun getBinding(): ActivitySigninBinding {
         return ActivitySigninBinding.inflate(layoutInflater)
@@ -50,7 +56,78 @@ class SignInActivity :
         setClickListener()
     }
 
+    private fun faceDetection(){
+        val packageManager = packageManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { // API level 30
+            val hasFaceFeature = packageManager.hasSystemFeature(PackageManager.FEATURE_FACE)
+            if (hasFaceFeature) {
+                // The device supports face authentication
+                setupBiometricPrompt()
+            } else {
+                Toast.makeText(applicationContext, "Face authentication not supported on this device.", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(applicationContext, "Face authentication requires Android 11 or higher.", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private fun setupBiometricPrompt() {
+        val biometricManager = BiometricManager.from(this)
+        when (biometricManager.canAuthenticate(BIOMETRIC_STRONG or BiometricManager.Authenticators.BIOMETRIC_WEAK)) {
+            BiometricManager.BIOMETRIC_SUCCESS -> {
+                // The device supports biometric authentication (strong or weak, e.g., fingerprint, face, or iris)
+                // Proceed with biometric authentication setup
+                val executor = ContextCompat.getMainExecutor(this)
+                val biometricPrompt = BiometricPrompt(this, executor,
+                    object : BiometricPrompt.AuthenticationCallback() {
+                        override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                            super.onAuthenticationError(errorCode, errString)
+                            Toast.makeText(applicationContext, "Authentication error: $errString", Toast.LENGTH_SHORT).show()
+                        }
+
+                        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                            super.onAuthenticationSucceeded(result)
+                            Toast.makeText(applicationContext, "Authentication succeeded!", Toast.LENGTH_SHORT).show()
+                        }
+
+                        override fun onAuthenticationFailed() {
+                            super.onAuthenticationFailed()
+                            Toast.makeText(applicationContext, "Authentication failed", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+
+                val promptInfo = BiometricPrompt.PromptInfo.Builder()
+                    .setTitle("Biometric login for my app")
+                    .setSubtitle("Log in using your biometric credential")
+                    .setNegativeButtonText("Use account password")
+                    .build()
+                biometricPrompt.authenticate(promptInfo)
+            }
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
+                Toast.makeText(applicationContext, "No biometric features available on this device.", Toast.LENGTH_SHORT).show()
+            }
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
+                Toast.makeText(applicationContext, "Biometric features are currently unavailable.", Toast.LENGTH_SHORT).show()
+            }
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+                Toast.makeText(applicationContext, "The user hasn't associated any biometric credentials with their account.", Toast.LENGTH_SHORT).show()
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED -> {
+                TODO()
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED -> {
+                TODO()
+            }
+
+            BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> {
+                TODO()
+            }
+        }
+    }
     override fun initialize() {
+//        faceDetection()
+
         savedSessionManager =
             SessionManager(this@SignInActivity, SessionManager.savedSharedPreferences)
 

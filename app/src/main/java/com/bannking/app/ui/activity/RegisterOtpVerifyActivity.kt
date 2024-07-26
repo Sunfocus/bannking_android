@@ -107,6 +107,7 @@ class RegisterOtpVerifyActivity :
                     if (register.apiResponse != null) {
                         val mainModel = gson.fromJson(register.apiResponse, UserModel::class.java)
                         if (mainModel.status.equals(Constants.STATUSSUCCESS)) {
+                            Log.d("sdfbvsdfshdfsd",mainModel.data!!.toString())
                             sessionManager.setUserDetails(SessionManager.userData, mainModel.data!!)
                             sessionManager.setBoolean(SessionManager.isLogin, true)
                             startActivity(

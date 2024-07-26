@@ -317,19 +317,6 @@ class BillingConnector(context: Context, base64Key: String) {
 
                                     Log.d("dsfjdghsfdhs",purchasesList.toString())
 
-                                    /*for (purchase in purchasesList) {
-                                        // process the purchase here
-                                        val purchaseResponse =
-                                            gson.fromJson(purchase?.originalJson, PurchaseResponse::class.java)
-                                        val packageName = "com.bannking.app"
-                                        val subscriptionId = purchaseResponse.productId
-                                        val accessToken = "AIzaSyBqM7p-qVzWqSxDtg2nwM36RLU9UtZ3ZS0" // Obtain this from OAuth 2.0
-                                        val purchaseToken = purchase.purchaseToken
-
-                                        Log.d("PurchaseValidation",subscriptionId!!)
-                                        Log.d("PurchaseValidation",purchaseToken)
-                                        validatePurchaseToken(packageName, subscriptionId!!, purchaseToken, accessToken)
-                                    }*/
                                 }
                             }
                             Log.d("dsfjdghsfdhs","yesss".toString())

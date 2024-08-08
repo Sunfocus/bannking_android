@@ -21,6 +21,7 @@ import com.bannking.app.model.viewModel.OtpViewModel
 import com.bannking.app.utils.Constants
 import com.bannking.app.utils.GenericTextWatcher
 import com.bannking.app.utils.SessionManager
+import com.google.firebase.messaging.FirebaseMessaging
 import java.util.Locale
 
 
@@ -53,7 +54,7 @@ class RegisterOtpVerifyActivity :
             userName = intent.getStringExtra("UserName").toString()
             password = intent.getStringExtra("Password").toString()
             otp = intent.getStringExtra("otp").toString()
-
+            Log.d("sadaskjdhas",otp.toString())
             Log.d("nnnnnnnnnnn",name)
             Log.d("nnnnnnnnnnn",email)
 //            viewModel.setDataInOtpList(intent.getStringExtra("Email").toString(), Constants.SECURITY_1)
@@ -83,13 +84,13 @@ class RegisterOtpVerifyActivity :
                 if (apiResponse != null) {
                     if (apiResponse.code in 199..299) {
                         val model = gson.fromJson(apiResponse.apiResponse, OtpModel::class.java)
-                        if (model.status.equals(Constants.STATUSSUCCESS)) {
+                        if (model.status == 200) {
 //                            Toast.makeText(
 //                                this@RegisterOtpVerifyActivity,
 //                                model.message + " " + model.note,
 //                                Toast.LENGTH_SHORT
 //                            ).show()
-                            otp = model.otp.toString()
+                            otp = model.data!!.otp.toString()
                         } else {
                             model.message?.let { dialogClass.showError(it) }
 
@@ -106,10 +107,18 @@ class RegisterOtpVerifyActivity :
                 if (register != null) {
                     if (register.apiResponse != null) {
                         val mainModel = gson.fromJson(register.apiResponse, UserModel::class.java)
-                        if (mainModel.status.equals(Constants.STATUSSUCCESS)) {
+                        if (mainModel.status == 200) {
                             Log.d("sdfbvsdfshdfsd",mainModel.data!!.toString())
+
+                            FirebaseMessaging.getInstance()
+                                .subscribeToTopic("user_" + mainModel.data!!.id)
+                                .addOnCompleteListener { task ->
+                                    Log.d("token====", mainModel.data!!.id.toString())
+                                }
+
                             sessionManager.setUserDetails(SessionManager.userData, mainModel.data!!)
                             sessionManager.setBoolean(SessionManager.isLogin, true)
+                            sessionManager.setString(SessionManager.USERTOKEN,"bearer ${mainModel.extraData}")
                             startActivity(
                                 Intent(
                                     this@RegisterOtpVerifyActivity,
@@ -155,12 +164,12 @@ class RegisterOtpVerifyActivity :
 
         return when {
             !networkCountryIso.isNullOrEmpty() -> {
-                Locale("", networkCountryIso).displayCountry
+                Locale("", networkCountryIso).isO3Country
             }
             !simCountryIso.isNullOrEmpty() -> {
-                Locale("", simCountryIso).displayCountry
+                Locale("", simCountryIso).isO3Country
             }
-            else -> Locale.getDefault().displayCountry
+            else -> Locale.getDefault().isO3Country
         }
     }
     private val PERMISSIONS_REQUEST_CODE = 1
@@ -190,7 +199,7 @@ class RegisterOtpVerifyActivity :
                                 email,
                                 userName,
                                 password,
-                                fcm_it,country,name
+                                country,name
                             )
                         }
 

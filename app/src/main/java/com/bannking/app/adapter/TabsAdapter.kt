@@ -3,10 +3,13 @@ package com.bannking.app.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bannking.app.R
+import com.bannking.app.UiExtension
 import com.bannking.app.databinding.ItemExpensesBinding
 import com.bannking.app.model.retrofitResponseModel.accountListModel.Data
 import com.bannking.app.ui.activity.TranSectionDetailActivity
@@ -45,7 +48,27 @@ class TabsAdapter(
         * name: stackOverFlow
         * Referenced by: https://stackoverflow.com/questions/33754445/margin-padding-in-last-child-in-recyclerview
         * */
+        if (UiExtension.isDarkModeEnabled()) {
+            mBinding!!.llAccountList.setBackgroundResource(R.drawable.corner_radius_stroke) // Dark mode background color
+            mBinding!!.cvAccountList.setBackgroundResource(R.drawable.corner_radius_stroke) // Dark mode background color
+            mBinding!!.txtTransaction.setTextColor(ContextCompat.getColor(context, R.color.white))
+            mBinding!!.txtAstric.setTextColor(ContextCompat.getColor(context, R.color.white))
+            mBinding!!.txtAccountCode.setTextColor(ContextCompat.getColor(context, R.color.white))
+            mBinding!!.tvAvail.setTextColor(ContextCompat.getColor(context, R.color.white))
+        } else {
+            mBinding!!.llAccountList.backgroundTintList =
+                ContextCompat.getColorStateList(
+                    context,
+                    R.color.white
+                ) // Light mode background color
+            mBinding!!.cvAccountList.setBackgroundColor(ContextCompat.getColor(context,R.color.white)) // Dark mode background color
+            mBinding!!.txtTransaction.setTextColor(ContextCompat.getColor(context, R.color.black))
+            mBinding!!.txtAstric.setTextColor(ContextCompat.getColor(context, R.color.black))
+            mBinding!!.txtAccountCode.setTextColor(ContextCompat.getColor(context, R.color.black))
+            mBinding!!.tvAvail.setTextColor(ContextCompat.getColor(context, R.color.black))
+        }
 
+        Log.e("sdfsdfsdfsd",list.toString())
         if (position == list!!.size - 1) {
             val params = holder.itemView.layoutParams as RecyclerView.LayoutParams
             params.bottomMargin = 400
@@ -59,15 +82,15 @@ class TabsAdapter(
 
         if (getAmount(list!![position].amount.toString()).startsWith( "-")) {
             mBinding!!.txtAmount.setTextColor(context.resources.getColor(R.color.clr_red))
-            mBinding!!.txtAmount.text = list!![position].amount
+            mBinding!!.txtAmount.text = "${list!![position].currency!!.icon}${list!![position].amount}"
         } else {
             mBinding!!.txtAmount.setTextColor(context.resources.getColor(R.color.clr_blue))
-            mBinding!!.txtAmount.text = list!![position].amount
+            mBinding!!.txtAmount.text = "${list!![position].currency!!.icon}${list!![position].amount}"
         }
 
 
         mBinding!!.txtTransaction.text = list!![position].account
-        mBinding!!.txtAccountCode.text = list!![position].accountCode
+        mBinding!!.txtAccountCode.text = list!![position].account_code
 
         mBinding!!.imgMore.setOnClickListener {
             listner.openDialogBox(list!![position])
@@ -86,11 +109,12 @@ class TabsAdapter(
             val data = list!![position]
             val intent = Intent(context, TranSectionDetailActivity::class.java)
             intent.putExtra("account", data.account)
-            intent.putExtra("budget_id", data.budgetId)
+            intent.putExtra("budget_id", data.budget_id)
             intent.putExtra("amount", data.amount)
-            intent.putExtra("accMenuId", data.accMenuId)
-            intent.putExtra("account_code", data.accountCode)
+            intent.putExtra("accMenuId", data.acc_title_id)
+            intent.putExtra("account_code", data.account_code)
             intent.putExtra("Id", data.id)
+            intent.putExtra("icon", data.currency!!.icon)
             context.startActivity(intent)
         }
 

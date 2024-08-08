@@ -3,13 +3,17 @@ package com.bannking.app.ui.activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import com.bannking.app.R
+import com.bannking.app.UiExtension
 import com.bannking.app.adapter.ExploreExpensesAdapter
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.databinding.ActivityExploreExpensesBinding
 import com.bannking.app.model.retrofitResponseModel.exploreExpensesModel.Data
 import com.bannking.app.model.retrofitResponseModel.exploreExpensesModel.ExploreExpensesModel
 import com.bannking.app.model.viewModel.ExploreExpensesViewModel
+import com.bannking.app.utils.SessionManager
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -17,7 +21,6 @@ import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.MPPointF
 import com.github.mikephil.charting.utils.Utils
-import java.lang.Math.tan
 
 
 class ExploreExpensesActivity :
@@ -33,7 +36,8 @@ class ExploreExpensesActivity :
 
     override fun initViewModel(viewModel: ExploreExpensesViewModel) {
         this.viewModel = viewModel
-        viewModel.setDataInExploreExpensesDataList()
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+        viewModel.setDataInExploreExpensesDataList(userToken)
         adapter = ExploreExpensesAdapter()
     }
 
@@ -79,7 +83,7 @@ class ExploreExpensesActivity :
 
     private fun updateExpensesDataList(model: ExploreExpensesModel, code: Int) {
         if (code in 199..299) {
-            if (model.status.equals("success", ignoreCase = true)) {
+            if (model.status == 200) {
                 list = model.data
                 if (model.data.isEmpty()) {
                     binding!!.txtNoDataFound.isVisible = true
@@ -149,7 +153,13 @@ class ExploreExpensesActivity :
 
         // on below line we are disabling our legend for pie chart
         binding?.chart1?.legend?.isEnabled = false
-        binding?.chart1?.setEntryLabelColor(Color.BLACK)
+
+        if (UiExtension.isDarkModeEnabled()) {
+            binding?.chart1?.setEntryLabelColor(Color.WHITE)
+        } else {
+            binding?.chart1?.setEntryLabelColor(Color.BLACK)
+        }
+
         binding?.chart1?.setEntryLabelTextSize(12f)
 
         // on below line we are creating array list and
@@ -188,7 +198,12 @@ class ExploreExpensesActivity :
 
         data.setValueTextSize(10f)
         data.setValueTypeface(Typeface.DEFAULT_BOLD)
-        data.setValueTextColor(Color.BLACK)
+
+        if (UiExtension.isDarkModeEnabled()) {
+            data.setValueTextColor(Color.WHITE)
+        } else {
+            data.setValueTextColor(Color.BLACK)
+        }
         binding?.chart1?.setData(data)
 
         // undo all highlights

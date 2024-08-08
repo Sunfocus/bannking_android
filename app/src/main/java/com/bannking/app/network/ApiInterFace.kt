@@ -1,6 +1,7 @@
 package com.bannking.app.network
 
 import com.bannking.app.model.CommonResponseApi
+import com.bannking.app.utils.Constants
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -11,100 +12,112 @@ import retrofit2.http.*
 interface ApiInterFace {
 
     @Headers("Content-Type: application/json")
-    @POST("appversion")
+    @POST("user/appversion")
     fun appDetails(@Body body: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("login")
+    @POST("user/login")
     fun userLogin(@Body body: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("sendotp")
+    @POST("user/sendotp")
     fun sendOtp(@Body body: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("change_language")
-    fun changeLanguage(@Body body: String): Call<JsonObject>
+    @POST("user/loginWithSocialMedia")
+    fun loginWithSocial(@Body body: String): Call<JsonObject>
+    @Headers("Content-Type: application/json")
+    @POST("user/sendOtpForForgotPassword")
+    fun sendOtpForget(@Body body: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("change_currency")
-    fun changeCurrency(@Body body: String): Call<JsonObject>
+    @PATCH("user/updateExtraUserFieldData")
+    fun changeLanguage(@Body body: String,@Header(Constants.AUTHORIZATION) token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("register")
+    @PATCH("user/update_currency")
+    fun changeCurrency(@Body body: String,@Header(Constants.AUTHORIZATION) token: String): Call<JsonObject>
+
+    @Headers("Content-Type: application/json")
+    @POST("user/register")
     fun registerUser(@Body body: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("change_notification")
-    fun changeNotification(@Body body: String): Call<JsonObject>
+    @POST("user/change_notification")
+    fun changeNotification(@Body body: String,@Header(Constants.AUTHORIZATION) token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("change_password")
-    fun changePassword(@Body body: String): Call<JsonObject>
+    @POST("user/changePassword")
+    fun changePassword(@Body body: String,@Header(Constants.AUTHORIZATION) token: String): Call<JsonObject>
 
+    //Na
     @Headers("Content-Type: application/json")
-    @POST("forgot")
+    @POST("user/forgot")
     fun forgetUserNameAndPassword(@Body body: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("language")
-    fun getLanguageList(@Body body: String): Call<JsonObject>
+    @GET("user/listLanguage")
+    fun getLanguageList(@Header(Constants.AUTHORIZATION) token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("currency")
-    fun getCurrencyList(@Body body: String): Call<JsonObject>
+    @GET("user/listCurrency")
+    fun getCurrencyList(@Header(Constants.AUTHORIZATION) token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("privacy")
+    @POST("user/privacy")
     fun getPrivacyText(@Body body: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("budget_planner_list")
-    fun getBudgetPlannerList(@Body body: String): Call<JsonObject>
+    @GET("user/listBudgetPlanner")
+    fun getBudgetPlannerList(@Query("acc_title_id")SelectedItemMenu: String,@Header(Constants.AUTHORIZATION) token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("account_title")
-    fun getAccountMenuTitle(@Body body: String): Call<JsonObject>
+    @GET("user/listAccountTitles")
+    fun getAccountMenuTitle( @Header(Constants.AUTHORIZATION) token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("delete_account")
-    fun deleteAccount(@Body body: String): Call<JsonObject>
+    @DELETE("user/deleteUserAccount")
+    fun deleteAccount(@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("create_own_account_title")
-    fun createOwnAccountTitle(@Body body: String): Call<JsonObject>
+    @POST("user/createAccountTitle")
+    fun createOwnAccountTitle(@Body body: String, @Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("explore_expenses")
-    fun exploreExpenses(@Body body: String): Call<JsonObject>
+    @GET("user/explore_expenses")
+    fun exploreExpenses(@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("account_list")
-    fun accountList(@Body body: String): Call<JsonObject>
+    @GET("user/account_list")
+    fun accountList(@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("transaction_list")
-    fun transactionList(@Body body: String): Call<JsonObject>
+    @GET("user/transaction_list")
+    fun transactionList( @Query("account_id") accountID: String,@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
+    //na
     @Headers("Content-Type: application/json")
-    @POST("transection_type")
+    @POST("user/transection_type")
     fun transactionType(@Body body: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("create_transaction_detail")
-    fun createTransactionDetail(@Body body: String): Call<JsonObject>
+    @POST("user/create_transaction_detail")
+    fun createTransactionDetail(@Body body: String,@Header(Constants.AUTHORIZATION)token: String ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("create_account")
-    fun createAccount(@Body body: String): Call<JsonObject>
+    @POST("user/create_account")
+    fun createAccount(@Body body: String,@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
+    @Headers("Content-Type: application/json")
+    @POST("user/createSubBudgetPlanner")
+    fun createSubBudgetAccount(@Body body: String,@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("profile")
-    fun getProfile(@Body body: String): Call<JsonObject>
+    @GET("user/profile")
+    fun getProfile(@Header(Constants.AUTHORIZATION) token: String): Call<JsonObject>
 
 
     @Multipart
-    @POST("update_profile")
+    @PATCH("user/update_profile")
     fun updateProfile(
         @Part("security") security: RequestBody?,
         @Part("username") username: RequestBody?,
@@ -112,59 +125,62 @@ interface ApiInterFace {
         @Part("id") id: RequestBody?,
         @Part("token") token: RequestBody?,
         @Part("name") name: RequestBody?,
-        @Part image: MultipartBody.Part
+        @Part("face_id_status") faceIdStatus: RequestBody?,
+        @Part image: MultipartBody.Part,@Header(Constants.AUTHORIZATION) tokens: String
     ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("notification")
-    fun notification(@Body body: String): Call<JsonObject>
+    @GET("user/listNotification")
+    fun notification(@Header(Constants.AUTHORIZATION)tokens: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("schedule_transfer")
-    fun scheduleTransfer(@Body body: String): Call<JsonObject>
+    @POST("user/schedule_transfer")
+    fun scheduleTransfer(@Body body: String,@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
 
     @Headers("Content-Type: application/json")
-    @POST("pay")
-    fun pay(@Body body: String): Call<JsonObject>
+    @POST("user/schedule_transfer")
+    fun pay(@Body body: String,@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("delete_bank_account")
-    fun deleteBankAccount(@Body body: String): Call<JsonObject>
+    @DELETE("user/delete_account")
+    fun deleteBankAccount( @Query("accountId") accountID: String,@Query("type") type: String,@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
+    //Na
     @Headers("Content-Type: application/json")
-    @POST("remove_header")
+    @POST("user/remove_header")
     fun removeHeader(@Body body: String): Call<CommonResponseApi>
 
     @Headers("Content-Type: application/json")
-    @POST("header_title_list")
-    fun headerTitleList(@Body body: String): Call<JsonObject>
+    @GET("user/header_title_list")
+    fun headerTitleList(@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("update_account")
-    fun updateAccount(@Body body: String): Call<JsonObject>
+    @PATCH("user/update_account")
+    fun updateAccount(@Body body: String,@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
+    //Na
     @Headers("Content-Type: application/json")
-    @POST("save_header")
+    @POST("user/save_header")
     fun saveHeader(@Body body: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("premium")
+    @POST("user/premium")
     fun getPremiumStatus(@Body body: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("subscription")
+    @POST("subs/subscription")
     fun purchaseSubscription(@Body body: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("androidSubscription")
-    fun purchaseSubscriptionNew(@Body body: String): Call<JsonObject>
+    @POST("subs/androidInitialPurchase")
+    fun purchaseSubscriptionNew(@Body body: String,@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("create_own_budget_planner")
-    fun createOwnBudgetPlanner(@Body body: String): Call<JsonObject>
+    @POST("user/createBudgetPlanner")
+    fun createOwnBudgetPlanner(@Body body: String,@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
-    @POST("forgot_password")
+    @POST("user/forgot_password")
     fun forgotPassword(@Body body: String): Call<JsonObject>
 }

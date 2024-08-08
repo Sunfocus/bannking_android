@@ -11,13 +11,17 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bannking.app.R
+import com.bannking.app.UiExtension
 import com.bannking.app.model.retrofitResponseModel.accountMenuTitleModel.Data
 import com.bannking.app.ui.activity.AccountMenuNewActivity
 import com.bannking.app.ui.activity.BudgetPlannerNewActivity
 
 
-class AccountMenuWithSavedAdapterNew(private var context: Context?, list: ArrayList<Data>, private var callback: ((Int) -> Unit)? = null) :
-    RecyclerView.Adapter<AccountMenuWithSavedAdapterNew.ViewHolder>() {
+class AccountMenuWithSavedAdapterNew(
+    private var context: Context?,
+    list: ArrayList<Data>,
+    private var callback: ((Int) -> Unit)? = null
+) : RecyclerView.Adapter<AccountMenuWithSavedAdapterNew.ViewHolder>() {
     private var list: ArrayList<Data>? = list
 
 
@@ -31,43 +35,60 @@ class AccountMenuWithSavedAdapterNew(private var context: Context?, list: ArrayL
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val model = list?.get(position)
-
+        if (UiExtension.isDarkModeEnabled()) {
+            holder.cardAccount.setBackgroundResource(R.drawable.corner_radius_stroke) // Dark mode background color
+        } else {
+            holder.cardAccount.backgroundTintList = ContextCompat.getColorStateList(
+                context!!, R.color.white
+            ) // Light mode background color
+        }
         if (position == 0) {
             holder.txtTitle.text = list?.get(0)?.name
         } else if (position == 1) {
             holder.txtTitle.text = list?.get(1)?.name
         }
 
+
 //        holder.btnCreate.isVisible = model!!.isFillUp
 
-/*        if (model!!.isAccountCreated) {
-            holder.btnCreate.text = context?.getString(R.string.str_created)
-            holder.btnCreate.background.setTint(context!!.getColor(R.color.clr_green))
-            holder.cardAccount.setCardBackgroundColor(context!!.getColor(R.color.clr_semi_dark_gray))
-            holder.txtSelectedBugPlanner.isClickable = false
-            holder.txtSelectedBugPlanner.isEnabled = false
-            holder.imgFloating.isVisible = false
-            holder.imgDelete.isVisible = false
-        } else {
-            holder.cardAccount.setCardBackgroundColor(context!!.getColor(R.color.white))
-        }*/
+        /*        if (model!!.isAccountCreated) {
+                    holder.btnCreate.text = context?.getString(R.string.str_created)
+                    holder.btnCreate.background.setTint(context!!.getColor(R.color.clr_green))
+                    holder.cardAccount.setCardBackgroundColor(context!!.getColor(R.color.clr_semi_dark_gray))
+                    holder.txtSelectedBugPlanner.isClickable = false
+                    holder.txtSelectedBugPlanner.isEnabled = false
+                    holder.imgFloating.isVisible = false
+                    holder.imgDelete.isVisible = false
+                } else {
+                    holder.cardAccount.setCardBackgroundColor(context!!.getColor(R.color.white))
+                }*/
 
-/*        holder.btnCreate.setOnClickListener {
-            if (!model.isAccountCreated) {
-                callback?.invoke(position)
-            } else {
-                (context as AccountMenuNewActivity).dialogClass.showError((context as AccountMenuNewActivity).getString(R.string.str_account_created))
-            }
-        }*/
+        /*        holder.btnCreate.setOnClickListener {
+                    if (!model.isAccountCreated) {
+                        callback?.invoke(position)
+                    } else {
+                        (context as AccountMenuNewActivity).dialogClass.showError((context as AccountMenuNewActivity).getString(R.string.str_account_created))
+                    }
+                }*/
 
 
         if (model?.budgetName != null) {
             holder.txtSelectedBugPlanner.text = model.budgetName
-            holder.txtSelectedBugPlanner.setTextColor(ContextCompat.getColor(context!!, R.color.clr_text_blu))
+            holder.txtSelectedBugPlanner.setTextColor(
+                ContextCompat.getColor(
+                    context!!,
+                    R.color.clr_text_blu
+                )
+            )
         } else {
             holder.txtSelectedBugPlanner.text =
                 context?.getString(R.string.str_select_budget_planner)
-            holder.txtSelectedBugPlanner.setTextColor(ContextCompat.getColor(context!!, R.color.clr_red))
+            holder.txtSelectedBugPlanner.setTextColor(
+                ContextCompat.getColor(
+                    context!!,
+                    R.color.clr_red
+                )
+            )
         }
 
         holder.txtSelectedBugPlanner.setOnClickListener {

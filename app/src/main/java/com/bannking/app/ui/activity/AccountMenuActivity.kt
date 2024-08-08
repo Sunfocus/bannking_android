@@ -17,7 +17,6 @@ import com.bannking.app.model.retrofitResponseModel.accountMenuTitleModel.Accoun
 import com.bannking.app.model.retrofitResponseModel.accountMenuTitleModel.Data
 import com.bannking.app.model.viewModel.AccountMenuViewModel
 import com.bannking.app.utils.AdController
-import com.bannking.app.utils.Constants
 import com.bannking.app.utils.CreateOwnMenuTitle
 import com.bannking.app.utils.SessionManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -37,7 +36,8 @@ class AccountMenuActivity :
 
     override fun initViewModel(viewModel: AccountMenuViewModel) {
         this.viewModel = viewModel
-        viewModel.setDataInAccountTitleList()
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+        viewModel.setDataInAccountTitleList(userToken)
     }
 
     override fun initialize() {
@@ -68,7 +68,7 @@ class AccountMenuActivity :
                 if (it != null) {
                     if (it.code in 199..299) {
                         val model = gson.fromJson(it.apiResponse, AccountTitleModel::class.java)
-                        if (model.status.equals(Constants.STATUSSUCCESS, true)) {
+                        if (model.status == 200) {
                             list = model.data
 //                            if (intent.getStringExtra("ComeFrom").equals("Navigation", true)) {
 //                            list.add(
@@ -99,9 +99,10 @@ class AccountMenuActivity :
                                 apiResponseData.apiResponse,
                                 CommonResponseApi::class.java
                             )
-                            if (model.status.equals(Constants.STATUSSUCCESS)) {
+                            if (model.status == 200) {
                                 dialogClass.showSuccessfullyDialog(model.message.toString())
-                                viewModel.setDataInAccountTitleList()
+                                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+                                viewModel.setDataInAccountTitleList(userToken)
                             } else {
                                 dialogClass.showError(model.message.toString())
                             }
@@ -122,7 +123,7 @@ class AccountMenuActivity :
                                 saveHeaderDataList.apiResponse,
                                 CommonResponseApi::class.java
                             )
-                            if (model.status.equals(Constants.STATUSSUCCESS, ignoreCase = true)) {
+                            if (model.status == 200) {
                                 dialogClass.showAccountCreateSuccessfullyDialog(getString(R.string.str_account_header_switch)) {
                                     val intent = Intent()
                                     intent.putExtra("MainToMenu", "MainToMenu")
@@ -226,7 +227,7 @@ class AccountMenuActivity :
         bottomSheetDialog =
             BottomSheetDialog(this@AccountMenuActivity, R.style.NoBackgroundDialogTheme)
         val view = LayoutInflater.from(this@AccountMenuActivity)
-            .inflate(R.layout.bottomshit_create_menu_title, findViewById(R.id.linearLayout))
+            .inflate(R.layout.bottomshit_create_menu_title, findViewById(R.id.linearLayoutMenu))
         bottomSheetDialog!!.setContentView(view)
         bottomSheetDialog!!.show()
 
@@ -235,7 +236,8 @@ class AccountMenuActivity :
 
         btnSubmit.setOnClickListener {
             if (edtCreateTitle.text.toString().isNotEmpty()) {
-                viewModel.setDataInCreateOwnMenuTitleList(edtCreateTitle.text.toString())
+                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+                viewModel.setDataInCreateOwnMenuTitleList(edtCreateTitle.text.toString(), userToken)
                 bottomSheetDialog!!.dismiss()
             } else
 

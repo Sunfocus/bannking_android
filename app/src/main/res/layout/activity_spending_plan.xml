@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/rlSpending"
     android:layout_height="match_parent"
     android:background="@color/clr_card_background"
     android:orientation="vertical"
@@ -48,11 +49,13 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvBankingHere"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/source_sans_regular"
                 android:text="@string/str_banking_is_here_to_help_you_live_your_best_financial_life"
                 android:textAlignment="center"
+                android:textColor="@color/grey"
                 android:textSize="14sp" />
 
         </LinearLayout>

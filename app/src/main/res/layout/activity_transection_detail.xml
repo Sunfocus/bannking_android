@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/rlMainTD"
     android:background="@color/clr_tab_frag"
     tools:context=".ui.activity.TranSectionDetailActivity">
 
@@ -25,7 +26,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
-        android:src="@drawable/ic_avatar" />
+        android:src="@drawable/sample_user" />
 
     <TextView
         android:id="@+id/txt_transaction_name"
@@ -60,7 +61,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#FFFFFF"
                 android:orientation="horizontal"
                 android:padding="12dp"
                 android:weightSum="1">
@@ -91,11 +91,12 @@
                         android:layout_marginTop="3dp"
                         android:fontFamily="@font/source_sans_regular"
                         android:singleLine="true"
-                        android:textColor="@color/clr_text_blu"
+                        android:textColor="@color/colorPrimary"
                         android:textSize="28sp"
                         tools:text="$445.49" />
 
                     <TextView
+                        android:id="@+id/tvAvailTD"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
@@ -129,7 +130,7 @@
                     android:layout_weight="0.319"
                     android:text="@string/str_pay"
                     android:textAlignment="center"
-                    android:textColor="@color/clr_text_blu" />
+                    android:textColor="@color/colorPrimary" />
 
                 <View
                     android:layout_width="0dp"
@@ -145,7 +146,7 @@
                     android:layout_weight="0.319"
                     android:text="@string/str_transfer"
                     android:textAlignment="center"
-                    android:textColor="@color/clr_text_blu" />
+                    android:textColor="@color/colorPrimary" />
 
                 <View
                     android:layout_width="0dp"
@@ -160,7 +161,7 @@
                     android:layout_weight="0.319"
                     android:text="@string/str_create"
                     android:textAlignment="center"
-                    android:textColor="@color/clr_text_blu" />
+                    android:textColor="@color/colorPrimary" />
 
 
             </LinearLayout>

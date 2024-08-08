@@ -27,7 +27,7 @@ class ProfileViewModel(val App: Application) : BaseViewModel(App) {
 
     var progressObservable: MutableLiveData<Boolean> = MutableLiveData(null)
 
-    fun setDataInLanguageList() {
+    fun setDataInLanguageList(userToken: String?) {
         progressObservable.value = true
         val apiBody = JsonObject()
         try {
@@ -35,7 +35,7 @@ class ProfileViewModel(val App: Application) : BaseViewModel(App) {
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-        val call = RetrofitClient.instance!!.myApi.getLanguageList(apiBody.toString())
+        val call = RetrofitClient.instance!!.myApi.getLanguageList(userToken!!)
         call.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 progressObservable.value = false
@@ -52,7 +52,7 @@ class ProfileViewModel(val App: Application) : BaseViewModel(App) {
         })
     }
 
-    fun setDataInCurrencyList() {
+    fun setDataInCurrencyList(userToken: String?) {
         progressObservable.value = true
         val apiBody = JsonObject()
         try {
@@ -60,7 +60,7 @@ class ProfileViewModel(val App: Application) : BaseViewModel(App) {
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-        val call = RetrofitClient.instance!!.myApi.getCurrencyList(apiBody.toString())
+        val call = RetrofitClient.instance!!.myApi.getCurrencyList(userToken!!)
         call.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 progressObservable.value = false
@@ -77,19 +77,19 @@ class ProfileViewModel(val App: Application) : BaseViewModel(App) {
         })
     }
 
-    fun setChangeLanguageDataList(strLanguageId: String) {
+    fun setChangeLanguageDataList(strLanguageId: String, userToken: String?) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
             val apiBody = JsonObject()
             try {
                 apiBody.addProperty("security", Constants.SECURITY_0)
                 apiBody.addProperty("id", BaseActivity.userModel!!.id)
-                apiBody.addProperty("lang_id", strLanguageId)
+                apiBody.addProperty("language_id", strLanguageId)
                 apiBody.addProperty("token", it)
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance!!.myApi.changeLanguage(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.changeLanguage(apiBody.toString(),userToken!!)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false
@@ -117,19 +117,19 @@ class ProfileViewModel(val App: Application) : BaseViewModel(App) {
         }
     }
 
-    fun setDataCurrencyChangeDataList(strCurrencyId: String) {
+    fun setDataCurrencyChangeDataList(strCurrencyId: String, userToken: String?) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
             val apiBody = JsonObject()
             try {
                 apiBody.addProperty("security", Constants.SECURITY_0)
                 apiBody.addProperty("id", BaseActivity.userModel!!.id)
-                apiBody.addProperty("currency", strCurrencyId)
+                apiBody.addProperty("currency_id", strCurrencyId)
                 apiBody.addProperty("token", it)
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance!!.myApi.changeCurrency(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.changeCurrency(apiBody.toString(),userToken!!)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false
@@ -157,7 +157,7 @@ class ProfileViewModel(val App: Application) : BaseViewModel(App) {
         }
     }
 
-    fun setDataNotificationDataList(isChecked: Boolean) {
+    fun setDataNotificationDataList(isChecked: Boolean, userToken: String?) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
             val notificationOnOFF: Int = if (isChecked) 1 else 0
@@ -170,7 +170,7 @@ class ProfileViewModel(val App: Application) : BaseViewModel(App) {
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance!!.myApi.changeNotification(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.changeNotification(apiBody.toString(),userToken!!)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false
@@ -197,7 +197,7 @@ class ProfileViewModel(val App: Application) : BaseViewModel(App) {
         }
     }
 
-    fun setDataDeleteAccountDataList() {
+    fun setDataDeleteAccountDataList(userToken: String?) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
             val apiBody = JsonObject()
@@ -208,7 +208,7 @@ class ProfileViewModel(val App: Application) : BaseViewModel(App) {
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance!!.myApi.deleteAccount(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.deleteAccount(userToken!!)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false

@@ -10,17 +10,19 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.bannking.app.R
+import com.bannking.app.UiExtension
 import com.bannking.app.UiExtension.FCM_TOKEN
 import com.bannking.app.adapter.AccountMenuNewAdapter
 import com.bannking.app.adapter.AccountMenuWithSavedAdapterNew
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.databinding.ActivityAccountMenuNewBinding
 import com.bannking.app.model.CommonResponseApi
+import com.bannking.app.model.retrofitResponseModel.accountListModel.AccountListModel
 import com.bannking.app.model.retrofitResponseModel.accountMenuTitleModel.AccountTitleModel
 import com.bannking.app.model.retrofitResponseModel.accountMenuTitleModel.Data
 import com.bannking.app.model.viewModel.AccountMenuViewModel
@@ -36,6 +38,7 @@ import retrofit2.Response
 class AccountMenuNewActivity :
     BaseActivity<AccountMenuViewModel, ActivityAccountMenuNewBinding>(AccountMenuViewModel::class.java) {
 
+    private lateinit var accountList: AccountListModel
     var adapter: AccountMenuNewAdapter? = null
     private var adapterNew: AccountMenuWithSavedAdapterNew? = null
     private lateinit var list: ArrayList<Data>
@@ -49,10 +52,28 @@ class AccountMenuNewActivity :
 
     override fun initViewModel(viewModel: AccountMenuViewModel) {
         this.viewModel = viewModel
-        viewModel.setDataInAccountTitleList()
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+        viewModel.setDataInAccountTitleList(userToken)
     }
 
+    private fun uiChangeColor(){
+        if (UiExtension.isDarkModeEnabled()) {
+            binding!!.cvAccountMenu.setBackgroundColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
+
+        } else {
+            binding!!.cvAccountMenu.setBackgroundColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.clr_card_background
+                )
+            )
+            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.black))
+        }
+    }
     override fun initialize() {
+        uiChangeColor()
+
         currentTab = SessionManager(this, SessionManager.currentTab)
         savedHeaderlist = ArrayList()
         adapter = AccountMenuNewAdapter()
@@ -69,17 +90,22 @@ class AccountMenuNewActivity :
                         name = listObject.name?.uppercase(),
                         type = "1",
                         isTitleMenuHasAccount = true,
-                        isAccountCreated = true
+                        isAccountCreated = 1
                     )
                 )
             }
+        }
+
+        if (intent.hasExtra("accountList")){
+             accountList =
+                intent.getSerializableExtra("accountList") as AccountListModel
         }
 
         adapterNew = AccountMenuWithSavedAdapterNew(
             this@AccountMenuNewActivity, savedHeaderlist
         ) { postion ->
             deleteConfirmationDialog(
-                savedHeaderlist[postion],
+                accountList.data[postion],
                 getString(R.string.str_remove_header),
                 Constants._DELETE_ACCOUNT_TITLE
             ) {
@@ -127,7 +153,7 @@ class AccountMenuNewActivity :
                     savedHeaderlist[data.getStringExtra("position").toString()
                         .toInt()].accountName = data.getStringExtra("edtAccountName")
                     savedHeaderlist[data.getStringExtra("position").toString()
-                        .toInt()].accountCode = data.getStringExtra("edtAccountCode")
+                        .toInt()].account_code = data.getStringExtra("edtAccountCode")
                     savedHeaderlist[data.getStringExtra("position").toString()
                         .toInt()].accountAmount = data.getStringExtra("edtAccountAmount")
                     savedHeaderlist[data.getStringExtra("position").toString().toInt()].budgetName =
@@ -137,7 +163,7 @@ class AccountMenuNewActivity :
                     savedHeaderlist[data.getStringExtra("position").toString().toInt()].isFillUp =
                         true
                     savedHeaderlist[data.getStringExtra("position").toString()
-                        .toInt()].isAccountCreated = true
+                        .toInt()].isAccountCreated = 1
                     savedHeaderlist[data.getStringExtra("position").toString()
                         .toInt()].isTitleMenuHasAccount = true
                     adapterNew?.notifyDataSetChanged()
@@ -151,7 +177,7 @@ class AccountMenuNewActivity :
                 if (it != null) {
                     if (it.code in 199..299) {
                         val model = gson.fromJson(it.apiResponse, AccountTitleModel::class.java)
-                        if (model.status.equals(Constants.STATUSSUCCESS, true)) {
+                        if (model.status == 200) {
                             list = model.data
 
                             val removedDuplicateValueList: ArrayList<Data> = ArrayList()
@@ -206,9 +232,10 @@ class AccountMenuNewActivity :
                             val model = gson.fromJson(
                                 apiResponseData.apiResponse, CommonResponseApi::class.java
                             )
-                            if (model.status.equals(Constants.STATUSSUCCESS)) {
+                            if (model.status == 200) {
                                 dialogClass.showSuccessfullyDialog(model.message.toString())
-                                viewModel.setDataInAccountTitleList()
+                                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+                                viewModel.setDataInAccountTitleList(userToken)
                             } else {
                                 dialogClass.showError(model.message.toString())
                             }
@@ -227,7 +254,7 @@ class AccountMenuNewActivity :
                             val model = gson.fromJson(
                                 saveHeaderDataList.apiResponse, CommonResponseApi::class.java
                             )
-                            if (model.status.equals(Constants.STATUSSUCCESS, ignoreCase = true)) {
+                            if (model.status == 200) {
                                 dialogClass.showAccountCreateSuccessfullyDialog(getString(R.string.str_account_header_switch)) {
                                     val intent = Intent()
                                     intent.putExtra("MainToMenu", "MainToMenu")
@@ -265,6 +292,7 @@ class AccountMenuNewActivity :
         )
         binding!!.rvMenu.adapter = adapter
     }
+
 
     private fun setOnClickListener() {
         with(binding!!) {
@@ -320,16 +348,27 @@ class AccountMenuNewActivity :
         bottomSheetDialog =
             BottomSheetDialog(this@AccountMenuNewActivity, R.style.NoBackgroundDialogTheme)
         val view = LayoutInflater.from(this@AccountMenuNewActivity)
-            .inflate(R.layout.bottomshit_create_menu_title, findViewById(R.id.linearLayout))
+            .inflate(R.layout.bottomshit_create_menu_title, findViewById(R.id.linearLayoutMenu))
         bottomSheetDialog!!.setContentView(view)
         bottomSheetDialog!!.show()
 
         val btnSubmit = view.findViewById<Button>(R.id.btn_submit)
         val edtCreateTitle = view.findViewById<EditText>(R.id.edt_create_title)
 
+        if (UiExtension.isDarkModeEnabled()) {
+            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.black)
+            edtCreateTitle.setHintTextColor(ContextCompat.getColor(this, R.color.white))
+            edtCreateTitle.setTextColor(ContextCompat.getColor(this, R.color.white))
+        }else{
+            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.white)
+            edtCreateTitle.setHintTextColor(ContextCompat.getColor(this, R.color.grey))
+            edtCreateTitle.setTextColor(ContextCompat.getColor(this, R.color.black))
+        }
+
         btnSubmit.setOnClickListener {
             if (edtCreateTitle.text.toString().isNotEmpty()) {
-                viewModel.setDataInCreateOwnMenuTitleList(edtCreateTitle.text.toString())
+                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+                viewModel.setDataInCreateOwnMenuTitleList(edtCreateTitle.text.toString(), userToken)
                 bottomSheetDialog!!.dismiss()
             } else
                 edtCreateTitle.error = resources.getString(R.string.str_please_enter_your_title)
@@ -338,8 +377,9 @@ class AccountMenuNewActivity :
 
 
     private fun deleteConfirmationDialog(
-        list: Data, alertMsg: String, deleteType: String, callbacks: (() -> Unit)? = null
+        list: com.bannking.app.model.retrofitResponseModel.accountListModel.Data, alertMsg: String, deleteType: String, callbacks: (() -> Unit)? = null
     ) {
+
         val builder: AlertDialog.Builder = AlertDialog.Builder(this@AccountMenuNewActivity)
         builder.setMessage(alertMsg)
         builder.setTitle(resources.getString(R.string.str_alert))
@@ -348,7 +388,7 @@ class AccountMenuNewActivity :
         builder.setPositiveButton(
             resources.getString(R.string.str_confirm)
         ) { _: DialogInterface?, _: Int ->
-            setDataInDeleteBankAccount(headerTitleID = list.id.toString(), type = deleteType) {
+            setDataInDeleteBankAccount(list.id.toString(), type = deleteType) {
                 callbacks?.invoke()
             }
         }
@@ -356,7 +396,9 @@ class AccountMenuNewActivity :
             resources.getString(R.string.str_cancel)
         ) { dialog: DialogInterface, _: Int ->
             dialog.cancel()
+
         }
+        Log.e("sdkjhfsdjfhds","${list.id}")
         val alertDialog: AlertDialog = builder.create()
         alertDialog.show()
     }
@@ -371,20 +413,21 @@ class AccountMenuNewActivity :
                 apiBody.addProperty("security", Constants.SECURITY_0)
                 apiBody.addProperty("id", userModel!!.id)
                 apiBody.addProperty("token", it)
-                apiBody.addProperty("account_id", "")
+                apiBody.addProperty("accountId", "")
                 apiBody.addProperty("header_title_id", headerTitleID)
                 apiBody.addProperty("type", type)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance?.myApi?.deleteBankAccount(apiBody.toString())
+            val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+            val call = RetrofitClient.instance?.myApi?.deleteBankAccount(headerTitleID,type,userToken!!)
 
             call?.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     viewModel.progressObservable.value = false
                     if (response.isSuccessful) {
                         val model = gson.fromJson(response.body(), CommonResponseApi::class.java)
-                        if (model.status.equals(Constants.STATUSSUCCESS)) {
+                        if (model.status == 200 ) {
                             dialogClass.showSuccessfullyDialog(model.message.toString()) {
                                 callbacks?.invoke()
                             }

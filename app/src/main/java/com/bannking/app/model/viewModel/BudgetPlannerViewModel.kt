@@ -20,7 +20,7 @@ class BudgetPlannerViewModel(val App: Application) : BaseViewModel(App) {
     var createAccountListData: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
     var progressObservable: MutableLiveData<Boolean> = MutableLiveData(null)
 
-    fun setDataInBudgetPlannerList(id: Int?, SelectedItemMenu: String) {
+    fun setDataInBudgetPlannerList(id: Int?, SelectedItemMenu: String,userToken:String) {
         progressObservable.value = true
         val apiBody = JsonObject()
 
@@ -33,7 +33,7 @@ class BudgetPlannerViewModel(val App: Application) : BaseViewModel(App) {
             e.printStackTrace()
         }
 
-        val call = RetrofitClient.instance!!.myApi.getBudgetPlannerList(apiBody.toString())
+        val call = RetrofitClient.instance!!.myApi.getBudgetPlannerList(SelectedItemMenu,userToken)
         call.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 progressObservable.value = false
@@ -59,7 +59,7 @@ class BudgetPlannerViewModel(val App: Application) : BaseViewModel(App) {
 
 
     fun setDataInCreateAccountListData(
-        accMenuId: String, budgetId: String, account: String, accountCode: String, amount: String
+        accMenuId: String, budgetId: String, account: String, accountCode: String, amount: String,userToke:String
     ) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
@@ -78,7 +78,7 @@ class BudgetPlannerViewModel(val App: Application) : BaseViewModel(App) {
                 e.printStackTrace()
             }
 
-            val call = RetrofitClient.instance!!.myApi.createAccount(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.createAccount(apiBody.toString(),userToke)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false

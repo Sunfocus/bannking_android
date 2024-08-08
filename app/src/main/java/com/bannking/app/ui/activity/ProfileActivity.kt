@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -18,12 +17,14 @@ import android.view.View
 import android.view.Window
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bannking.app.BuildConfig
 import com.bannking.app.R
-import com.bannking.app.UiExtension.FCM_TOKEN
+import com.bannking.app.UiExtension
 import com.bannking.app.adapter.CurrencyAdapter
 import com.bannking.app.adapter.LanguageAdapter
 import com.bannking.app.core.BaseActivity
@@ -35,15 +36,12 @@ import com.bannking.app.model.retrofitResponseModel.userModel.UserModel
 import com.bannking.app.model.viewModel.ProfileViewModel
 import com.bannking.app.utils.*
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.firebase.messaging.FirebaseMessaging
 import com.zeugmasolutions.localehelper.Locales
-import darren.googlecloudtts.GoogleCloudTTS
-import darren.googlecloudtts.parameter.VoiceSelectionParams
 import java.util.*
 
 
@@ -66,8 +64,9 @@ class ProfileActivity :
     var util: Utils = Utils()
     private lateinit var savedSessionManagerVoice: SessionManager
     private lateinit var savedSessionManagerCurrency: SessionManager
-  //  private lateinit var textToSpeech: TextToSpeech
-  var  mTextToSpeech:TextToSpeech? = null
+
+    //  private lateinit var textToSpeech: TextToSpeech
+    var mTextToSpeech: TextToSpeech? = null
 
     private lateinit var reviewManager: ReviewManager
     private var reviewInfo: ReviewInfo? = null
@@ -88,17 +87,19 @@ class ProfileActivity :
         savedSessionManagerCurrency = SessionManager(this@ProfileActivity, SessionManager.CURRENCY)
 
         this.viewModel = viewModel
-        viewModel.setDataInLanguageList()
-        viewModel.setDataInCurrencyList()
-     //   textToSpeech = TextToSpeech(this@ProfileActivity, this)
-        mTextToSpeech = TextToSpeech(this.applicationContext
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+        viewModel.setDataInLanguageList(userToken)
+        viewModel.setDataInCurrencyList(userToken)
+        //   textToSpeech = TextToSpeech(this@ProfileActivity, this)
+        mTextToSpeech = TextToSpeech(
+            this.applicationContext
         ) { status ->
             var locale = Locale.US
             if (status == TextToSpeech.SUCCESS) {
 
                 if (status == TextToSpeech.SUCCESS) {
 
-                    if(savedSessionManager.getLanguage() == "English") {
+                    if (savedSessionManager.getLanguage() == "English") {
                         locale = Locale.US
                     } else if (savedSessionManager.getLanguage() == "Spanish") {
                         locale = Locale.forLanguageTag("es")
@@ -127,46 +128,48 @@ class ProfileActivity :
                      }*/
                 }
 
-              /*  val a = HashSet<String>()
-                a.add(savedSessionManagerVoice.getAnnouncementVoice().toString()) //here you can give male if you want to select male voice.
-                a.add("male") //here you can give male if you want to select male voice.
+                /*  val a = HashSet<String>()
+                  a.add(savedSessionManagerVoice.getAnnouncementVoice().toString()) //here you can give male if you want to select male voice.
+                  a.add("male") //here you can give male if you want to select male voice.
 
-                val v = Voice("en-us-x-sfg#male_2-local",locale, 400, 200, true, a)
-                mTextToSpeech!!.setVoice(v)
-                mTextToSpeech!!.setSpeechRate(0.8f);*/
+                  val v = Voice("en-us-x-sfg#male_2-local",locale, 400, 200, true, a)
+                  mTextToSpeech!!.setVoice(v)
+                  mTextToSpeech!!.setSpeechRate(0.8f);*/
 
 
-                val engineInfo: List<TextToSpeech.EngineInfo> =
-                    mTextToSpeech!!.getEngines()
+                val engineInfo: List<TextToSpeech.EngineInfo> = mTextToSpeech!!.engines
                 for (info in engineInfo) {
                     Log.e("speach", "info: $info")
                     if (info.equals("EngineInfo{name=com.samsung.SMT}")) {
                         getDeviceName()
                     }
                 }
-                val result: Int =
-                    mTextToSpeech!!.setLanguage(locale)
+                val result: Int = mTextToSpeech!!.setLanguage(locale)
                 if (result == TextToSpeech.LANG_MISSING_DATA) {
-                    Toast.makeText(this@ProfileActivity,
+                    Toast.makeText(
+                        this@ProfileActivity,
                         getString(R.string.language_pack_missing),
-                        Toast.LENGTH_SHORT).show()
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else if (result == TextToSpeech.LANG_NOT_SUPPORTED) {
                     getDeviceName()
-                    Toast.makeText(this@ProfileActivity,
+                    Toast.makeText(
+                        this@ProfileActivity,
                         getString(R.string.language_not_supported),
-                        Toast.LENGTH_SHORT).show()
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 // mImageSpeak.setEnabled(true);
-                mTextToSpeech!!.setOnUtteranceProgressListener(
-                    object : UtteranceProgressListener() {
-                        override fun onStart(utteranceId: String) {
-                            Log.e("Inside", "OnStart")
-                            // process_tts.hide();
-                        }
+                mTextToSpeech!!.setOnUtteranceProgressListener(object :
+                    UtteranceProgressListener() {
+                    override fun onStart(utteranceId: String) {
+                        Log.e("Inside", "OnStart")
+                        // process_tts.hide();
+                    }
 
-                        override fun onDone(utteranceId: String) {}
-                        override fun onError(utteranceId: String) {}
-                    })
+                    override fun onDone(utteranceId: String) {}
+                    override fun onError(utteranceId: String) {}
+                })
             } else {
                 Log.e("LOG_TAG", "TTS Initilization Failed")
             }
@@ -179,10 +182,44 @@ class ProfileActivity :
         setOnClickListener()
     }
 
-    override fun initialize() {
-        updateUi(userModel)
+
+    private fun uiColor() {
+        if (UiExtension.isDarkModeEnabled()) {
+            binding!!.pfScroll.backgroundTintList =
+                ContextCompat.getColorStateList(
+                    this,
+                    R.color.black
+                )
+            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.ivHelp.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.ivBank.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.ivCurrency.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.ivLanguage.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.ivRateApp.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.txtAppVersion.setTextColor(ContextCompat.getColor(this, R.color.white))
+        } else {
+            binding!!.pfScroll.backgroundTintList =
+                ContextCompat.getColorStateList(
+                    this,
+                    R.color.clr_card_background
+                )
+            binding!!.txtAppVersion.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.black))
+            binding!!.ivLanguage.setColorFilter(this.resources.getColor(R.color.black))
+            binding!!.ivRateApp.setColorFilter(this.resources.getColor(R.color.black))
+            binding!!.ivHelp.setColorFilter(this.resources.getColor(R.color.black))
+            binding!!.ivBank.setColorFilter(this.resources.getColor(R.color.black))
+            binding!!.ivCurrency.setColorFilter(this.resources.getColor(R.color.black))
+        }
     }
-    private fun getDeviceName(): String? {
+
+    override fun initialize() {
+        uiColor()
+        updateUi(userModel)
+
+    }
+
+    private fun getDeviceName(): String {
         val manufacturer = Build.MANUFACTURER
         val model = Build.MODEL
         return if (model.startsWith(manufacturer)) {
@@ -191,7 +228,8 @@ class ProfileActivity :
             capitalize(manufacturer) + " " + model
         }
     }
-    private fun capitalize(s: String?): String? {
+
+    private fun capitalize(s: String?): String {
         if (s == null || s.length == 0) {
             return ""
         }
@@ -202,8 +240,7 @@ class ProfileActivity :
         } else {
             Log.e("device name", first.uppercaseChar().toString() + s.substring(1))
             val name = first.uppercaseChar().toString() + s.substring(1)
-            if (name == "Samsung") {
-                /*ComponentName componentToLaunch = new ComponentName(
+            if (name == "Samsung") {/*ComponentName componentToLaunch = new ComponentName(
                              "com.android.settings",
                              "com.android.settings.TextToSpeechSettings");
                      Intent intent = new Intent();
@@ -216,7 +253,8 @@ class ProfileActivity :
                 val alertDialog = android.app.AlertDialog.Builder(this).create()
                 alertDialog.setTitle("Alert")
                 alertDialog.setMessage("Alert message to be shown")
-                alertDialog.setButton(android.app.AlertDialog.BUTTON_NEUTRAL, "OK"
+                alertDialog.setButton(
+                    android.app.AlertDialog.BUTTON_NEUTRAL, "OK"
                 ) { dialog, which ->
                     val intent = Intent()
                     intent.action = "com.android.settings.TTS_SETTINGS"
@@ -228,6 +266,7 @@ class ProfileActivity :
             first.uppercaseChar().toString() + s.substring(1)
         }
     }
+
     override fun observe() {
         with(viewModel) {
 //            Use For Language BottomShit List
@@ -235,8 +274,7 @@ class ProfileActivity :
                 if (apiResponseData != null) {
                     updateLanguageAdapter(
                         gson.fromJson(
-                            apiResponseData.apiResponse,
-                            LanguageModel::class.java
+                            apiResponseData.apiResponse, LanguageModel::class.java
                         ), apiResponseData.code
                     )
                 }
@@ -246,8 +284,7 @@ class ProfileActivity :
                 if (apiResponseData != null) {
                     updateCurrencyAdapter(
                         gson.fromJson(
-                            apiResponseData.apiResponse,
-                            LanguageModel::class.java
+                            apiResponseData.apiResponse, LanguageModel::class.java
                         ), apiResponseData.code
                     )
                 }
@@ -259,16 +296,12 @@ class ProfileActivity :
                 if (apiResponseData != null) {
                     if (apiResponseData.apiResponse != null) {
                         val model = gson.fromJson(
-                            apiResponseData.apiResponse,
-                            CommonResponseApi::class.java
+                            apiResponseData.apiResponse, CommonResponseApi::class.java
                         )
-                        if (model.status.toString()
-                                .equals(Constants.STATUSSUCCESS, ignoreCase = true)
-                        ) {
+                        if (model.status == 200) {
                             userModel!!.currencyId = newCurrencyId?.toInt()
                             sessionManager.setUserDetails(
-                                SessionManager.userData,
-                                userModel!!
+                                SessionManager.userData, userModel!!
                             )
                             dialogClass.showSuccessfullyDialog(model.message.toString())
 //                            Toast.makeText(this@ProfileActivity,""+  model.message.toString(), Toast.LENGTH_SHORT).show()
@@ -278,8 +311,7 @@ class ProfileActivity :
                             model.message.toString()
                         }
 
-                    } else
-                        dialogClass.showError(resources.getString(R.string.str_failed_currency_change_request))
+                    } else dialogClass.showError(resources.getString(R.string.str_failed_currency_change_request))
 //                        Toast.makeText(this@ProfileActivity, "Failed Currency Change Request", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -289,14 +321,12 @@ class ProfileActivity :
                 if (apiResponseData != null) {
                     if (apiResponseData.apiResponse != null) {
                         val model = gson.fromJson(
-                            apiResponseData.apiResponse.toString(),
-                            CommonResponseApi::class.java
+                            apiResponseData.apiResponse.toString(), CommonResponseApi::class.java
                         )
-                        if (model.status.equals(Constants.STATUSSUCCESS)) {
+                        if (model.status == 200) {
                             userModel!!.languageId = newLanguagId?.toInt()
                             sessionManager.setUserDetails(
-                                SessionManager.userData,
-                                userModel!!
+                                SessionManager.userData, userModel!!
                             )
 //                            dialogClass.showSuccessfullyDialog(model.message.toString())
                             val dialog = Dialog(this@ProfileActivity)
@@ -310,42 +340,49 @@ class ProfileActivity :
                             txtSucessfulyMessage.text = model.message.toString()
                             btnOk.setOnClickListener {
 //                                AdController.showInterAd(this@ProfileActivity, null, 0) {
-                                    dialog.dismiss()
-                                    when (model.name) {
-                                        "English" -> {
-                                            updateLocale(Locales.English)
-                                            savedSessionManager.setLanguage("English")
-                                        }
-                                        "Spanish" -> {
-                                            updateLocale(Locales.Spanish)
-                                            savedSessionManager.setLanguage("Spanish")
-                                        }
-                                        "French" -> {
-                                            updateLocale(Locales.French)
-                                            savedSessionManager.setLanguage("French")
-                                        }
-                                        "Arabic" -> {
-                                            updateLocale(Locales.Arabic)
-                                            savedSessionManager.setLanguage("Arabic")
-                                        }
-                                        "Russia" -> {
-                                            updateLocale(Locales.Russian)
-                                            savedSessionManager.setLanguage("Russia")
-                                        }
-                                        "Portuguese" -> {
-                                            updateLocale(Locales.Portuguese)
-                                            savedSessionManager.setLanguage("Portuguese")
-                                        }
-                                        "Dutch" -> {
-                                            updateLocale(Locales.Dutch)
-                                            savedSessionManager.setLanguage("Dutch")
-                                        }
-                                        else -> {
-                                            updateLocale(Locales.English)
-                                            savedSessionManager.setLanguage("English")
-                                        }
-
+                                dialog.dismiss()
+                                when (model.name) {
+                                    "English" -> {
+                                        updateLocale(Locales.English)
+                                        savedSessionManager.setLanguage("English")
                                     }
+
+                                    "Spanish" -> {
+                                        updateLocale(Locales.Spanish)
+                                        savedSessionManager.setLanguage("Spanish")
+                                    }
+
+                                    "French" -> {
+                                        updateLocale(Locales.French)
+                                        savedSessionManager.setLanguage("French")
+                                    }
+
+                                    "Arabic" -> {
+                                        updateLocale(Locales.Arabic)
+                                        savedSessionManager.setLanguage("Arabic")
+                                    }
+
+                                    "Russia" -> {
+                                        updateLocale(Locales.Russian)
+                                        savedSessionManager.setLanguage("Russia")
+                                    }
+
+                                    "Portuguese" -> {
+                                        updateLocale(Locales.Portuguese)
+                                        savedSessionManager.setLanguage("Portuguese")
+                                    }
+
+                                    "Dutch" -> {
+                                        updateLocale(Locales.Dutch)
+                                        savedSessionManager.setLanguage("Dutch")
+                                    }
+
+                                    else -> {
+                                        updateLocale(Locales.English)
+                                        savedSessionManager.setLanguage("English")
+                                    }
+
+                                }
 //                                }
                                 changeLanguageData.value = null
                             }
@@ -354,8 +391,7 @@ class ProfileActivity :
                         } else {
                             dialogClass.showError(model.message.toString())
                         }
-                    } else
-                        dialogClass.showError(resources.getString(R.string.str_failed_language_change_request))
+                    } else dialogClass.showError(resources.getString(R.string.str_failed_language_change_request))
                 }
             }
 
@@ -364,22 +400,19 @@ class ProfileActivity :
                 if (apiResponseData != null) {
                     if (apiResponseData.apiResponse != null) {
                         val model = gson.fromJson(
-                            apiResponseData.apiResponse.toString(),
-                            CommonResponseApi::class.java
+                            apiResponseData.apiResponse.toString(), CommonResponseApi::class.java
                         )
-                        if (model.status.equals(Constants.STATUSSUCCESS)) {
+                        if (model.status == 200) {
                             userModel!!.notification = newnotificationOnOFF.toString()
                             dialogClass.showSuccessfullyDialog(model.message.toString())
                             sessionManager.setUserDetails(
-                                SessionManager.userData,
-                                userModel!!
+                                SessionManager.userData, userModel!!
                             )
                         } else {
                             dialogClass.showError(model.message.toString())
                         }
 
-                    } else
-                        dialogClass.showError(resources.getString(R.string.str_failed_notification_change_request))
+                    } else dialogClass.showError(resources.getString(R.string.str_failed_notification_change_request))
                 }
             }
 
@@ -389,10 +422,22 @@ class ProfileActivity :
                     if (apiResponseData.apiResponse != null) {
                         val mainModel =
                             gson.fromJson(apiResponseData.apiResponse, UserModel::class.java)
-                        if (mainModel.status.equals(Constants.STATUSSUCCESS)) {
+                        if (mainModel.status == 200) {
+                            FirebaseMessaging.getInstance()
+                                .unsubscribeFromTopic("user_" + userModel!!.id)
+                                .addOnCompleteListener { task ->
+                                    Log.d("token====", userModel!!.id.toString())
+                                }
+                            savedSessionManager.setString(
+                                SessionManager.UserId, ""
+                            )
+                            savedSessionManager.setString(
+                                SessionManager.Password, ""
+                            )
                             inAppPurchaseSM.logOut()
                             sessionManager.logOut()
                             sessionManager.setBoolean(SessionManager.isLogin, false)
+
 //                            startActivity(Intent(this@ProfileActivity, SplashActivity::class.java).setFlags(
 //                                FLAG_ACTIVITY_CLEAR_TASK))
 //                            finishAffinity()
@@ -401,16 +446,13 @@ class ProfileActivity :
                             val mainIntent = Intent.makeRestartActivityTask(cn)
                             startActivity(mainIntent)
                         }
-                    } else
-                        dialogClass.showServerErrorDialog()
+                    } else dialogClass.showServerErrorDialog()
                 }
             }
             progressObservable.observe(this@ProfileActivity) {
                 if (it != null) {
-                    if (it)
-                        dialogClass.showLoadingDialog()
-                    else
-                        dialogClass.hideLoadingDialog()
+                    if (it) dialogClass.showLoadingDialog()
+                    else dialogClass.hideLoadingDialog()
                 }
             }
         }
@@ -419,12 +461,11 @@ class ProfileActivity :
     private fun updateUi(data: com.bannking.app.model.retrofitResponseModel.userModel.Data?) {
         val setdata: com.bannking.app.model.retrofitResponseModel.userModel.Data =
             data ?: userModel!!
-        Log.d("hjdsffsjsdfds",setdata.image.toString())
-        Glide.with(this@ProfileActivity)
-            .load(setdata.image)
-            .placeholder(R.drawable.glide_dot) //<== will simply not work:
-            .into(binding!!.profileImage)
-            /*.into(object : SimpleTarget<Bitmap?>() {
+        Log.d("hjdsffsjsdfds", setdata.image.toString())
+        if (setdata.image != null) {
+            Glide.with(this@ProfileActivity).load(Constants.IMG_BASE_URL + setdata.image)
+                .into(binding!!.profileImage)
+        }/*.into(object : SimpleTarget<Bitmap?>() {
                 override fun onResourceReady(
                     resource: Bitmap,
                     transition: Transition<in Bitmap?>?,
@@ -434,7 +475,7 @@ class ProfileActivity :
 
             })*/
 
-        binding!!.txtUsername.text = setdata.username.toString()
+        binding!!.txtUsername.text = setdata.name.toString()
         binding!!.txtEmailId.text = setdata.email
         binding!!.txtAppVersion.text =
             " ${getString(R.string.str_version)} ${BuildConfig.VERSION_NAME}"
@@ -442,6 +483,19 @@ class ProfileActivity :
 
     }
 
+    private fun setThemeMode(isNightMode: Boolean) {
+        val nightMode = if (isNightMode)
+            AppCompatDelegate.MODE_NIGHT_YES
+        else
+            AppCompatDelegate.MODE_NIGHT_NO
+        // Check if the current mode is different before setting it
+        if (AppCompatDelegate.getDefaultNightMode() != nightMode) {
+            AppCompatDelegate.setDefaultNightMode(nightMode)
+
+            // Optional: Restart the activity to apply the theme change
+            recreate()
+        }
+    }
 
     private fun setOnClickListener() {
         with(binding!!) {
@@ -455,6 +509,18 @@ class ProfileActivity :
 //            switchNotification.isChecked = sessionManager.getBoolean(SessionManager.isNotification)
             switchNotification.isChecked = userModel?.notification!!.toInt() == 1
 
+            val dayNight = sessionManager.getBoolean(SessionManager.DAYNIGHT)
+            if (dayNight){
+                switchDayNight.isChecked = true
+            }else{
+                switchDayNight.isChecked = false
+            }
+
+            switchDayNight.setOnCheckedChangeListener { _, isChecked ->
+                sessionManager.setBoolean(SessionManager.DAYNIGHT, isChecked)
+                setThemeMode(isChecked)
+            }
+
 
             llChangePassword.setOnClickListener {
                 startActivity(Intent(this@ProfileActivity, ChangePasswordActivity::class.java))
@@ -463,7 +529,8 @@ class ProfileActivity :
             switchNotification.setOnCheckedChangeListener { _, isChecked ->
 //                sessionManager.setBoolean(SessionManager.isNotification, isChecked)
                 newnotificationOnOFF = if (isChecked) 1 else 0
-                viewModel.setDataNotificationDataList(isChecked)
+                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+                viewModel.setDataNotificationDataList(isChecked, userToken)
             }
 
             imgBack.setOnClickListener { finish() }
@@ -495,10 +562,10 @@ class ProfileActivity :
                     BottomSheetDialog(this@ProfileActivity, R.style.NoBackgroundDialogTheme)
                 this@ProfileActivity.bottomSheetDialog = bottomSheetDialog
                 val view = LayoutInflater.from(this@ProfileActivity)
-                    .inflate(R.layout.bottomshit_sounds, findViewById(R.id.linearLayout))
+                    .inflate(R.layout.bottomshit_sounds, findViewById(R.id.linearLayoutSound))
                 bottomSheetDialog.setContentView(view)
                 bottomSheetDialog.show()
-                openSoundsBottomedDialog(bottomSheetDialog,view)
+                openSoundsBottomedDialog(bottomSheetDialog, view)
             }
 
             llCurrency.setOnClickListener {
@@ -517,7 +584,8 @@ class ProfileActivity :
             }
 
             llPrivacyPolicy.setOnClickListener {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://bannking.com/privacy"))
+                val browserIntent =
+                    Intent(Intent.ACTION_VIEW, Uri.parse("https://bannking.com/privacy"))
                 startActivity(browserIntent)
 //                startActivity(Intent(this@ProfileActivity, PrivacyPolicyActivity::class.java))
             }
@@ -529,16 +597,42 @@ class ProfileActivity :
             llEditProfile.setOnClickListener {
                 startActivity(Intent(this@ProfileActivity, ProfileUpdateActivity::class.java))
             }
+            LLAccountInfo.setOnClickListener {
+                startActivity(Intent(this@ProfileActivity, ProfileUpdateActivity::class.java))
+            }
+
         }
 
     }
 
     private fun openSoundsBottomedDialog(bottomSheetDialog: BottomSheetDialog, view: View?) {
         val radiogrp: RadioGroup = view!!.findViewById(R.id.radiogrp)
+        val linearLayoutSound: RelativeLayout = view.findViewById(R.id.linearLayoutSound)
         val btn_maleVoice: RadioButton = view.findViewById(R.id.btn_maleVoice)
         val btn_femaleVoice: RadioButton = view.findViewById(R.id.btn_femaleVoice)
         val btn_otherVoice: RadioButton = view.findViewById(R.id.btn_otherVoice)
         val btnScheduleTransfer: Button = view.findViewById(R.id.btn_schedule_Voice)
+
+//        val drawableLeftFemale: Drawable =
+//            btn_femaleVoice.compoundDrawablesRelative[0] // index 0 is drawableLeft
+//        val drawableLeftMale: Drawable =
+//            btn_femaleVoice.compoundDrawablesRelative[0] // index 0 is drawableLeft
+
+        if (UiExtension.isDarkModeEnabled()) {
+            linearLayoutSound.backgroundTintList =
+                ContextCompat.getColorStateList(this, R.color.black)
+            btn_femaleVoice.setTextColor(Color.WHITE)
+            btn_maleVoice.setTextColor(Color.WHITE)
+//            drawableLeftMale.setTint(Color.WHITE)
+//            drawableLeftFemale.setTint(Color.WHITE)
+        } else {
+            linearLayoutSound.backgroundTintList =
+                ContextCompat.getColorStateList(this, R.color.white)
+            btn_femaleVoice.setTextColor(Color.BLACK)
+            btn_maleVoice.setTextColor(Color.BLACK)
+//            drawableLeftMale.setTint(Color.BLACK)
+//            drawableLeftFemale.setTint(Color.BLACK)
+        }
 
 
         if (savedSessionManagerVoice.getAnnouncementVoice() == "Male") {
@@ -566,11 +660,13 @@ class ProfileActivity :
                     voice = util.getGenderDescription(Gender.MALE)
                     savedSessionManagerVoice.setAnnouncementVoice(voice)
                 }
+
                 R.id.btn_femaleVoice -> {
                     selection(btn_maleVoice, btn_femaleVoice, btn_otherVoice, btn_femaleVoice)
                     voice = util.getGenderDescription(Gender.FEMALE)
                     savedSessionManagerVoice.setAnnouncementVoice(voice)
                 }
+
                 R.id.btn_otherVoice -> {
                     selection(btn_maleVoice, btn_femaleVoice, btn_otherVoice, btn_otherVoice)
                     voice = util.getGenderDescription(Gender.OTHER)
@@ -593,7 +689,12 @@ class ProfileActivity :
         }
     }
 
-    private fun selection(btn_maleVoice: RadioButton, btn_femaleVoice: RadioButton, btn_otherVoice: RadioButton, select: RadioButton) {
+    private fun selection(
+        btn_maleVoice: RadioButton,
+        btn_femaleVoice: RadioButton,
+        btn_otherVoice: RadioButton,
+        select: RadioButton
+    ) {
         btn_maleVoice.isChecked = false
         btn_femaleVoice.isChecked = false
         btn_otherVoice.isChecked = false
@@ -615,7 +716,8 @@ class ProfileActivity :
             resources.getString(R.string.str_confirm)
         ) { dialog: DialogInterface?, _: Int ->
             AdController.showInterAd(this@ProfileActivity, null, 0)
-            viewModel.setDataDeleteAccountDataList()
+            val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+            viewModel.setDataDeleteAccountDataList(userToken)
             dialog?.dismiss()
         }
         builder.setNegativeButton(
@@ -635,41 +737,41 @@ class ProfileActivity :
                 reviewInfo = task.result
                 startReviewFlow()
             } else {
-                Log.d("sdfsdfdsfsdf",task.toString())
+                Log.d("sdfsdfdsfsdf", task.toString())
                 // There was some problem, log or handle the error code.
                 // task.exception
             }
         }
     }
+
     private fun startReviewFlow() {
         reviewInfo?.let {
             val flow = reviewManager.launchReviewFlow(this, it)
             flow.addOnCompleteListener { _ ->
                 // The flow has finished, update the last prompt time
 //                saveReviewManager.setBoolean(SessionManager.REVIEWMANAGER,true)
-                Log.d("sdfsdfdsfsdf","yes")
+                Log.d("sdfsdfdsfsdf", "yes")
             }
         }
     }
 
-    private fun launchMarket() {
-        /*   if (utils.checkisFirstDayOfWeek()){
+    private fun launchMarket() {/*   if (utils.checkisFirstDayOfWeek()){
                RateDialog(this, false).show()
            }*/
 //        RateDialog(this, false).show()
         requestReviewFlow()
 
-/*        val uri: Uri = Uri.parse("market://details?id=$packageName")
-        val myAppLinkToMarket = Intent(Intent.ACTION_VIEW, uri)
-        try {
-            startActivity(myAppLinkToMarket)
-        } catch (e: ActivityNotFoundException) {
-            val uri = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
-            val goMarket = Intent(Intent.ACTION_VIEW, uri)
-            startActivity(goMarket)
-//            dialogClass.showError(getString())
-//            Toast.makeText(this@ProfileActivity,  "unable to find market app", Toast.LENGTH_LONG).show()
-        }*/
+        /*        val uri: Uri = Uri.parse("market://details?id=$packageName")
+                val myAppLinkToMarket = Intent(Intent.ACTION_VIEW, uri)
+                try {
+                    startActivity(myAppLinkToMarket)
+                } catch (e: ActivityNotFoundException) {
+                    val uri = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+                    val goMarket = Intent(Intent.ACTION_VIEW, uri)
+                    startActivity(goMarket)
+        //            dialogClass.showError(getString())
+        //            Toast.makeText(this@ProfileActivity,  "unable to find market app", Toast.LENGTH_LONG).show()
+                }*/
     }
 
     private fun logout() {
@@ -682,6 +784,12 @@ class ProfileActivity :
         builder.setPositiveButton(
             resources.getString(R.string.str_confirm)
         ) { dialog: DialogInterface?, _: Int ->
+
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("user_" + userModel!!.id)
+                .addOnCompleteListener { task ->
+                    Log.d("token====", userModel!!.id.toString())
+                }
+            sessionManager.setString(SessionManager.USERTOKEN, "")
             inAppPurchaseSM.logOut()
             sessionManager.logOut()
             sessionManager.setBoolean(SessionManager.isLogin, false)
@@ -707,9 +815,10 @@ class ProfileActivity :
 
     private fun updateLanguageAdapter(model: LanguageModel, code: Int) {
         if (code in 199..299) {
-            if (model.status.equals("success", ignoreCase = true)) {
+            if (model.status == 200) {
                 if (model.data != null) {
                     languageDataList = model.data!!
+                    Log.d("sdfsdfjsdfsdf", model.data!!.toString())
                     model.data?.let { languageAdapter.updateList(it) }
                 }
             }
@@ -718,7 +827,7 @@ class ProfileActivity :
 
     private fun updateCurrencyAdapter(model: LanguageModel, code: Int) {
         if (code in 199..299) {
-            if (model.status.equals("success", ignoreCase = true)) {
+            if (model.status == 200) {
                 if (model.data != null) {
                     currencyDataList = model.data!!
                     model.data?.let { currencyAdapter.updateList(it) }
@@ -728,13 +837,27 @@ class ProfileActivity :
     }
 
     private fun openCurrencyBottomedDialog(view: View) {
+        if (UiExtension.isDarkModeEnabled()) {
+            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.black)
+
+        } else {
+            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.white)
+
+        }
         rvCurrency = view.findViewById(R.id.rv_currency)
         rvCurrency.layoutManager = LinearLayoutManager(this)
         currencyAdapter = CurrencyAdapter(this@ProfileActivity, currencyDataList, this)
         rvCurrency.adapter = currencyAdapter
     }
 
-    private fun    openLanguageBottomedDialog(view: View) {
+    private fun openLanguageBottomedDialog(view: View) {
+        if (UiExtension.isDarkModeEnabled()) {
+            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.black)
+
+        } else {
+            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.white)
+
+        }
         rvLanguage = view.findViewById(R.id.rv_language)
         rvLanguage.layoutManager = LinearLayoutManager(this)
         languageAdapter = LanguageAdapter(this@ProfileActivity, languageDataList, this)
@@ -748,18 +871,18 @@ class ProfileActivity :
             bottomSheetDialog!!.dismiss()
         }
         val adTime = savedAdTime.getLong(SessionManager.ADTIME)
-         val fiveMinutesInMillis = 5 * 60 * 1000 // 5 minutes in milliseconds
+        val fiveMinutesInMillis = 5 * 60 * 1000 // 5 minutes in milliseconds
         val currentTime = System.currentTimeMillis()
         // Calculate the time difference
         val timeDifference = currentTime - adTime
-
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
         if (type == Constants.CLICKLANGUAGE) {
             if (timeDifference > fiveMinutesInMillis) {
                 AdController.showInterAd(this@ProfileActivity, null, 0)
             }
             savedSessionManager.setLanguage(name)
             rvLanguage.post { languageAdapter.notifyDataSetChanged() }
-            viewModel.setChangeLanguageDataList(checkBoxID.toString())
+            viewModel.setChangeLanguageDataList(checkBoxID.toString(), userToken)
             newLanguagId = checkBoxID
 
             //Change Language Response
@@ -771,7 +894,7 @@ class ProfileActivity :
             newCurrencyId = checkBoxID
             savedSessionManagerCurrency.setCurrency(newCurrencyId)
             rvCurrency.post { currencyAdapter.notifyDataSetChanged() }
-            viewModel.setDataCurrencyChangeDataList(checkBoxID.toString())
+            viewModel.setDataCurrencyChangeDataList(checkBoxID.toString(), userToken)
         }
     }
 
@@ -789,14 +912,14 @@ class ProfileActivity :
     override fun onResume() {
         super.onResume()
         updateUi(userModel)
-        binding!!.cardUpgrade.isVisible = !isPremium
+//        binding!!.cardUpgrade.isVisible = !isPremium
         binding!!.cardRemoveAds.isVisible = !isPremium
 //        binding!!.llUpgrade.isVisible = !isPremium
     }
 
     private fun speechToText() {
         if (savedSessionManagerVoice.getAnnouncementVoice() == "Male") {
-            if(savedSessionManager.getLanguage() == "English") {
+            if (savedSessionManager.getLanguage() == "English") {
                 speakText("Hi I am a Male Gender")
             } else if (savedSessionManager.getLanguage() == "Spanish") {
                 speakText("Hola soy un género masculino")
@@ -813,7 +936,7 @@ class ProfileActivity :
             }
         } else if (savedSessionManagerVoice.getAnnouncementVoice() == "Female") {
 
-            if(savedSessionManager.getLanguage() == "English") {
+            if (savedSessionManager.getLanguage() == "English") {
                 speakText("Hi I am a Female Gender")
             } else if (savedSessionManager.getLanguage() == "Spanish") {
                 speakText("Hola soy un género femenino")
@@ -839,37 +962,37 @@ class ProfileActivity :
         mTextToSpeech!!.setSpeechRate(0.9.toFloat())
 
         if (savedSessionManagerVoice.getAnnouncementVoice() == "Male") {
-            val availableVoices: Set<Voice> = mTextToSpeech!!.getVoices()
+            val availableVoices: Set<Voice> = mTextToSpeech!!.voices
             var selectedVoice: Voice? = null
             for (voice in availableVoices) {
-                if (savedSessionManager.getLanguage() == "Arabic"){
+                if (savedSessionManager.getLanguage() == "Arabic") {
                     if (voice.name == "ar-xa-x-ard-local") {
                         selectedVoice = voice
-                        mTextToSpeech!!.setVoice(selectedVoice)
+                        mTextToSpeech!!.voice = selectedVoice
                         break
                     }
-                }else {
+                } else {
                     if (voice.name == "en-us-x-iom-local") {
                         selectedVoice = voice
-                        mTextToSpeech!!.setVoice(selectedVoice)
+                        mTextToSpeech!!.voice = selectedVoice
                         break
                     }
                 }
             }
         } else {
-            val availableVoices: Set<Voice> = mTextToSpeech!!.getVoices()
+            val availableVoices: Set<Voice> = mTextToSpeech!!.voices
             var selectedVoice: Voice? = null
             for (voice in availableVoices) {
-                if (savedSessionManager.getLanguage() == "Arabic"){
+                if (savedSessionManager.getLanguage() == "Arabic") {
                     if (voice.name == "ar-xa-x-arc-network") {
                         selectedVoice = voice
-                        mTextToSpeech!!.setVoice(selectedVoice)
+                        mTextToSpeech!!.voice = selectedVoice
                         break
                     }
-                }else {
+                } else {
                     if (voice.name == "en-us-x-iog-network") {
                         selectedVoice = voice
-                        mTextToSpeech!!.setVoice(selectedVoice)
+                        mTextToSpeech!!.voice = selectedVoice
                         break
                     }
                 }

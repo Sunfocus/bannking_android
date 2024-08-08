@@ -353,7 +353,7 @@ class BillingConnector(context: Context, base64Key: String) {
      * Max out at the time specified by RECONNECT_TIMER_MAX_TIME_MILLISECONDS (15 minutes)
      */
 
-    fun validatePurchaseToken(
+    /*fun validatePurchaseToken(
         packageName: String,
         subscriptionId: String,
         purchaseToken: String,
@@ -381,7 +381,7 @@ class BillingConnector(context: Context, base64Key: String) {
                 // Handle request failure
             }
         })
-    }
+    }*/
     private fun retryBillingClientConnection() {
         findUiHandler().postDelayed({ connect() }, reconnectMilliseconds)
         reconnectMilliseconds =

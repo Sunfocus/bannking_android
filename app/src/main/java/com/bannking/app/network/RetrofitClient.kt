@@ -38,7 +38,7 @@ class RetrofitClient private constructor() {
         }
         client.addInterceptor(logInterceptor)
         logig.setLevel(HttpLoggingInterceptor.Level.BODY)
-        val retrofit = Retrofit.Builder().baseUrl(Constants.BASE_URL)
+        val retrofit = Retrofit.Builder().baseUrl(Constants.BASE_URLS)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .client(client.build())

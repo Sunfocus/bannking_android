@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class ExploreExpensesModel(
 
-    @SerializedName("status") var status: String? = null,
+    @SerializedName("status") var status: Int? = null,
     @SerializedName("data") var data: ArrayList<Data> = arrayListOf()
 
 )

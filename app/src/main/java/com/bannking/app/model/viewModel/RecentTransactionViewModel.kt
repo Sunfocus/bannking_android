@@ -1,6 +1,7 @@
 package com.bannking.app.model.viewModel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.bannking.app.UiExtension.FCM_TOKEN
 import com.bannking.app.core.BaseActivity
@@ -24,7 +25,8 @@ class RecentTransactionViewModel(val App: Application) : BaseViewModel(App) {
     var progressObservable: MutableLiveData<Boolean> = MutableLiveData(null)
 
 
-    fun setDataInRecentTransactionListData(accountId: String) {
+    fun setDataInRecentTransactionListData(accountId: String, userToken: String?) {
+        Log.e("userToken", "setDataInRecentTransactionListData: $userToken", )
         App.FCM_TOKEN.let {
             val apiBody = JsonObject()
             try {
@@ -37,7 +39,7 @@ class RecentTransactionViewModel(val App: Application) : BaseViewModel(App) {
             }
 
             progressObservable.value = true
-            val call = RetrofitClient.instance!!.myApi.transactionList(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.transactionList(accountId,userToken!!)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false
@@ -102,7 +104,8 @@ class RecentTransactionViewModel(val App: Application) : BaseViewModel(App) {
         strAccountId: String,
         strTransactionTitle: String,
         strTransactionDate: String,
-        strAmount: String
+        strAmount: String,
+        userToken: String?
     ) {
         App.FCM_TOKEN.let {
             val apiBody = JsonObject()
@@ -119,7 +122,7 @@ class RecentTransactionViewModel(val App: Application) : BaseViewModel(App) {
                 e.printStackTrace()
             }
             progressObservable.value = true
-            val call = RetrofitClient.instance!!.myApi.createTransactionDetail(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.createTransactionDetail(apiBody.toString(),userToken!!)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false
@@ -153,7 +156,8 @@ class RecentTransactionViewModel(val App: Application) : BaseViewModel(App) {
         account: String,
         account_code: String,
         strAmount: String,
-        acc_menu_id: String
+        acc_menu_id: String,
+        userToken: String?
     ) {
         App.FCM_TOKEN.let {
             val apiBody = JsonObject()
@@ -166,12 +170,12 @@ class RecentTransactionViewModel(val App: Application) : BaseViewModel(App) {
                 apiBody.addProperty("account", account)
                 apiBody.addProperty("account_code", account_code)
                 apiBody.addProperty("amount", strAmount)
-                apiBody.addProperty("account_id", strAccountId)
+                apiBody.addProperty("accountId", strAccountId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
             progressObservable.value = true
-            val call = RetrofitClient.instance!!.myApi.updateAccount(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.updateAccount(apiBody.toString(),userToken!!)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false

@@ -14,9 +14,11 @@ import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import com.bannking.app.R
+import com.bannking.app.UiExtension.isDarkModeEnabled
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.core.CommonResponseModel
 import com.bannking.app.databinding.ActivityMainBinding
@@ -76,7 +78,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
                                 deleteAccount.apiResponse,
                                 CommonResponseApi::class.java
                             )
-                            if (mainModel.status!!.equals(Constants.STATUSSUCCESS, true)) {
+                            if (mainModel.status!! == 200) {
                                 dialogClass.showSuccessfullyDialog(mainModel.message.toString()) {
                                     deleteBankAccount.value = null
                                     headerTitleList.value =
@@ -101,9 +103,17 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
 
     @SuppressLint("SetTextI18n")
     override fun initialize() {
+        if (isDarkModeEnabled()) {
+            binding!!.bottomNavigationBar.setBackgroundResource(R.drawable.nav_shape_night) // Dark mode background color
+        } else {
+            binding!!.bottomNavigationBar.setBackgroundResource(R.drawable.nav_shape) // Light mode background color
+        }
+
+
         reviewManager = ReviewManagerFactory.create(this)
         saveReviewManager = SessionManager(this, SessionManager.REVIEWMANAGER)
         val saveReviewManager = saveReviewManager.getLong(SessionManager.REVIEWMANAGER)
+        sessionManager.updateLastActiveTime()
 
         val twentyFourInMillis = 24 * 60 * 60 * 1000 // 24hr in milliseconds
         val currentTime = System.currentTimeMillis()
@@ -275,7 +285,13 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
                                 viewModel.headerTitleList.value?.apiResponse,
                                 HeaderModel::class.java
                             )
+                        val accountList =
+                            gson.fromJson(
+                                viewModel.accountListData.value?.apiResponse,
+                                AccountListModel::class.java
+                            )
                         intent.putExtra("Headermodel", model)
+                        intent.putExtra("accountList", accountList)
                         resultLauncher.launch(intent)
 
 //                        val intent = Intent(this@MainActivity, AccountMenuActivity::class.java)
@@ -295,11 +311,16 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
                             viewModel.headerTitleList.value?.apiResponse,
                             HeaderModel::class.java
                         )
+                    val accountList =
+                        gson.fromJson(
+                            viewModel.accountListData.value?.apiResponse,
+                            AccountListModel::class.java
+                        )
                     startActivityForResult(
                         Intent(
                             this@MainActivity, SpendingPlanActivity::class.java
                         ).putExtra("ComeFrom", "Navigation")
-                            .putExtra("Headermodel", model), Constants.MAIN_TO_SPENDING
+                            .putExtra("Headermodel", model).putExtra("accountList", accountList), Constants.MAIN_TO_SPENDING
                     )
                 }
 
@@ -340,11 +361,20 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
             finishAndRemoveTask()
         }
 
-        viewModel.setDataInHeaderTitleList()
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+
+        viewModel.setDataInHeaderTitleList(userToken)
 
         Handler(Looper.getMainLooper()).postDelayed({
-            viewModel.setDataInAccountList()
+            if (userToken != null) {
+                viewModel.setDataInAccountList(userToken)
+            }
         }, 100)
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (userToken != null) {
+                viewModel.getUserProfileData(userToken)
+            }
+        }, 200)
 
         binding!!.bottomNavigationBar.selectedItemId = R.id.nav_account
 
@@ -371,12 +401,12 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
         }
 
         if (savedSessionManagerLanguage.getLanguage().equals("")) {
-            savedSessionManagerLanguage.setLanguage(userModel!!.languageName.toString())
+            savedSessionManagerLanguage.setLanguage(userModel!!.language!!.name.toString())
         }
 
         Glide.with(this@MainActivity)
             .asBitmap()
-            .load(userModel!!.image)
+            .load(Constants.IMG_BASE_URL+userModel!!.image)
             .placeholder(R.drawable.glide_dot) //<== will simply not work:
             .error(R.drawable.glide_warning) // <== is also useless
             .into(object : SimpleTarget<Bitmap?>() {
@@ -406,7 +436,10 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
         if (resultCode == RESULT_OK && (requestCode == Constants.MAIN_TO_MENU || requestCode == Constants.MAIN_TO_SPENDING)) {
             if (data!!.hasExtra("MainToMenu")) {
                 viewModel.setIdInFilterDatanull(null)
-                viewModel.setDataInHeaderTitleList()
+                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+//                viewModel.setDataInAccountList(userToken!!)
+//
+                viewModel.setDataInHeaderTitleList(userToken)
             }
         }
     }
@@ -425,7 +458,9 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 viewModel.setIdInFilterDatanull(null)
-                viewModel.setDataInHeaderTitleList()
+                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+//                viewModel.setDataInAccountList(userToken!!)
+                viewModel.setDataInHeaderTitleList(userToken)
             }
         }
 

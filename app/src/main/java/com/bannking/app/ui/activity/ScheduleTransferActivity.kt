@@ -11,17 +11,23 @@ import android.view.Window
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.bannking.app.R
+import com.bannking.app.UiExtension
 import com.bannking.app.UiExtension.getDateMMMDDYYYY
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.databinding.ActivityScheduleTransferBinding
 import com.bannking.app.model.CommonResponseApi
+import com.bannking.app.model.PayResponseApi
 import com.bannking.app.model.retrofitResponseModel.accountListModel.AccountListModel
 import com.bannking.app.model.retrofitResponseModel.accountListModel.Data
 import com.bannking.app.model.viewModel.PayAndTransferViewModel
-import com.bannking.app.utils.Constants
+import com.bannking.app.utils.SessionManager
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -56,10 +62,63 @@ class ScheduleTransferActivity :
 
     override fun initViewModel(viewModel: PayAndTransferViewModel) {
         this.viewModel = viewModel
-        viewModel.setDataInAccountList()
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+        if (userToken != null) {
+            viewModel.setDataInAccountList(userToken)
+        }
+    }
+
+    private fun setUIColor() {
+        if (UiExtension.isDarkModeEnabled()) {
+            binding!!.rlTransfer.backgroundTintList =
+                ContextCompat.getColorStateList(
+                    this,
+                    R.color.black
+                )
+            binding!!.tvTF.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.txtTransferDate.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.txtTransferFrom.setTextColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.white
+                )
+            )
+            binding!!.tvTT.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvTN.setTextColor(ContextCompat.getColor(this, R.color.white))
+        } else {
+            binding!!.rlTransfer.backgroundTintList =
+                ContextCompat.getColorStateList(
+                    this,
+                    R.color.white
+                )
+            binding!!.tvTF.setTextColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.grey
+                )
+            )
+            binding!!.txtTransferFrom.setTextColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.black
+                )
+            )
+            binding!!.tvTT.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding!!.txtTransferDate.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.tvTN.setTextColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.grey
+                )
+            )
+
+        }
     }
 
     override fun initialize() {
+        setUIColor()
+
+
         if (intent != null) {
             accountFromId = intent.getStringExtra("Id").toString()
             strTranSectionName = intent.getStringExtra("TranSectionName").toString()
@@ -106,7 +165,7 @@ class ScheduleTransferActivity :
                                 gson.fromJson(accountList.apiResponse, AccountListModel::class.java)
                             accountDataList = mainModel.data
                             for (data in mainModel.data) {
-                                spinnerList.add("${data.account.toString()} ...${data.accountCode.toString()} ")
+                                spinnerList.add("${data.account.toString()} ...${data.account_code.toString()} ")
                             }
 
                             binding!!.spinTransferTo.apply {
@@ -139,9 +198,9 @@ class ScheduleTransferActivity :
                     if (transfer.code in 199..299) {
                         if (transfer.apiResponse != null) {
                             val model =
-                                gson.fromJson(transfer.apiResponse, CommonResponseApi::class.java)
-                            if (model.status.equals(Constants.STATUSSUCCESS)) {
-                                showPaymentSuccessfully(model.amount.toString(), model)
+                                gson.fromJson(transfer.apiResponse, PayResponseApi::class.java)
+                            if (model.status == 200) {
+                                showPaymentSuccessfully(model.data!!.amount.toString(), model)
                             } else
                                 dialogClass.showError(model.message.toString())
                         }
@@ -174,12 +233,20 @@ class ScheduleTransferActivity :
                     if (edtTransferAmount.valueString.toString().toDouble() > 0.0) {
                         if (spinner1AccountNamr.isNotEmpty() && accountToName.isNotEmpty()) {
                             if (accountFromId != accountToId) {
+                                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+
+                                val format1 = SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH)
+                                val format2 = SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH)
+                                // Parse the input date string
+                                val date = format1.parse(txtTransferDate.text.toString())
+                                // Format the parsed date to the desired format
+                                val formattedDate = date?.let { format2.format(it) }
                                 viewModel.setDataInScheduleTransfer(
                                     accountFromId,
                                     accountToId,
                                     "",
                                     edtTransferAmount.valueString,
-                                    txtTransferDate.text.toString()
+                                    formattedDate!!, userToken
                                 )
                             } else
                                 dialogClass.showError(resources.getString(R.string.str_sender_and_depositor_account_cannot_be_same))
@@ -193,9 +260,8 @@ class ScheduleTransferActivity :
 
 
             }
-
-
-            txtTransferDate.text = utils.getCurrentDateForTransfer()
+            val currentDate = utils.getCurrentDateForTransfer()
+            txtTransferDate.text = currentDate
 
             llTransferDate.setOnClickListener {
                 datePickerDialog = DatePickerDialog(
@@ -205,8 +271,8 @@ class ScheduleTransferActivity :
                             if (dayOfMonth < 10) "0$dayOfMonth" else dayOfMonth.toString()
                         val strNewMonthOfYear =
                             if ((monthOfYear + 1) < 10) "0" + (monthOfYear + 1).toString() else (monthOfYear + 1).toString()
-                        txtTransferDate.text =
-                            "$year-$strNewMonthOfYear-$strNewDayOfMonth".getDateMMMDDYYYY()
+
+                        txtTransferDate.text = "$year-$strNewMonthOfYear-$strNewDayOfMonth".getDateMMMDDYYYY()
                     }, mYear, mMonth, mDay
                 )
 //                datePickerDialog!!.datePicker.minDate = System.currentTimeMillis() - 1000;
@@ -227,7 +293,7 @@ class ScheduleTransferActivity :
                         accountFromId = accountDataList[position].id.toString()
 
                         strTranSectionName = accountDataList[position].account.toString()
-                        strTranSectionNumber = accountDataList[position].accountCode.toString()
+                        strTranSectionNumber = accountDataList[position].account_code.toString()
                     }
 
                     override fun onNothingSelected(adapter: AdapterView<*>?) {}
@@ -241,7 +307,7 @@ class ScheduleTransferActivity :
                         id: Long
                     ) {
                         accountToName = accountDataList[position].account.toString()
-                        accountToCode = accountDataList[position].accountCode.toString()
+                        accountToCode = accountDataList[position].account_code.toString()
                         accountToId = accountDataList[position].id.toString()
 //                    Toast.makeText(this@ScheduleTransferActivity, "" + accountToName, Toast.LENGTH_SHORT).show()
                     }
@@ -255,7 +321,7 @@ class ScheduleTransferActivity :
     @SuppressLint("SetTextI18n")
     private fun showPaymentSuccessfully(
         currentAmount: String? = null,
-        model: CommonResponseApi
+        model: PayResponseApi
     ) {
         val dialog = Dialog(this@ScheduleTransferActivity)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -265,20 +331,45 @@ class ScheduleTransferActivity :
 
         val btnReTransfer: Button = dialog.findViewById(R.id.btn_re_transfer)
         val txtDone: TextView = dialog.findViewById(R.id.txt_done)
+        val rlSuccess: RelativeLayout = dialog.findViewById(R.id.rlSuccess)
+        val llSuccess: LinearLayout = dialog.findViewById(R.id.llSuccess)
 
         val txtAmount: TextView = dialog.findViewById(R.id.txt_amount)
+        val tvTranStatus: TextView = dialog.findViewById(R.id.tvTranStatus)
+        val tvTranOn: TextView = dialog.findViewById(R.id.tvTranOn)
+        val tvTranTo: TextView = dialog.findViewById(R.id.tvTranTo)
+        val tvTranFrom: TextView = dialog.findViewById(R.id.tvTranFrom)
         val txtTransactionNumber: TextView = dialog.findViewById(R.id.txt_transaction_number)
+        val tvTranNo: TextView = dialog.findViewById(R.id.tvTranNo)
         val txtTransferFrom: TextView = dialog.findViewById(R.id.txt_transfer_from)
         val txtTransferTo: TextView = dialog.findViewById(R.id.txt_transfer_to)
         val txtTransferOn: TextView = dialog.findViewById(R.id.txt_transfer_on)
         val txtTransferStatus: TextView = dialog.findViewById(R.id.txt_transfer_status)
 
+        if (UiExtension.isDarkModeEnabled()) {
+           rlSuccess.setBackgroundColor(ContextCompat.getColor(this, R.color.black))
+           llSuccess.setBackgroundResource(R.drawable.corner_radius_stroke)
+            tvTranNo.setTextColor(ContextCompat.getColor(this, R.color.white))
+            tvTranTo.setTextColor(ContextCompat.getColor(this, R.color.white))
+            tvTranFrom.setTextColor(ContextCompat.getColor(this, R.color.white))
+            tvTranOn.setTextColor(ContextCompat.getColor(this, R.color.white))
+            tvTranStatus.setTextColor(ContextCompat.getColor(this, R.color.white))
+        } else {
+           rlSuccess.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
+            llSuccess.setBackgroundResource(R.drawable.round_layout_otp)
+            tvTranNo.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            tvTranTo.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            tvTranFrom.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            tvTranOn.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            tvTranStatus.setTextColor(ContextCompat.getColor(this, R.color.grey))
+        }
+
         txtAmount.text = binding!!.edtTransferAmount.formattedString.toString()
-        txtTransactionNumber.text = model.transactionId.toString()
+        txtTransactionNumber.text = model.data!!.transactionId.toString()
         txtTransferFrom.text = "$strTranSectionName...$strTranSectionNumber"
         txtTransferTo.text = "$accountToName...$accountToCode"
         txtTransferOn.text = binding!!.txtTransferDate.text.toString()
-        txtTransferStatus.text = model.transactionStatus.toString()
+        txtTransferStatus.text = model.data!!.transactionStatus.toString()
 
 
         btnReTransfer.setOnClickListener { dialog.dismiss() }

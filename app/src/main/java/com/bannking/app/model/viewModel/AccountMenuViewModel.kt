@@ -25,7 +25,7 @@ class AccountMenuViewModel(val App: Application) : BaseViewModel(App) {
     var progressObservable: MutableLiveData<Boolean> = MutableLiveData(null)
 
 
-    fun setDataInAccountTitleList() {
+    fun setDataInAccountTitleList(userToken: String?) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
             val apiBody = JsonObject()
@@ -37,7 +37,9 @@ class AccountMenuViewModel(val App: Application) : BaseViewModel(App) {
                 Log.e("TAG_EXCEPTION", "setDataInAccountTitleList: " + e.message.toString())
             }
 
-            val call = RetrofitClient.instance!!.myApi.getAccountMenuTitle(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.getAccountMenuTitle(
+                userToken!!
+            )
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false
@@ -65,7 +67,7 @@ class AccountMenuViewModel(val App: Application) : BaseViewModel(App) {
         }
     }
 
-    fun setDataInCreateOwnMenuTitleList(strTitleName: String) {
+    fun setDataInCreateOwnMenuTitleList(strTitleName: String, userToken: String?) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
             val apiBody = JsonObject()
@@ -77,7 +79,7 @@ class AccountMenuViewModel(val App: Application) : BaseViewModel(App) {
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance!!.myApi.createOwnAccountTitle(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.createOwnAccountTitle(apiBody.toString(),userToken!!)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false

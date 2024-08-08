@@ -1,28 +1,37 @@
 package com.bannking.app.ui.activity
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import com.bannking.app.BuildConfig
 import com.bannking.app.R
+import com.bannking.app.UiExtension
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.databinding.ActivityProfileUpdateBinding
 import com.bannking.app.model.retrofitResponseModel.userModel.Data
 import com.bannking.app.model.retrofitResponseModel.userModel.UserModel
 import com.bannking.app.model.viewModel.ProfileUpdateViewModel
+import com.bannking.app.utils.AdController
 import com.bannking.app.utils.Constants
 import com.bannking.app.utils.FileUtil
+import com.bannking.app.utils.SessionManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.messaging.FirebaseMessaging
 import java.io.IOException
 
 class ProfileUpdateActivity :
     BaseActivity<ProfileUpdateViewModel, ActivityProfileUpdateBinding>(ProfileUpdateViewModel::class.java) {
-
+    private var switchFaceVerificationOFF: Boolean = false
     lateinit var viewModel: ProfileUpdateViewModel
     private var bottomSheetDialog: BottomSheetDialog? = null
 
@@ -39,14 +48,52 @@ class ProfileUpdateActivity :
         this.viewModel = viewModel
     }
 
+    private fun uiColor(){
+        if (UiExtension.isDarkModeEnabled()) {
+            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.tvUpdatePP.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.llUpdateProfile.setBackgroundColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.tvFirstName.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvUserName.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvChangeEmail.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvSecurity.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvRefrain.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvVersion.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.etFirstNameUpdate.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.edtUserEmail.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.edtUserName.setTextColor(ContextCompat.getColor(this, R.color.white))
+        } else {
+            binding!!.llUpdateProfile.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.black))
+            binding!!.tvUpdatePP.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.tvFirstName.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.tvUserName.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.tvChangeEmail.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.tvSecurity.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.tvRefrain.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.tvVersion.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.edtUserName.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.etFirstNameUpdate.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.edtUserEmail.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.edtUserName.setHintTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding!!.etFirstNameUpdate.setHintTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding!!.edtUserEmail.setHintTextColor(ContextCompat.getColor(this, R.color.grey))
+        }
+    }
+
     override fun initialize() {
         data = Data()
-        viewModel.setDataProfileDataList()
+        uiColor()
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+        viewModel.setDataProfileDataList(userToken)
 
     }
 
     override fun setMethod() {
         setOnClickListener()
+        val versionName: String = BuildConfig.VERSION_NAME
+        binding!!.tvVersion.text = "$versionName"
+
     }
 
 
@@ -58,7 +105,7 @@ class ProfileUpdateActivity :
                         val mainModel =
                             gson.fromJson(updateResponse.apiResponse, UserModel::class.java)
                         if (mainModel != null) {
-                            if (mainModel.status.equals(Constants.STATUSSUCCESS)) {
+                            if (mainModel.status == 200) {
                                 data = mainModel.data
                                 setUserDataInSession(mainModel.data!!)
                                 dialogClass.showSuccessfullyDialog(mainModel.message.toString())
@@ -70,6 +117,41 @@ class ProfileUpdateActivity :
                         dialogClass.showServerErrorDialog()
                 }
             }
+
+            //Delete Account Response
+            deleteAccountData.observe(this@ProfileUpdateActivity) { apiResponseData ->
+                if (apiResponseData != null) {
+                    if (apiResponseData.apiResponse != null) {
+                        val mainModel =
+                            gson.fromJson(apiResponseData.apiResponse, UserModel::class.java)
+                        if (mainModel.status == 200) {
+                            FirebaseMessaging.getInstance()
+                                .unsubscribeFromTopic("user_" + userModel!!.id)
+                                .addOnCompleteListener { task ->
+                                    Log.d("token====", userModel!!.id.toString())
+                                }
+                            sessionManager.setString(
+                                SessionManager.UserId, ""
+                            )
+                            sessionManager.setString(
+                                SessionManager.Password, ""
+                            )
+                            inAppPurchaseSM.logOut()
+                            sessionManager.logOut()
+                            sessionManager.setBoolean(SessionManager.isLogin, false)
+
+//                            startActivity(Intent(this@ProfileActivity, SplashActivity::class.java).setFlags(
+//                                FLAG_ACTIVITY_CLEAR_TASK))
+//                            finishAffinity()
+                            val intent = Intent(this@ProfileUpdateActivity, SplashActivity::class.java)
+                            val cn = intent.component
+                            val mainIntent = Intent.makeRestartActivityTask(cn)
+                            startActivity(mainIntent)
+                        }
+                    } else dialogClass.showServerErrorDialog()
+                }
+            }
+
             progressObservable.observe(this@ProfileUpdateActivity) {
                 if (it != null) {
                     if (it)
@@ -85,10 +167,16 @@ class ProfileUpdateActivity :
                         if (apiResponseData.apiResponse != null) {
                             val mainModel =
                                 gson.fromJson(apiResponseData.apiResponse, UserModel::class.java)
-                            if (mainModel.status.equals(Constants.STATUSSUCCESS)) {
+                            if (mainModel.status == 200) {
                                 data = mainModel.data
                                 setUserDataInSession((mainModel.data!!))
                                 updateUi(mainModel.data)
+
+                                if (mainModel.data!!.subscriptionStatus == 1) {
+                                    inAppPurchaseSM.setBoolean(SessionManager.isPremium, true)
+                                } else  {
+                                    inAppPurchaseSM.setBoolean(SessionManager.isPremium, false)
+                                }
                             }
                         }
                     } else if (apiResponseData.code in 400..500) {
@@ -102,9 +190,11 @@ class ProfileUpdateActivity :
 
     private fun setOnClickListener() {
         with(binding!!) {
-
             imgBack.setOnClickListener {
                 finish()
+            }
+            llChangePasswordPf.setOnClickListener {
+                startActivity(Intent(this@ProfileUpdateActivity, ChangePasswordActivity::class.java))
             }
 
             rlEditProfile.setOnClickListener {
@@ -114,9 +204,39 @@ class ProfileUpdateActivity :
             btnSubmit.setOnClickListener {
                 onSubmitClick()
             }
+            switchFaceVerification.setOnCheckedChangeListener { _, isChecked ->
+//                sessionManager.setBoolean(SessionManager.isNotification, isChecked)
+                switchFaceVerificationOFF = isChecked
+            }
+            cardDelete.setOnClickListener {
+                deleteUserAccount()
+            }
         }
     }
+    private fun deleteUserAccount() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this@ProfileUpdateActivity)
 
+        builder.setMessage(resources.getString(R.string.str_are_you_sure_you_want_to_delete_this_user_account))
+
+        builder.setTitle(resources.getString(R.string.str_alert))
+        builder.setIcon(R.drawable.ic_warning)
+        builder.setCancelable(false)
+        builder.setPositiveButton(
+            resources.getString(R.string.str_confirm)
+        ) { dialog: DialogInterface?, _: Int ->
+            AdController.showInterAd(this@ProfileUpdateActivity, null, 0)
+            val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+            viewModel.setDataDeleteAccountDataList(userToken)
+            dialog?.dismiss()
+        }
+        builder.setNegativeButton(
+            resources.getString(R.string.str_cancel)
+        ) { dialog: DialogInterface, _: Int ->
+            dialog.cancel()
+        }
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.show()
+    }
 
     private fun openBottomSuitorUpdateProfile() {
 
@@ -157,11 +277,13 @@ class ProfileUpdateActivity :
             if (etFirstNameUpdate.text.isNotEmpty()){
             if (edtUserName.text.isNotEmpty()) {
                 if (edtUserEmail.text.toString().isNotEmpty()) {
+                    val userToken = sessionManager.getString(SessionManager.USERTOKEN)
                     if (utils.isValidEmailId(edtUserEmail.text.toString().trim())) {
+                        switchFaceVerification.isChecked
                         viewModel.setDataUpdateDataList(
                             edtUserName.text.toString(),
                             edtUserEmail.text.toString(),
-                            imgPath,etFirstNameUpdate.text.toString()
+                            imgPath,etFirstNameUpdate.text.toString(),userToken,switchFaceVerification.isChecked
                         )
                     } else
                         edtUserEmail.error =
@@ -179,7 +301,7 @@ class ProfileUpdateActivity :
         val setdata: Data = data ?: userModel!!
         Glide.with(this@ProfileUpdateActivity)
             .asBitmap()
-            .load(setdata.image)
+            .load(Constants.IMG_BASE_URL+setdata.image)
             .placeholder(R.drawable.glide_dot) //<== will simply not work:
             .error(R.drawable.glide_warning) // <== is also useless
             .into(object : SimpleTarget<Bitmap?>() {
@@ -191,6 +313,8 @@ class ProfileUpdateActivity :
                 }
 
             })
+
+        binding!!.switchFaceVerification.isChecked = setdata.face_id_status!!
 
         binding!!.edtUserName.setText(setdata.username.toString())
         binding!!.edtUserEmail.setText(setdata.email.toString())

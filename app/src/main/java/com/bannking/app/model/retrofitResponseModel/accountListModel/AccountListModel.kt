@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class AccountListModel(
-    @SerializedName("status") var status: String? = null,
+    @SerializedName("status") var status: Int? = null,
     @SerializedName("data") var data: ArrayList<Data> = arrayListOf()
 ) : Serializable
 
@@ -13,20 +13,20 @@ class Data : Serializable {
     @SerializedName("id")
     var id: String? = null
 
-    @SerializedName("acc_detail")
-    var accDetail: ArrayList<AccDetail> = arrayListOf()
+    @SerializedName("userAccountTitle")
+    var userAccountTitle: UserAccountTitle?= null
 
     @SerializedName("user_id")
-    var userId: String? = null
+    var user_id: String? = null
 
-    @SerializedName("acc_menu_id")
-    var accMenuId: String? = null
+    @SerializedName("acc_title_id")
+    var acc_title_id: String? = null
 
     @SerializedName("acc_menu_title")
     var accMenuTitle: String? = null
 
     @SerializedName("budget_id")
-    var budgetId: String? = null
+    var budget_id: String? = null
 
     @SerializedName("budget_title")
     var budgetTitle: String? = null
@@ -35,13 +35,13 @@ class Data : Serializable {
     var account: String? = null
 
     @SerializedName("account_code")
-    var accountCode: String? = null
+    var account_code: String? = null
 
     @SerializedName("currency_id")
     var currencyId: String? = null
 
     @SerializedName("currency")
-    var currency: String? = null
+    var currency: Currency? = null
 
     @SerializedName("amount")
     var amount: String? = null
@@ -50,9 +50,14 @@ class Data : Serializable {
 }
 
 
-data class AccDetail(
+data class UserAccountTitle(
+    @SerializedName("id") var id: String? = null,
+    @SerializedName("name") var name: String? = null
 
-    @SerializedName("acc_menu_id") var accMenuId: String? = null,
-    @SerializedName("acc_menu_title") var accMenuTitle: String? = null
+) : Serializable
+data class Currency(
+    @SerializedName("id") var id: String? = null,
+    @SerializedName("name") var name: String? = null,
+    @SerializedName("icon") var icon: String? = null
 
 ) : Serializable

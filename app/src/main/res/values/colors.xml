@@ -7,10 +7,11 @@
 
     <color name="colorPrimary">#105CA8</color>
     <color name="first_screen">#5271ff</color>
-
+    <color name="view_color">#C4C4C4</color>
 
     <color name="clr_blue">#105CA8</color>
     <color name="clr_dark_gray">#D1D1D1</color>
+    <color name="grey">#808080</color>
     <color name="clr_semi_dark_gray">#EDECEC</color>
     <color name="clr_text">#2A3532</color>
     <color name="clr_card_background">#FBFBFB</color>

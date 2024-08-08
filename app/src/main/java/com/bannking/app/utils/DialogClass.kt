@@ -13,7 +13,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.bannking.app.R
+import com.bannking.app.UiExtension
+import com.bannking.app.UiExtension.drawable
 import com.bannking.app.ui.activity.UpgradeActivity
 
 
@@ -75,7 +78,21 @@ class DialogClass(private val context: Context) {
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         val txtOk: TextView = dialog.findViewById(R.id.txt_ok)
         val txtMessage: TextView = dialog.findViewById(R.id.txt_message)
+        val llErrorDialog: LinearLayout = dialog.findViewById(R.id.llErrorDialog)
         txtMessage.text = strMessage
+
+        if (UiExtension.isDarkModeEnabled()) {
+            llErrorDialog.background = context.drawable(
+                R.drawable.round_layout_otp_night
+            )
+            txtMessage.setTextColor(ContextCompat.getColor(context, R.color.white))
+        }else{
+            llErrorDialog.background = context.drawable(
+                R.drawable.round_layout_otp
+            )
+            txtMessage.setTextColor(ContextCompat.getColor(context, R.color.black))
+
+        }
         txtOk.setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
@@ -118,10 +135,24 @@ class DialogClass(private val context: Context) {
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         val btnOk: TextView = dialog.findViewById(R.id.txt_done)
         val txtSucessfulyMessage: TextView = dialog.findViewById(R.id.txt_sucessfuly_message)
+        val llSuccessDialog: LinearLayout = dialog.findViewById(R.id.llSuccessDialog)
         txtSucessfulyMessage.text = strMessage
         btnOk.setOnClickListener {
             dialog.dismiss()
             callbacks?.invoke()
+        }
+
+        if (UiExtension.isDarkModeEnabled()) {
+            llSuccessDialog.background = context.drawable(
+                R.drawable.round_layout_otp_night
+            )
+            txtSucessfulyMessage.setTextColor(ContextCompat.getColor(context, R.color.white))
+        }else{
+            llSuccessDialog.background = context.drawable(
+                R.drawable.round_layout_otp
+            )
+            txtSucessfulyMessage.setTextColor(ContextCompat.getColor(context, R.color.black))
+
         }
         dialog.show()
     }

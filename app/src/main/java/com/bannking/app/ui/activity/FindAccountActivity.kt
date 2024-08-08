@@ -36,7 +36,7 @@ class FindAccountActivity :
                 if (apiResponse != null) {
                     if (apiResponse.code in 199..299) {
                         val model = gson.fromJson(apiResponse.apiResponse, OtpModel::class.java)
-                        if (model.status.equals(Constants.STATUSSUCCESS)) {
+                        if (model.status == 200) {
 
 //                            Toast.makeText(
 //                                this@FindAccountActivity,
@@ -47,9 +47,9 @@ class FindAccountActivity :
                                 this@FindAccountActivity,
                                 ForgetProfileVerifyOtpActivity::class.java
                             )
-                            intent.putExtra("email", model.email.toString())
-                            intent.putExtra("otp", model.otp.toString())
-                            intent.putExtra("user_id", model.user_id.toString())
+                            intent.putExtra("email", model.data!!.email.toString())
+                            intent.putExtra("otp", model.data!!.otp.toString())
+                            intent.putExtra("user_id", model.data!!.id.toString())
                             startActivity(intent)
                         } else {
                             dialogClass.showError(model.message.toString())
@@ -79,7 +79,7 @@ class FindAccountActivity :
             btnNext.setOnClickListener {
                 if (!edtFindAccountEmail.text.isNullOrEmpty()) {
                     if (utils.isValidEmailId(edtFindAccountEmail.text.toString().trim())) {
-                        viewModel.setDataInOtpList(
+                        viewModel.setDataInOtpListForget(
                             edtFindAccountEmail.text.toString(),
                             Constants.SECURITY_2,""
                         )

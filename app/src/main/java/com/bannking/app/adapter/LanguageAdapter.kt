@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bannking.app.R
+import com.bannking.app.UiExtension
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.model.retrofitResponseModel.languageModel.Data
 import com.bannking.app.utils.CheckBoxListener
@@ -51,6 +53,13 @@ class LanguageAdapter : RecyclerView.Adapter<LanguageAdapter.ViewHolder> {
     override fun onBindViewHolder(holder: ViewHolder, pos: Int) {
         val position = holder.adapterPosition
 
+        if (UiExtension.isDarkModeEnabled()) {
+            holder.txtName.setTextColor(ContextCompat.getColor(context, R.color.white))
+        } else {
+            holder.txtName.setTextColor(ContextCompat.getColor(context, R.color.black))
+
+        }
+
         holder.txtName.text = arrayList[position].name
 
 
@@ -81,7 +90,7 @@ class LanguageAdapter : RecyclerView.Adapter<LanguageAdapter.ViewHolder> {
         }
         Glide.with(context)
             .asBitmap()
-            .load(arrayList[position].img)
+            .load(Constants.IMG_BASE_URL + arrayList[position].img)
             .placeholder(R.drawable.glide_dot) //<== will simply not work:
             .error(R.drawable.glide_warning) // <== is also useless
             .into(object : SimpleTarget<Bitmap?>() {

@@ -57,7 +57,7 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_marginEnd="10dp"
-            android:src="@drawable/ic_avatar"
+            android:src="@drawable/sample_user"
             app:civ_border_color="@color/white"
             app:civ_border_width="2dp" />
 
@@ -94,6 +94,7 @@
     </LinearLayout>
 
     <ScrollView
+        android:id="@+id/pfScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="20dp"
@@ -117,7 +118,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
-                    android:id="@+id/ll_language"
+                    android:id="@+id/LLAccountInfo"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_gravity="center"
@@ -130,7 +131,7 @@
                         android:layout_weight="0.2"
                         android:padding="10dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_earth" />
+                        android:src="@drawable/profile_info" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -138,7 +139,7 @@
                         android:layout_weight="0.6"
                         android:fontFamily="@font/source_sans_regular"
                         android:gravity="center_vertical"
-                        android:text="@string/str_languages"
+                        android:text="@string/account_info"
                         android:textColor="@color/clr_text_blu"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -204,6 +205,239 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="-2dp"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="6dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:id="@+id/ll_currency"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <ImageView
+                        android:id="@+id/ivCurrency"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.2"
+                        android:padding="10dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/change_currency" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.6"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:gravity="center_vertical"
+                        android:text="@string/str_currency"
+                        android:textColor="@color/clr_text_blu"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.2"
+                        android:padding="10dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_next" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="-2dp"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="6dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:id="@+id/llBank"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <ImageView
+                        android:id="@+id/ivBank"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.2"
+                        android:padding="10dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/bank" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.6"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:gravity="center_vertical"
+                        android:text="@string/link_bank"
+                        android:textColor="@color/clr_text_blu"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.2"
+                        android:padding="10dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_next" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="6dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:id="@+id/ll_language"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <ImageView
+                        android:id="@+id/ivLanguage"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.2"
+                        android:padding="10dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/language" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.6"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:gravity="center_vertical"
+                        android:text="@string/str_languages"
+                        android:textColor="@color/clr_text_blu"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.2"
+                        android:padding="10dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_next" />
+
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="6dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:id="@+id/llDayNight"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.2"
+                        android:padding="10dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/day_and_night" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:gravity="center_vertical"
+                        android:text="@string/day_night_mode"
+                        android:textColor="@color/clr_text_blu"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <Switch
+                        android:id="@+id/switchDayNight"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.3"
+                        android:checked="true"
+                        android:minHeight="0dp"
+                        android:paddingEnd="10dp"
+                        android:thumb="@drawable/switch_custom_thumb"
+                        android:track="@drawable/switch_custom_track"
+                        tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="6dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:id="@+id/llRefer"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.2"
+                        android:padding="10dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/refer" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:gravity="center_vertical"
+                        android:text="@string/refer_a_friend"
+                        android:textColor="@color/clr_text_blu"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
                 android:id="@+id/card_remove_ads"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -244,6 +478,7 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/cv_rate_up"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="-2dp"
@@ -252,7 +487,6 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
-                    android:id="@+id/ll_currency"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_gravity="center"
@@ -260,12 +494,13 @@
                     android:weightSum="1">
 
                     <ImageView
+                        android:id="@+id/ivRateApp"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.2"
                         android:padding="10dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_currency" />
+                        android:src="@drawable/ic_star" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -273,7 +508,46 @@
                         android:layout_weight="0.6"
                         android:fontFamily="@font/source_sans_regular"
                         android:gravity="center_vertical"
-                        android:text="@string/str_select_your_currency"
+                        android:text="@string/str_rate_app"
+                        android:textColor="@color/clr_text_blu"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="-2dp"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="6dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:id="@+id/ll_privacy_policy"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <ImageView
+                        android:id="@+id/ivHelp"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.2"
+                        android:padding="10dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/help_and_privacy" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.6"
+                        android:fontFamily="@font/source_sans_regular"
+                        android:gravity="center_vertical"
+                        android:text="@string/help_privacy"
                         android:textColor="@color/clr_text_blu"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -289,6 +563,7 @@
                 android:layout_marginBottom="-2dp"
                 app:cardCornerRadius="5dp"
                 app:cardElevation="6dp"
+                android:visibility="gone"
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
@@ -330,48 +605,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="-2dp"
                 app:cardCornerRadius="5dp"
-                app:cardElevation="6dp"
-                app:cardUseCompatPadding="true">
-
-                <LinearLayout
-                    android:id="@+id/ll_privacy_policy"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
-
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.8"
-                        android:fontFamily="@font/source_sans_regular"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="20dp"
-                        android:text="@string/str_privacy_policy"
-                        android:textColor="@color/clr_text_blu"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <ImageView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.2"
-                        android:padding="10dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/ic_next" />
-
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="-2dp"
-                app:cardCornerRadius="5dp"
+                android:visibility="gone"
                 app:cardElevation="6dp"
                 app:cardUseCompatPadding="true">
 
@@ -428,6 +662,7 @@
                 android:layout_marginBottom="-2dp"
                 app:cardCornerRadius="5dp"
                 app:cardElevation="6dp"
+                android:visibility="gone"
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
@@ -463,45 +698,7 @@
 
             </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cv_rate_up"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="-2dp"
-                app:cardCornerRadius="5dp"
-                app:cardElevation="6dp"
-                app:cardUseCompatPadding="true">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
-
-                    <ImageView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.2"
-                        android:padding="10dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/ic_star" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.6"
-                        android:fontFamily="@font/source_sans_regular"
-                        android:gravity="center_vertical"
-                        android:text="@string/str_rate_app"
-                        android:textColor="@color/clr_text_blu"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_upgrade"
@@ -509,6 +706,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="-2dp"
                 app:cardCornerRadius="5dp"
+                android:visibility="gone"
                 app:cardElevation="6dp"
                 app:cardUseCompatPadding="true">
 
@@ -603,6 +801,7 @@
                 android:layout_marginBottom="-2dp"
                 app:cardCornerRadius="5dp"
                 app:cardElevation="6dp"
+                android:visibility="gone"
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout

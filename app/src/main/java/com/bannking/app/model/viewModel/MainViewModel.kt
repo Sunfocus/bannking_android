@@ -1,6 +1,7 @@
 package com.bannking.app.model.viewModel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.bannking.app.UiExtension.FCM_TOKEN
 import com.bannking.app.core.BaseActivity
@@ -15,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONException
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,9 +28,48 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
     var deleteBankAccount: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
     var filterTabDataList: MutableLiveData<ArrayList<Data>> = MutableLiveData(null)
 //    var fcmToken : MutableLiveData<String> = MutableLiveData("")
+    var getProfileData: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
 
 
-    fun setDataInAccountList() {
+    fun getUserProfileData(userToken: String?) {
+        App.FCM_TOKEN.let {
+            progressObservable.value = true
+            val apiBody = JsonObject()
+            try {
+                apiBody.addProperty("security", Constants.SECURITY_0)
+                apiBody.addProperty("id", BaseActivity.userModel?.id)
+                apiBody.addProperty("token", it)
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+            val call = RetrofitClient.instance!!.myApi.getProfile(userToken!!)
+            call.enqueue(object : Callback<JsonObject> {
+                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                    progressObservable.value = false
+                    if (response.isSuccessful) {
+                        if (response.code() in 199..299) {
+                            getProfileData.value =
+                                CommonResponseModel(response.body(), response.code())
+                        } else if (response.code() in 400..500) {
+                            assert(response.errorBody() != null)
+                            val errorBody = response.errorBody().toString()
+                            val jsonObject: JsonObject =
+                                JsonParser.parseString(errorBody).asJsonObject
+                            getProfileData.value = CommonResponseModel(jsonObject, response.code())
+                        }
+                    } else {
+                        getProfileData.value = CommonResponseModel(null, 500)
+                    }
+                }
+
+                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                    progressObservable.value = false
+                    getProfileData.value = CommonResponseModel(null, 500)
+                }
+            })
+        }
+    }
+    fun setDataInAccountList(userToken: String) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
             val apiBody = JsonObject()
@@ -39,8 +80,9 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance?.myApi?.accountList(apiBody.toString())
+            val call = RetrofitClient.instance?.myApi?.accountList(userToken)
 
+            Log.d("UserToken",userToken)
             call?.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false
@@ -66,7 +108,12 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
         }
     }
 
-    fun setDataInDeleteBankAccount(strAccountId: String, headerTitleID: String, type: String) {
+    fun setDataInDeleteBankAccount(
+        strAccountId: String,
+        headerTitleID: String,
+        type: String,
+        userToken: String?
+    ) {
         progressObservable.value = true
         App.FCM_TOKEN.let {
             val apiBody = JsonObject()
@@ -74,13 +121,13 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
                 apiBody.addProperty("security", Constants.SECURITY_0)
                 apiBody.addProperty("id", BaseActivity.userModel!!.id)
                 apiBody.addProperty("token", it)
-                apiBody.addProperty("account_id", strAccountId)
+                apiBody.addProperty("accountId", strAccountId)
                 apiBody.addProperty("header_title_id", headerTitleID)
                 apiBody.addProperty("type", type)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance?.myApi?.deleteBankAccount(apiBody.toString())
+            val call = RetrofitClient.instance?.myApi?.deleteBankAccount(strAccountId,type,userToken!!)
 
             call?.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -108,7 +155,7 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
         }
     }
 
-    fun setDataInHeaderTitleList() {
+    fun setDataInHeaderTitleList(userToken: String?) {
         progressObservable.value = true
         val apiBody = JsonObject()
 
@@ -121,7 +168,7 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
                         apiBody.addProperty("token", it)
 
                         val call =
-                            RetrofitClient.instance?.myApi?.headerTitleList(apiBody.toString())
+                            RetrofitClient.instance?.myApi?.headerTitleList(userToken!!)
 
                         call?.enqueue(object : Callback<JsonObject> {
                             override fun onResponse(

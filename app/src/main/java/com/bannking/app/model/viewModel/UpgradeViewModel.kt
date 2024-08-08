@@ -78,7 +78,8 @@ class UpgradeViewModel(val App: Application) : BaseViewModel(App) {
         purchaseToken: String,
         productId: String,
         purchaseDate: Long,
-        phoneStat: String
+        orderId: String,
+        userToken: String?
     ) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
@@ -88,14 +89,14 @@ class UpgradeViewModel(val App: Application) : BaseViewModel(App) {
                 apiBody.addProperty("id", BaseActivity.userModel!!.id)
                 apiBody.addProperty("token", it)
                 apiBody.addProperty("purchase_token", purchaseToken)
-                apiBody.addProperty("product_id", productId)
+                apiBody.addProperty("purchase_type", productId)
                 apiBody.addProperty("purchase_date", purchaseDate)
-                apiBody.addProperty("phone_stat", phoneStat)
+                apiBody.addProperty("order_id", orderId)
             } catch (e: Exception) {
                 Log.e("TAG_EXCEPTION", "setDataInAccountTitleList: " + e.message.toString())
             }
 
-            val call = RetrofitClient.instance!!.myApi.purchaseSubscriptionNew(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.purchaseSubscriptionNew(apiBody.toString(),userToken!!)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false

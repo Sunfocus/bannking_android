@@ -40,8 +40,8 @@
     <string name="str_profile">Profiel</string>
     <string name="str_gmail">ibeorstore@gmail.com</string>
     <string name="str_name">Mike</string>
-    <string name="str_languages">Talen</string>
-    <string name="str_sound">Geluid</string>
+    <string name="str_languages">Taal wijzigen</string>
+    <string name="str_sound">Stemlezer</string>
     <string name="str_remove_all_ads">Verwijder alle advertenties</string>
     <string name="str_select_your_currency">Selecteer uw valuta</string>
     <string name="str_change_password">Verander wachtwoord</string>
@@ -271,6 +271,9 @@
     <string name="let_s_get_started">Laten we beginnen</string>
     <string name="_3_days_free_trial">3 dagen gratis proefperiode</string>
     <string name="log_in">Log in</string>
+    <string name="account_info">Account informatie</string>
+    <string name="link_bank">Linkbank</string>
+    <string name="help_privacy"><![CDATA[Hulp & Privacy]]></string>
 
 </resources>
 

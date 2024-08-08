@@ -21,7 +21,7 @@ class NotificationViewModel(val App: Application) : BaseViewModel(App) {
     var progressObservable: MutableLiveData<Boolean> = MutableLiveData(null)
 
 
-    fun setDataInNotificationList() {
+    fun setDataInNotificationList(userToken: String?) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
             val apiBody = JsonObject()
@@ -33,7 +33,7 @@ class NotificationViewModel(val App: Application) : BaseViewModel(App) {
                 Log.e("TAG_EXCEPTION", "setDataInAccountTitleList: " + e.message.toString())
             }
 
-            val call = RetrofitClient.instance!!.myApi.notification(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.notification(userToken!!)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false

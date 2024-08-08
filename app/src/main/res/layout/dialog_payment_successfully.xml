@@ -2,11 +2,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:id="@+id/rlSuccess"
     android:background="#00555555"
     android:orientation="vertical">
 
 
     <LinearLayout
+        android:id="@+id/llSuccess"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="35dp"
@@ -74,6 +76,8 @@
                     android:weightSum="1">
 
                     <TextView
+                        android:id="@+id/tvTranNo"
+                        android:textColor="@color/grey"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.4"
@@ -112,6 +116,8 @@
                     android:weightSum="1">
 
                     <TextView
+                        android:id="@+id/tvTranFrom"
+                        android:textColor="@color/grey"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.4"
@@ -150,6 +156,8 @@
                     android:weightSum="1">
 
                     <TextView
+                        android:id="@+id/tvTranTo"
+                        android:textColor="@color/grey"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.4"
@@ -188,6 +196,8 @@
                     android:weightSum="1">
 
                     <TextView
+                        android:id="@+id/tvTranOn"
+                        android:textColor="@color/grey"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.4"
@@ -226,6 +236,8 @@
                     android:weightSum="1">
 
                     <TextView
+                        android:id="@+id/tvTranStatus"
+                        android:textColor="@color/grey"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.4"

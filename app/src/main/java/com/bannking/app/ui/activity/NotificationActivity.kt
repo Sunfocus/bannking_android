@@ -5,15 +5,17 @@ import com.bannking.app.adapter.NotificationAdapter
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.databinding.ActivityNotificationBinding
 import com.bannking.app.model.retrofitResponseModel.notificationModel.Data
+import com.bannking.app.model.retrofitResponseModel.notificationModel.Notification
 import com.bannking.app.model.retrofitResponseModel.notificationModel.NotificationModel
 import com.bannking.app.model.viewModel.NotificationViewModel
+import com.bannking.app.utils.SessionManager
 
 class NotificationActivity :
     BaseActivity<NotificationViewModel, ActivityNotificationBinding>(NotificationViewModel::class.java) {
 
     lateinit var viewModel: NotificationViewModel
     lateinit var adapter: NotificationAdapter
-    private lateinit var listData: ArrayList<Data>
+    private lateinit var listData: ArrayList<Notification>
 
     override fun getBinding(): ActivityNotificationBinding {
         return ActivityNotificationBinding.inflate(layoutInflater)
@@ -21,7 +23,8 @@ class NotificationActivity :
 
     override fun initViewModel(viewModel: NotificationViewModel) {
         this.viewModel = viewModel
-        viewModel.setDataInNotificationList()
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+        viewModel.setDataInNotificationList(userToken)
     }
 
     override fun initialize() {
@@ -47,13 +50,15 @@ class NotificationActivity :
                                 accountList.apiResponse,
                                 NotificationModel::class.java
                             )
-                            if (mainModel.data.size != 0) {
-                                listData = mainModel.data
-                                adapter.updateList(mainModel.data)
-                            } else
+                            if (mainModel.data.notifications != null){
+                                if (mainModel.data.notifications!!.size != 0) {
+                                    listData = mainModel.data.notifications!!
+                                    adapter.updateList(mainModel.data.notifications!!)
+                                } else
+                                    dialogClass.showError(resources.getString(R.string.str_no_data_found))
 
-                                dialogClass.showError(resources.getString(R.string.str_no_data_found))
-//                                Toast.makeText(this@NotificationActivity, "No data found", Toast.LENGTH_SHORT).show()
+                            }else dialogClass.showError(resources.getString(R.string.str_no_data_found))
+
                         }
                     } else if (accountList.code in 400..500) {
                         dialogClass.showServerErrorDialog()

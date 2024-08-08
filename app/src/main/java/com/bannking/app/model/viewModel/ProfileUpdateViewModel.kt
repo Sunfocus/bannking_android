@@ -26,13 +26,14 @@ class ProfileUpdateViewModel(val App: Application) : BaseViewModel(App) {
     var profileUpdateData: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
     var progressObservable: MutableLiveData<Boolean> = MutableLiveData(null)
     var profileData: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
-
-
+    var deleteAccountData: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
     fun setDataUpdateDataList(
         strUserName: String,
         strEmail: String,
         strProfileImage: String,
-        firstName: String
+        firstName: String,
+        userToken: String?,
+        checked: Boolean
     ) {
         App.FCM_TOKEN.let {
 
@@ -56,6 +57,8 @@ class ProfileUpdateViewModel(val App: Application) : BaseViewModel(App) {
                 strUserName.toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val mdSecurity: RequestBody =
                 Constants.SECURITY_0.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            val switchFaceVerification: RequestBody =
+                checked.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
 
             progressObservable.value = true
             val call = RetrofitClient.instance!!.myApi.updateProfile(
@@ -63,8 +66,8 @@ class ProfileUpdateViewModel(val App: Application) : BaseViewModel(App) {
                 mdUserName,
                 mdEmail,
                 mdID,
-                mdToken,mdName,
-                imgFile,
+                mdToken,mdName,switchFaceVerification,
+                imgFile,userToken!!
             )
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -94,7 +97,44 @@ class ProfileUpdateViewModel(val App: Application) : BaseViewModel(App) {
         }
     }
 
-    fun setDataProfileDataList() {
+    fun setDataDeleteAccountDataList(userToken: String?) {
+        App.FCM_TOKEN.let {
+            progressObservable.value = true
+            val apiBody = JsonObject()
+            try {
+                apiBody.addProperty("security", Constants.SECURITY_0)
+                apiBody.addProperty("id", BaseActivity.userModel!!.id)
+                apiBody.addProperty("token", it)
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+            val call = RetrofitClient.instance!!.myApi.deleteAccount(userToken!!)
+            call.enqueue(object : Callback<JsonObject> {
+                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                    progressObservable.value = false
+                    if (response.isSuccessful) {
+                        if (response.code() in 199..299) {
+                            deleteAccountData.value =
+                                CommonResponseModel(response.body(), response.code())
+                        } else if (response.code() in 400..500) {
+                            assert(response.errorBody() != null)
+                            val errorBody = response.errorBody().toString()
+                            val jsonObject: JsonObject =
+                                JsonParser.parseString(errorBody).asJsonObject
+                            deleteAccountData.value =
+                                CommonResponseModel(jsonObject, response.code())
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                    progressObservable.value = false
+                    deleteAccountData.value = CommonResponseModel(null, 500)
+                }
+            })
+        }
+    }
+    fun setDataProfileDataList(userToken: String?) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
             val apiBody = JsonObject()
@@ -105,7 +145,7 @@ class ProfileUpdateViewModel(val App: Application) : BaseViewModel(App) {
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance!!.myApi.getProfile(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.getProfile(userToken!!)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false

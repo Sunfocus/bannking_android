@@ -42,7 +42,7 @@ class ResetPasswordActivity :
                 if (apiResponse != null) {
                     if (apiResponse.code in 199..299) {
                         val model = gson.fromJson(apiResponse.apiResponse, OtpModel::class.java)
-                        if (model.status.equals(Constants.STATUSSUCCESS)) {
+                        if (model.status == 200) {
                             dialogClass.showSuccessfullyDialog(model.message.toString()) {
                                 startActivity(Intent(this@ResetPasswordActivity, SignInActivity::class.java))
                                 finishAffinity()

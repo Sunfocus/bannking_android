@@ -83,6 +83,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val title = mJsonObject.getString("title")
             val body = mJsonObject.getString("body")
             sendNotification(body, title)
+        }else {
+            val data = remoteMessage.notification
+            if (data != null) {
+                sendNotification(data.body.toString(), data.title.toString())
+            }
         }
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.

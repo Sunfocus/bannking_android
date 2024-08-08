@@ -94,6 +94,7 @@
 
 
     <RelativeLayout
+        android:id="@+id/rlPay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/ll_amount"
@@ -114,11 +115,13 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tvTF"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/source_sans_regular"
                     android:text="@string/str_transfer_from"
+                    android:textColor="@color/grey"
                     android:textAlignment="viewStart"
                     android:textDirection="anyRtl" />
 
@@ -157,6 +160,7 @@
 
 
                 <TextView
+                    android:id="@+id/tvTT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -185,6 +189,7 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tvTN"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"

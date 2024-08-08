@@ -8,11 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bannking.app.databinding.ItemBudgetPlannerBinding
 import com.bannking.app.model.retrofitResponseModel.budgetPlannerModel.Data
 import com.bannking.app.utils.OnClickListener
+import com.bannking.app.utils.OnClickListenerBudget
 
 class BudgetPlannerAdapter(
     private var context: Context?,
     private var list: List<Data>?,
-    private var onClickListener: OnClickListener?
+    private var onClickListener: OnClickListenerBudget?
 ) : RecyclerView.Adapter<BudgetPlannerAdapter.ViewHolder>() {
 
     var mBinding: ItemBudgetPlannerBinding? = null
@@ -40,7 +41,7 @@ class BudgetPlannerAdapter(
 
         mBinding!!.imgBudgetColor.setBackgroundColor(Color.parseColor(list!![position].color))
         mBinding!!.txtTitle.text = list!![position].name
-        holder.itemView.setOnClickListener { onClickListener!!.clickLister(list!![position]) }
+//        holder.itemView.setOnClickListener { onClickListener!!.clickLister(list!![position]) }
     }
 
     override fun getItemCount(): Int {

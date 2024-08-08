@@ -1,9 +1,13 @@
 package com.bannking.app.utils
 
 import com.bannking.app.model.retrofitResponseModel.budgetPlannerModel.Data
+import com.bannking.app.model.retrofitResponseModel.budgetPlannerModel.SubBudgetPlanner
 
 interface OnClickListener {
-    fun clickLister(data: Data)
+    fun clickLister(data: SubBudgetPlanner)
+}
+interface OnClickListenerBudget {
+    fun clickListerBudget(data: Data,subData: SubBudgetPlanner,clickedCreate:String)
 }
 
 interface CheckBoxListener {

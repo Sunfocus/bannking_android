@@ -3,8 +3,13 @@ package com.bannking.app.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bannking.app.R
+import com.bannking.app.UiExtension
+import com.bannking.app.UiExtension.drawable
 import com.bannking.app.databinding.ItemSpendingBinding
 import com.bannking.app.model.SpendingModel
 import com.bannking.app.utils.SpendAdapterClick
@@ -29,6 +34,17 @@ class SpendingAdapter : RecyclerView.Adapter<SpendingAdapter.ViewHolder> {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
+
+        if (UiExtension.isDarkModeEnabled()) {
+            mBinding!!.cardClick.background = context!!.drawable(
+                R.drawable.drawable_unselected_night
+            )
+
+        } else {
+            mBinding!!.cardClick.setBackgroundColor(ContextCompat.getColor(context!!, R.color.white))
+
+        }
+
         mBinding!!.imgDrawable.setImageResource(list!![position].image)
         mBinding!!.txtTitle.text = list!![position].title
         holder.itemView.setOnClickListener {

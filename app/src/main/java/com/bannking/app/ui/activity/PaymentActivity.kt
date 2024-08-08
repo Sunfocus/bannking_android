@@ -13,17 +13,22 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.bannking.app.R
+import com.bannking.app.UiExtension
 import com.bannking.app.UiExtension.getDateMMMDDYYYY
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.databinding.ActivityPaymentBinding
 import com.bannking.app.model.CommonResponseApi
+import com.bannking.app.model.PayResponseApi
 import com.bannking.app.model.retrofitResponseModel.accountListModel.AccountListModel
 import com.bannking.app.model.retrofitResponseModel.accountListModel.Data
 import com.bannking.app.model.viewModel.PayAndTransferViewModel
-import com.bannking.app.utils.Constants
+import com.bannking.app.utils.SessionManager
+import java.text.SimpleDateFormat
 import java.util.*
 
 class PaymentActivity :
@@ -57,11 +62,59 @@ class PaymentActivity :
 
     override fun initViewModel(viewModel: PayAndTransferViewModel) {
         this.viewModel = viewModel
-        viewModel.setDataInAccountList()
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+        if (userToken != null) {
+            viewModel.setDataInAccountList(userToken)
+        }
     }
+    private fun setUIColor() {
+        if (UiExtension.isDarkModeEnabled()) {
+            binding!!.rlPay.backgroundTintList =
+                ContextCompat.getColorStateList(
+                    this,
+                    R.color.black
+                )
+            binding!!.tvTF.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.txtPaymentDate.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.txtTransferFrom.setTextColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.white
+                )
+            )
+            binding!!.tvTT.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvTN.setTextColor(ContextCompat.getColor(this, R.color.white))
+        } else {
+            binding!!.rlPay.backgroundTintList =
+                ContextCompat.getColorStateList(
+                    this,
+                    R.color.white
+                )
+            binding!!.tvTF.setTextColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.grey
+                )
+            )
+            binding!!.txtTransferFrom.setTextColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.black
+                )
+            )
+            binding!!.tvTT.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding!!.txtPaymentDate.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.tvTN.setTextColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.grey
+                )
+            )
 
+        }
+    }
     override fun initialize() {
-
+        setUIColor()
         if (intent != null) {
             accountFromId = intent.getStringExtra("Id").toString()
             strTranSectionName = intent.getStringExtra("TranSectionName").toString()
@@ -107,7 +160,7 @@ class PaymentActivity :
                                 gson.fromJson(accountList.apiResponse, AccountListModel::class.java)
                             accountDataList = mainModel.data
                             for (data in mainModel.data) {
-                                spinnerList.add("${data.account.toString()} ...${data.accountCode.toString()} ")
+                                spinnerList.add("${data.account.toString()} ...${data.account_code.toString()} ")
 //                                spinnerList.add(data.account.toString())
                             }
                             binding!!.spinTransferTo.apply {
@@ -146,11 +199,11 @@ class PaymentActivity :
                         if (payDataList.apiResponse != null) {
                             val model = gson.fromJson(
                                 payDataList.apiResponse,
-                                CommonResponseApi::class.java
+                                PayResponseApi::class.java
                             )
-                            if (model.status.equals(Constants.STATUSSUCCESS)) {
-//                                Toast.makeText(this@PaymentActivity, "" + model.message, Toast.LENGTH_SHORT).show()
-                                showPaymentSuccessfully(model.amount!!, model)
+                            if (model.status== 200) {
+                                showPaymentSuccessfully(model.data!!.amount!!, model)
+                                Toast.makeText(this@PaymentActivity, "" + model.message, Toast.LENGTH_SHORT).show()
                             } else
                                 model.message?.let { dialogClass.showError(it) }
 
@@ -190,12 +243,21 @@ class PaymentActivity :
                     if (txtPayAmount.valueString.toDouble() > 0.0) {
                         if (spinner1AccountNamr.isNotEmpty() && accountToName.isNotEmpty()) {
                             if (accountFromId != accountToId) {
+                                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+
+
+                                val format1 = SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH)
+                                val format2 = SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH)
+                                // Parse the input date string
+                                val date = format1.parse(txtPaymentDate.text.toString())
+                                // Format the parsed date to the desired format
+                                val formattedDate = date?.let { format2.format(it) }
                                 viewModel.setDataInPayDataList(
                                     accountFromId,
                                     accountToId,
                                     "",
                                     txtPayAmount.valueString,
-                                    txtPaymentDate.text.toString()
+                                    formattedDate!!,userToken
                                 )
                             } else
                                 dialogClass.showError(resources.getString(R.string.str_sender_and_depositor_account_cannot_be_same))
@@ -226,8 +288,9 @@ class PaymentActivity :
 
 
             }
+            val currentDate = utils.getCurrentDateForTransfer()
 
-            txtPaymentDate.text = utils.getCurrentDateForTransfer()
+            txtPaymentDate.text = currentDate
 
             llPayDate.setOnClickListener {
                 datePickerDialog = DatePickerDialog(
@@ -237,8 +300,9 @@ class PaymentActivity :
                             if (dayOfMonth < 10) "0$dayOfMonth" else dayOfMonth.toString()
                         val strNewMonthOfYear =
                             if ((monthOfYear + 1) < 10) "0" + (monthOfYear + 1).toString() else (monthOfYear + 1).toString()
-                        txtPaymentDate.text =
-                            "$year-$strNewMonthOfYear-$strNewDayOfMonth".getDateMMMDDYYYY()
+
+
+                        txtPaymentDate.text =  "$year-$strNewMonthOfYear-$strNewDayOfMonth".getDateMMMDDYYYY()
                     }, mYear, mMonth, mDay
                 )
 //                datePickerDialog!!.datePicker.minDate = System.currentTimeMillis() - 1000;
@@ -257,7 +321,7 @@ class PaymentActivity :
                     accountFromId = accountDataList[position].id.toString()
 
                     strTranSectionName = accountDataList[position].account.toString()
-                    strTranSectionNumber = accountDataList[position].accountCode.toString()
+                    strTranSectionNumber = accountDataList[position].account_code.toString()
                 }
 
                 override fun onNothingSelected(adapter: AdapterView<*>?) {}
@@ -271,7 +335,7 @@ class PaymentActivity :
                 ) {
                     accountToName = accountDataList[position].account.toString()
                     accountToId = accountDataList[position].id.toString()
-                    accountToCode = accountDataList[position].accountCode.toString()
+                    accountToCode = accountDataList[position].account_code.toString()
 //                    Toast.makeText(this@PaymentActivity, "" + accountToName, Toast.LENGTH_SHORT).show()
                 }
 
@@ -281,7 +345,7 @@ class PaymentActivity :
         }
     }
 
-    private fun showPaymentSuccessfully(amount: String = "", model: CommonResponseApi) {
+    private fun showPaymentSuccessfully(amount: String = "", model: PayResponseApi) {
         val dialog = Dialog(this@PaymentActivity)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
@@ -301,13 +365,15 @@ class PaymentActivity :
             dialog.findViewById(R.id.txt_transfer_status)
 
         txtAmount.text = binding!!.txtPayAmount.formattedString.toString()
-        txtTransactionNumber.text = model.transactionId.toString()
+        txtTransactionNumber.text = model.data!!.transactionId.toString()
 //        txtTransferFrom.text = strTranSectionName
 //        txtTransferTo.text = accountToName
         txtTransferFrom.text = "$strTranSectionName...$strTranSectionNumber"
         txtTransferTo.text = "$accountToName...$accountToCode"
         txtTransferOn.text = binding!!.txtPaymentDate.text.toString()
-        txtTransferStatus.text = model.transactionStatus.toString()
+        if (model.data!!.transactionStatus!=null){
+            txtTransferStatus.text = model.data!!.transactionStatus.toString()
+        }
 
 
         btnReTransfer.setOnClickListener { dialog.dismiss() }

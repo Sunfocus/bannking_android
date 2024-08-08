@@ -22,7 +22,7 @@ class PayAndTransferViewModel(val App: Application) : BaseViewModel(App) {
     var progressObservable: MutableLiveData<Boolean> = MutableLiveData(null)
 
 
-    fun setDataInAccountList() {
+    fun setDataInAccountList(userToken: String) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
             val apiBody = JsonObject()
@@ -33,7 +33,7 @@ class PayAndTransferViewModel(val App: Application) : BaseViewModel(App) {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance?.myApi?.accountList(apiBody.toString())
+            val call = RetrofitClient.instance?.myApi?.accountList(userToken)
 
             call?.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -65,7 +65,8 @@ class PayAndTransferViewModel(val App: Application) : BaseViewModel(App) {
         accountToId: String,
         transactionTitle: String,
         amount: String,
-        transferDate: String
+        transferDate: String,
+        userToken: String?
     ) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
@@ -79,10 +80,11 @@ class PayAndTransferViewModel(val App: Application) : BaseViewModel(App) {
                 apiBody.addProperty("transaction_title", transactionTitle)
                 apiBody.addProperty("amount", amount)
                 apiBody.addProperty("transfer_date", transferDate)
+                apiBody.addProperty("type", "3")
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance?.myApi?.scheduleTransfer(apiBody.toString())
+            val call = RetrofitClient.instance?.myApi?.scheduleTransfer(apiBody.toString(),userToken!!)
 
             call?.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -116,7 +118,8 @@ class PayAndTransferViewModel(val App: Application) : BaseViewModel(App) {
         accountToId: String,
         transactionTitle: String,
         amount: String,
-        paymentDate: String
+        paymentDate: String,
+        userToken: String?
     ) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
@@ -129,11 +132,12 @@ class PayAndTransferViewModel(val App: Application) : BaseViewModel(App) {
                 apiBody.addProperty("account_to_id", accountToId)
                 apiBody.addProperty("transaction_title", transactionTitle)
                 apiBody.addProperty("amount", amount)
-                apiBody.addProperty("payment_date", paymentDate)
+                apiBody.addProperty("transfer_date", paymentDate)
+                apiBody.addProperty("type", "2")
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance?.myApi?.pay(apiBody.toString())
+            val call = RetrofitClient.instance?.myApi?.pay(apiBody.toString(),userToken!!)
 
             call?.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {

@@ -40,8 +40,8 @@
     <string name="str_profile">Профиль</string>
     <string name="str_gmail">ibeorstore@gmail.com</string>
     <string name="str_name">Майк</string>
-    <string name="str_languages">Языки</string>
-    <string name="str_sound">Звук</string>
+    <string name="str_languages">Изменение языка</string>
+    <string name="str_sound">Голосовой читатель</string>
     <string name="str_remove_all_ads">Удалить все объявления</string>
     <string name="str_select_your_currency">Выберите свою валюту</string>
     <string name="str_change_password">Изменить пароль</string>
@@ -269,6 +269,9 @@
     <string name="let_s_get_started">Давайте начнем</string>
     <string name="_3_days_free_trial">3 дня бесплатной пробной версии</string>
     <string name="log_in">Авторизоваться</string>
+    <string name="account_info">Информация об аккаунте</string>
+    <string name="link_bank">Ссылка Банк</string>
+    <string name="help_privacy">Помощь и конфиденциальность</string>
 
 </resources>
 

@@ -276,7 +276,7 @@ class TabTwoFragment :
             val intent = Intent(activity, ScheduleTransferActivity::class.java)
             intent.putExtra("Id", list.id.toString())
             intent.putExtra("TranSectionName", list.account.toString())
-            intent.putExtra("TranSectionNumber", list.accountCode.toString())
+            intent.putExtra("TranSectionNumber", list.account_code.toString())
             intent.putExtra("ComeFrom", "TranSectionDetailActivity")
             startActivity(intent)
             dialog.dismiss()
@@ -344,7 +344,7 @@ class TabTwoFragment :
                     viewModel.progressObservable.value = false
                     if (response.isSuccessful) {
                         if (response.code() in 199..299) {
-                            if (response.body()?.status.equals(Constants.STATUSSUCCESS)) {
+                            if (response.body()?.status == 200) {
                                 if (response.body()?.message.equals("Header title remove successfully..")) {
                                     dialogClass.showSuccessfullyDialog(response.body()?.message.toString()) {
                                         requireActivity().recreate()
@@ -381,7 +381,13 @@ class TabTwoFragment :
         builder.setPositiveButton(
             resources.getString(R.string.str_confirm)
         ) { _: DialogInterface?, _: Int ->
-            viewModel.setDataInDeleteBankAccount(list.id.toString(), tabTwoID, deleteType)
+            val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+            viewModel.setDataInDeleteBankAccount(
+                list.id.toString(),
+                tabTwoID,
+                deleteType,
+                userToken
+            )
         }
         builder.setNegativeButton(
             resources.getString(R.string.str_cancel)
@@ -604,51 +610,51 @@ class TabTwoFragment :
 
         if (savedSessionManagerVoice.getAnnouncementVoice() == "Male") {
             if(savedSessionManager.getLanguage() == "English") {
-                speakText("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.accountCode.toString()) + "*is*" + returnz)
+                speakText("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.account_code.toString()) + "*is*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Spanish") {
-                speakText("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.accountCode.toString()) + "*cuesta*" + returnz)
+                speakText("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.account_code.toString()) + "*cuesta*" + returnz)
             } else if (savedSessionManager.getLanguage() == "French") {
-                speakText("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.accountCode.toString()) + "*est de*" + returnz)
+                speakText("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.account_code.toString()) + "*est de*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Arabic") {
-                speakText("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.accountCode.toString()) + "*يكون*" + returnz)
+                speakText("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.account_code.toString()) + "*يكون*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Russia") {
-                speakText("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.accountCode.toString()) + "*является*" + returnz)
+                speakText("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.account_code.toString()) + "*является*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Portuguese") {
-                speakText("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.accountCode.toString()) + "*é*" + returnz)
+                speakText("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.account_code.toString()) + "*é*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Dutch") {
-                speakText("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.accountCode.toString()) + "*bedraagt*" + returnz)
+                speakText("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.account_code.toString()) + "*bedraagt*" + returnz)
             }
         } else if (savedSessionManagerVoice.getAnnouncementVoice() == "Female") {
             if(savedSessionManager.getLanguage() == "English") {
-                speakText("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.accountCode.toString()) + "*is*" + returnz)
+                speakText("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.account_code.toString()) + "*is*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Spanish") {
-                speakText("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.accountCode.toString()) + "*cuesta*" + returnz)
+                speakText("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.account_code.toString()) + "*cuesta*" + returnz)
             } else if (savedSessionManager.getLanguage() == "French") {
-                speakText("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.accountCode.toString()) + "*est de*" + returnz)
+                speakText("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.account_code.toString()) + "*est de*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Arabic") {
-                speakText("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.accountCode.toString()) + "*يكون*" + returnz)
+                speakText("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.account_code.toString()) + "*يكون*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Russia") {
-                speakText("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.accountCode.toString()) + "*является*" + returnz)
+                speakText("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.account_code.toString()) + "*является*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Portuguese") {
-                speakText("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.accountCode.toString()) + "*é*" + returnz)
+                speakText("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.account_code.toString()) + "*é*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Dutch") {
-                speakText("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.accountCode.toString()) + "*bedraagt*" + returnz)
+                speakText("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.account_code.toString()) + "*bedraagt*" + returnz)
             }
         } else if (savedSessionManagerVoice.getAnnouncementVoice() == "") {
             if(savedSessionManager.getLanguage() == "English") {
-                speakText("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.accountCode.toString()) + "*is*" + returnz)
+                speakText("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.account_code.toString()) + "*is*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Spanish") {
-                speakText("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.accountCode.toString()) + "*cuesta*" + returnz)
+                speakText("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.account_code.toString()) + "*cuesta*" + returnz)
             } else if (savedSessionManager.getLanguage() == "French") {
-                speakText("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.accountCode.toString()) + "*est de*" + returnz)
+                speakText("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.account_code.toString()) + "*est de*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Arabic") {
-                speakText("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.accountCode.toString()) + "*يكون*" + returnz)
+                speakText("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.account_code.toString()) + "*يكون*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Russia") {
-                speakText("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.accountCode.toString()) + "*является*" + returnz)
+                speakText("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.account_code.toString()) + "*является*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Portuguese") {
-                speakText("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.accountCode.toString()) + "*é*" + returnz)
+                speakText("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.account_code.toString()) + "*é*" + returnz)
             } else if (savedSessionManager.getLanguage() == "Dutch") {
-                speakText("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.accountCode.toString()) + "*bedraagt*" + returnz)
+                speakText("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.account_code.toString()) + "*bedraagt*" + returnz)
             }
         }
     }
@@ -671,36 +677,36 @@ class TabTwoFragment :
 
         if (type == "Male") {
             if(savedSessionManager.getLanguage() == "English") {
-                speakTextDialog("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.accountCode.toString()) + "*is*" + returnz,type)
+                speakTextDialog("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.account_code.toString()) + "*is*" + returnz,type)
             } else if (savedSessionManager.getLanguage() == "Spanish") {
-                speakTextDialog("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.accountCode.toString()) + "*cuesta*" + returnz,type)
+                speakTextDialog("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.account_code.toString()) + "*cuesta*" + returnz,type)
             } else if (savedSessionManager.getLanguage() == "French") {
-                speakTextDialog("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.accountCode.toString()) + "*est de*" + returnz,type)
+                speakTextDialog("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.account_code.toString()) + "*est de*" + returnz,type)
             } else if (savedSessionManager.getLanguage() == "Arabic") {
-                speakTextDialog("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.accountCode.toString()) + "*يكون*" + returnz,type)
+                speakTextDialog("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.account_code.toString()) + "*يكون*" + returnz,type)
             } else if (savedSessionManager.getLanguage() == "Russia") {
-                speakTextDialog("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.accountCode.toString()) + "*является*" + returnz,type)
+                speakTextDialog("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.account_code.toString()) + "*является*" + returnz,type)
             } else if (savedSessionManager.getLanguage() == "Portuguese") {
-                speakTextDialog("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.accountCode.toString()) + "*é*" + returnz,type)
+                speakTextDialog("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.account_code.toString()) + "*é*" + returnz,type)
             } else if (savedSessionManager.getLanguage() == "Dutch") {
-                speakTextDialog("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.accountCode.toString()) + "*bedraagt*" + returnz,type)
+                speakTextDialog("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.account_code.toString()) + "*bedraagt*" + returnz,type)
             }
         }
         else if (type == "Female") {
             if(savedSessionManager.getLanguage() == "English") {
-                speakTextDialog("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.accountCode.toString()) + "*is*" + returnz,type)
+                speakTextDialog("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.account_code.toString()) + "*is*" + returnz,type)
             } else if (savedSessionManager.getLanguage() == "Spanish") {
-                speakTextDialog("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.accountCode.toString()) + "*cuesta*" + returnz,type)
+                speakTextDialog("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.account_code.toString()) + "*cuesta*" + returnz,type)
             } else if (savedSessionManager.getLanguage() == "French") {
-                speakTextDialog("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.accountCode.toString()) + "*est de*" + returnz,type)
+                speakTextDialog("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.account_code.toString()) + "*est de*" + returnz,type)
             } else if (savedSessionManager.getLanguage() == "Arabic") {
-                speakTextDialog("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.accountCode.toString()) + "*يكون*" + returnz,type)
+                speakTextDialog("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.account_code.toString()) + "*يكون*" + returnz,type)
             } else if (savedSessionManager.getLanguage() == "Russia") {
-                speakTextDialog("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.accountCode.toString()) + "*является*" + returnz,type)
+                speakTextDialog("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.account_code.toString()) + "*является*" + returnz,type)
             } else if (savedSessionManager.getLanguage() == "Portuguese") {
-                speakTextDialog("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.accountCode.toString()) + "*é*" + returnz,type)
+                speakTextDialog("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.account_code.toString()) + "*é*" + returnz,type)
             } else if (savedSessionManager.getLanguage() == "Dutch") {
-                speakTextDialog("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.accountCode.toString()) + "*bedraagt*" + returnz,type)
+                speakTextDialog("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.account_code.toString()) + "*bedraagt*" + returnz,type)
             }
         }
     }

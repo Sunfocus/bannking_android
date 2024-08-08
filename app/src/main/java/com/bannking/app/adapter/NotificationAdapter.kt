@@ -2,28 +2,34 @@ package com.bannking.app.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bannking.app.R
 import com.bannking.app.databinding.ItemNotificationBinding
 import com.bannking.app.model.retrofitResponseModel.notificationModel.Data
+import com.bannking.app.model.retrofitResponseModel.notificationModel.Notification
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class NotificationAdapter : RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
     private var context: Context? = null
-    private var list: List<Data>? = null
+    private var list: List<Notification>? = null
     var mBinding: ItemNotificationBinding? = null
 
     constructor()
 
-    constructor(context: Context?, list: List<Data>?) {
+    constructor(context: Context?, list: List<Notification>?) {
         this.context = context
         this.list = list
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(list: ArrayList<Data>) {
+    fun updateList(list: ArrayList<Notification>) {
         this.list = list
         notifyDataSetChanged()
     }
@@ -38,6 +44,7 @@ class NotificationAdapter : RecyclerView.Adapter<NotificationAdapter.ViewHolder>
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         if (position % 3 == 0) {
@@ -73,9 +80,13 @@ class NotificationAdapter : RecyclerView.Adapter<NotificationAdapter.ViewHolder>
             holder.itemView.layoutParams = params
         }
 
-        mBinding!!.txtNotificationMessage.text = list!![position].message
+        mBinding!!.txtNotificationMessage.text = list!![position].details
         mBinding!!.txtNotificationTitle.text = list!![position].title
-        mBinding!!.txtNotificationDate.text = list!![position].datetime
+        val zonedDateTime = ZonedDateTime.parse(list!![position].createdAt)
+        val outputFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm a", Locale.ENGLISH)
+        // Format the parsed date-time to the desired format
+        val formattedDate = zonedDateTime.format(outputFormatter)
+        mBinding!!.txtNotificationDate.text = formattedDate
     }
 
     override fun getItemCount(): Int {

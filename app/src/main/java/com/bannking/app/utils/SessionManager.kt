@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.bannking.app.model.retrofitResponseModel.userModel.Data
 import com.google.gson.Gson
+import java.util.Date
 
 class SessionManager(context: Context, sharedName: String?) {
 
@@ -47,7 +48,13 @@ class SessionManager(context: Context, sharedName: String?) {
     fun getString(key: String?): String? {
         return sharedPref.getString(key, "")
     }
+    fun updateLastActiveTime() {
+        sharedPref.edit().putLong(KEY_LAST_ACTIVE_TIME, System.currentTimeMillis()).apply()
 
+    }
+    fun getLastActiveTime(): Long {
+        return sharedPref.getLong(KEY_LAST_ACTIVE_TIME, 0)
+    }
     fun setBoolean(key: String?, value: Boolean?) {
         mEditor.putBoolean(key, value!!)
         mEditor.commit()
@@ -62,6 +69,7 @@ class SessionManager(context: Context, sharedName: String?) {
         mEditor.putBoolean(isLogin, false)
         mEditor.clear()
         mEditor.commit()
+        mEditor.apply()
     }
 
 
@@ -118,7 +126,10 @@ class SessionManager(context: Context, sharedName: String?) {
         const val APP_PRIVACY_POLICY = "privacyPolicy"
 
         var isLogin = "isLogin"
+        var USERTOKEN = "userToken"
+        var DAYNIGHT = "dayNight"
         var isDeleteORLogOut = "isDeleteORLogOut"
+        const val KEY_LAST_ACTIVE_TIME = "last_active_time"
         var userData = "userData"
 
         //        var TOKEN = "TOKEN"

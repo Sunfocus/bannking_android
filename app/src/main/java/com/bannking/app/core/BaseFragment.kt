@@ -20,7 +20,7 @@ abstract class BaseFragment<VM : BaseViewModel, Binding : ViewBinding>(private v
     var utils: Utils = Utils()
     lateinit var sessionManager: SessionManager
     lateinit var dialogClass: DialogClass
-
+    lateinit var inAppPurchaseSM: SessionManager
 
     open fun init() {}
 
@@ -41,6 +41,7 @@ abstract class BaseFragment<VM : BaseViewModel, Binding : ViewBinding>(private v
         super.onCreateView(inflater, container, savedInstanceState)
         dialogClass = DialogClass(requireActivity())
         sessionManager = SessionManager(requireActivity(), SessionManager.mySharedPref)
+        inAppPurchaseSM = SessionManager(requireActivity(), SessionManager.myInAppPurchase)
         return mBinding.root
     }
 

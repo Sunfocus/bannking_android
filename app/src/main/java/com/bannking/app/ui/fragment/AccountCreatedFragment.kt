@@ -7,21 +7,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.bannking.app.R
+import com.bannking.app.UiExtension.isDarkModeEnabled
 import com.bannking.app.adapter.FilterTabAdapter
 import com.bannking.app.core.BaseFragment
 import com.bannking.app.databinding.FragmentAccountCreatedBinding
+import com.bannking.app.model.retrofitResponseModel.accountListModel.AccountListModel
 import com.bannking.app.model.retrofitResponseModel.headerModel.HeaderModel
+import com.bannking.app.model.retrofitResponseModel.userModel.UserModel
 import com.bannking.app.model.viewModel.MainViewModel
 import com.bannking.app.ui.activity.AccountMenuNewActivity
 import com.bannking.app.ui.activity.MainActivity
 import com.bannking.app.uiUtil.viewPagerAdapter.SectionsPagerAdapter
 import com.bannking.app.utils.AdController
-import com.bannking.app.utils.Constants
 import com.bannking.app.utils.ItemClickListener
 import com.bannking.app.utils.SessionManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -42,6 +45,7 @@ class AccountCreatedFragment :
             mParam1 = requireArguments().getString(ARG_PARAM1)
             mParam2 = requireArguments().getString(ARG_PARAM2)
         }
+        Log.d("sdfdsfdsfs", "yes")
     }
 
 
@@ -62,6 +66,21 @@ class AccountCreatedFragment :
     }
 
     override fun viewCreated() {
+        if (isDarkModeEnabled()) {
+            mBinding.LLVp.backgroundTintList =
+                ContextCompat.getColorStateList(
+                    requireActivity(),
+                    R.color.black
+                ) // Dark mode background color
+            mBinding.txtInformation.setTextColor(ContextCompat.getColor(requireActivity(), R.color.white))
+        } else {
+            mBinding.LLVp.backgroundTintList =
+                ContextCompat.getColorStateList(
+                    requireActivity(),
+                    R.color.clr_wild_sand
+                ) // Light mode background color
+            mBinding.txtInformation.setTextColor(ContextCompat.getColor(requireActivity(), R.color.clr_text))
+        }
         savedSessionManagerTab1 = SessionManager(requireActivity(), SessionManager.TAB1)
         savedSessionManagerTab2 = SessionManager(requireActivity(), SessionManager.TAB2)
         currentTab = SessionManager(requireActivity(), SessionManager.currentTab)
@@ -86,7 +105,13 @@ class AccountCreatedFragment :
                             viewModel.headerTitleList.value?.apiResponse,
                             HeaderModel::class.java
                         )
+                    val accountList =
+                        gson.fromJson(
+                            viewModel.accountListData.value?.apiResponse,
+                            AccountListModel::class.java
+                        )
                     intent.putExtra("Headermodel", model)
+                    intent.putExtra("accountList", accountList)
                     (requireActivity() as MainActivity).resultLauncher.launch(intent)
                 }
             } else {
@@ -96,7 +121,13 @@ class AccountCreatedFragment :
                         viewModel.headerTitleList.value?.apiResponse,
                         HeaderModel::class.java
                     )
+                val accountList =
+                    gson.fromJson(
+                        viewModel.accountListData.value?.apiResponse,
+                        AccountListModel::class.java
+                    )
                 intent.putExtra("Headermodel", model)
+                intent.putExtra("accountList", accountList)
                 (requireActivity() as MainActivity).resultLauncher.launch(intent)
             }
 
@@ -113,6 +144,27 @@ class AccountCreatedFragment :
 
     override fun observer() {
         with(viewModel) {
+            getProfileData.observe(this@AccountCreatedFragment) { apiResponseData ->
+                if (apiResponseData != null) {
+                    if (apiResponseData.code in 199..299) {
+                        if (apiResponseData.apiResponse != null) {
+                            val mainModel =
+                                gson.fromJson(apiResponseData.apiResponse, UserModel::class.java)
+                            if (mainModel.status == 200) {
+                                if (mainModel.data!!.subscriptionStatus == 1) {
+                                    inAppPurchaseSM.setBoolean(SessionManager.isPremium, true)
+                                } else {
+                                    inAppPurchaseSM.setBoolean(SessionManager.isPremium, false)
+                                }
+                            }
+                        }
+                    } else if (apiResponseData.code in 400..500) {
+                        dialogClass.showServerErrorDialog()
+                    }
+                }
+            }
+
+
             headerTitleList.observe(requireActivity()) { header ->
                 if (isVisible) {
                     if (header != null) {
@@ -120,7 +172,7 @@ class AccountCreatedFragment :
                             if (header.apiResponse != null) {
                                 val model =
                                     gson.fromJson(header.apiResponse, HeaderModel::class.java)
-                                if (model.status.equals(Constants.STATUSSUCCESS)) {
+                                if (model.status == 200) {
                                     mBinding.tablayout.setupWithViewPager(mBinding.viewPager)
                                     val sectionsPagerAdapter = SectionsPagerAdapter(
                                         childFragmentManager,
@@ -149,6 +201,7 @@ class AccountCreatedFragment :
                                     mBinding.viewPager.setCurrentItem(selectedTabIndex, false)
                                     setCurrentTab()
                                 } else {
+                                    Log.e("sdfkhsdjfds", "yess")
                                     dialogClass.showServerErrorDialog()
                                 }
                             }

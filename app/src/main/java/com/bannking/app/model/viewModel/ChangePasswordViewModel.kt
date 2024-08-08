@@ -21,20 +21,24 @@ class ChangePasswordViewModel(val App: Application) : BaseViewModel(App) {
     var changePasswordData: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
     var progressObservable: MutableLiveData<Boolean> = MutableLiveData(null)
 
-    fun setDataInChangePasswordList(strOldPassword: String, strNewPassword: String) {
+    fun setDataInChangePasswordList(
+        strOldPassword: String,
+        strNewPassword: String,
+        userToken: String?
+    ) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
             val apiBody = JsonObject()
             try {
                 apiBody.addProperty("security", Constants.SECURITY_0)
                 apiBody.addProperty("id", BaseActivity.userModel!!.id)
-                apiBody.addProperty("old_pass", strOldPassword)
-                apiBody.addProperty("new_pass", strNewPassword)
+                apiBody.addProperty("oldPassword", strOldPassword)
+                apiBody.addProperty("newPassword", strNewPassword)
                 apiBody.addProperty("token", it)
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance!!.myApi.changePassword(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.changePassword(apiBody.toString(),userToken!!)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false

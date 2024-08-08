@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class CommonResponseApi(
 
-    @SerializedName("status") var status: String? = null,
+    @SerializedName("status") var status: Int? = null,
     @SerializedName("transaction_status") var transactionStatus: String? = null,
     @SerializedName("message") var message: String? = null,
     @SerializedName("amount") var amount: String? = null,

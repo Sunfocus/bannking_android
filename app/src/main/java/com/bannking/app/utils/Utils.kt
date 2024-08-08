@@ -59,14 +59,14 @@ class Utils {
         val filterable: ArrayList<Data> = arrayListOf()
 
         for (item in data) {
-            for (accountDetail in item.accDetail) {
-                if (accountDetail.accMenuTitle == query) {
+//            for (accountDetail in item.accDetail) {
+                if (item.userAccountTitle!!.name == query) {
                     filterable.add(item.apply {
-                        accMenuId = accountDetail.accMenuId
-                        accMenuTitle = accountDetail.accMenuTitle
+                        acc_title_id = item.userAccountTitle!!.id
+                        accMenuTitle = item.userAccountTitle!!.name
                     })
                 }
-            }
+//            }
         }
         return filterable
     }

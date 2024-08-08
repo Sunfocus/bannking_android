@@ -6,7 +6,7 @@ import java.io.Serializable
 
 data class HeaderModel(
 
-    @SerializedName("status") var status: String? = null,
+    @SerializedName("status") var status: Int? = null,
     @SerializedName("data") var data: ArrayList<Data> = arrayListOf()
 
 ) : Serializable

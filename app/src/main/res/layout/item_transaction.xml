@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/cvListTD"
     android:layout_marginHorizontal="15dp"
     android:background="@color/white"
     app:cardCornerRadius="8dp"
@@ -23,6 +24,7 @@
             android:background="?android:attr/listDivider" />
 
         <LinearLayout
+            android:id="@+id/llTDList"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.98"
@@ -41,7 +43,6 @@
                 android:textDirection="anyRtl"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:visibility="gone"
                 tools:text="transaction_title" />
 
             <TextView
@@ -55,6 +56,7 @@
                 android:textDirection="anyRtl"
                 android:textSize="14sp"
                 android:textStyle="bold"
+                android:visibility="gone"
                 tools:text="transaction_description" />
 
             <TextView

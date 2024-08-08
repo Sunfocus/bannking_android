@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout"
+    android:id="@+id/linearLayoutSound"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/top_corner_shape"
@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+
             <RadioGroup
                 android:id="@+id/radiogrp"
                 android:layout_width="match_parent"
@@ -50,6 +51,7 @@
                     android:drawablePadding="30dp"
                     android:paddingLeft="20dp"
                     android:layoutDirection="rtl"
+                    android:drawableLeft="@drawable/male_users"
                     android:drawableRight="?android:attr/listChoiceIndicatorSingle"
                     android:background="@drawable/edittext_border_shape"
                     android:text="@string/male_sound"
@@ -65,6 +67,7 @@
                     android:drawablePadding="30dp"
                     android:paddingLeft="20dp"
                     android:layoutDirection="rtl"
+                    android:drawableLeft="@drawable/female_users"
                     android:background="@drawable/edittext_border_shape"
                     android:drawableRight="?android:attr/listChoiceIndicatorSingle"
                     android:text="@string/female_sound"
@@ -85,6 +88,7 @@
                     android:drawableRight="?android:attr/listChoiceIndicatorSingle"
                     android:text="Other Voice"
                     android:textAllCaps="false" />
+
             </RadioGroup>
 
             <View

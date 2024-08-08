@@ -9,6 +9,7 @@ import android.os.LocaleList
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.bannking.app.utils.GetTokenFromOverride
 import com.bannking.app.utils.SessionManager
 import com.google.android.gms.tasks.OnCompleteListener
@@ -24,7 +25,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object UiExtension {
-
+    fun isDarkModeEnabled(): Boolean {
+        return AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+    }
     fun AppCompatActivity.generateFCM(getTokenFromOverride: GetTokenFromOverride) {
         Firebase.messaging.token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -109,12 +112,12 @@ object UiExtension {
     }
 
     fun String.getDateMMMDDYYYY(): String {
-
         val format1 = SimpleDateFormat("yyyy-MM-dd")
         val format2 = SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH)
         val date = format1.parse(this)
         return date?.let { format2.format(it) }.toString()
     }
+
 
     private fun String.getDecoratedStringFromNumber(): String {
         val numberPattern = "#,###,###,###"

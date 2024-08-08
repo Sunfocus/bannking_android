@@ -18,12 +18,14 @@ import com.bannking.app.databinding.BottomshitCreateBudgetPlannerBinding
 import com.bannking.app.model.CommonResponseApi
 import com.bannking.app.model.retrofitResponseModel.budgetPlannerModel.BudgetPlannerModel
 import com.bannking.app.model.retrofitResponseModel.budgetPlannerModel.Data
+import com.bannking.app.model.retrofitResponseModel.budgetPlannerModel.SubBudgetPlanner
 import com.bannking.app.model.viewModel.BudgetPlannerViewModel
 import com.bannking.app.network.RetrofitClient
 import com.bannking.app.utils.AdController
 import com.bannking.app.utils.Constants
 import com.bannking.app.utils.EasyMoneyEditText
 import com.bannking.app.utils.OnClickListener
+import com.bannking.app.utils.OnClickListenerBudget
 import com.bannking.app.utils.SessionManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.JsonObject
@@ -35,7 +37,7 @@ import retrofit2.Response
 
 class BudgetPlannerActivity :
     BaseActivity<BudgetPlannerViewModel, ActivityBudgetPlannerBinding>(BudgetPlannerViewModel::class.java)/* AppCompatActivity(),*/,
-    OnClickListener {
+    OnClickListenerBudget {
 
 
     private var bottomSheetDialog: BottomSheetDialog? = null
@@ -50,9 +52,12 @@ class BudgetPlannerActivity :
 
     override fun initViewModel(viewModel: BudgetPlannerViewModel) {
         this.viewModel = viewModel
-        viewModel.setDataInBudgetPlannerList(
-            userModel?.id, intent.getStringExtra("SelectedItemMenu").toString()
-        )
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+        if (userToken != null) {
+            viewModel.setDataInBudgetPlannerList(
+                userModel?.id, intent.getStringExtra("SelectedItemMenu").toString(),userToken
+            )
+        }
     }
 
     override fun initialize() {
@@ -76,7 +81,7 @@ class BudgetPlannerActivity :
                         if (it.code in 199..299) {
                             val model =
                                 gson.fromJson(it.apiResponse, BudgetPlannerModel::class.java)
-                            if (model.status.equals(Constants.STATUSSUCCESS, true)) {
+                            if (model.status == 200) {
                                 binding!!.rvBudgetPlanner.apply {
                                     adapter = BudgetPlannerAdapter(
                                         this@BudgetPlannerActivity,
@@ -100,7 +105,7 @@ class BudgetPlannerActivity :
                     if (createAccount.code in 199..299) {
                         val mainModel =
                             gson.fromJson(createAccount.apiResponse, CommonResponseApi::class.java)
-                        if (mainModel.status.equals(Constants.STATUSSUCCESS)) {
+                        if (mainModel.status == 200) {
                             dialogClass.showAccountCreateSuccessfullyDialog(getString(R.string.str_account_create_successfully)) {
 
                                 headerTitleList.value =
@@ -188,8 +193,10 @@ class BudgetPlannerActivity :
                     jsonObject.addProperty("id", userModel?.id.toString())
                     jsonObject.addProperty("name", bottomBinding.edtBudgetTitle.text.toString())
                     jsonObject.addProperty("color", colorCode.toString())
+
+                    val userToken = sessionManager.getString(SessionManager.USERTOKEN)
                     val call =
-                        RetrofitClient.instance?.myApi?.createOwnBudgetPlanner(jsonObject.toString())
+                        RetrofitClient.instance?.myApi?.createOwnBudgetPlanner(jsonObject.toString(),userToken!!)
 
                     call?.enqueue(object : Callback<JsonObject> {
                         override fun onResponse(
@@ -200,7 +207,7 @@ class BudgetPlannerActivity :
                             if (response.isSuccessful) {
                                 if (response.code() in 199..299) {
                                     dialogClass.showSuccessfullyDialog(resources.getString(R.string.str_your_budget_title_created_successfully))
-                                    val model = gson.fromJson(
+                                   /* val model = gson.fromJson(
                                         response.body(),
                                         BudgetPlannerModel::class.java
                                     )
@@ -208,7 +215,13 @@ class BudgetPlannerActivity :
                                         this@BudgetPlannerActivity,
                                         model.data,
                                         this@BudgetPlannerActivity
-                                    )
+                                    )*/
+
+                                    if (userToken != null) {
+                                        viewModel.setDataInBudgetPlannerList(
+                                            userModel?.id, intent.getStringExtra("SelectedItemMenu").toString(),userToken
+                                        )
+                                    }
 
 //                                    binding!!.rvBudgetPlanner.apply {
 //                                        adapter = BudgetPlannerAdapter(
@@ -250,7 +263,7 @@ class BudgetPlannerActivity :
 
 
     //Adapter Click Listener
-    override fun clickLister(data: Data) {
+    override fun clickListerBudget(data: Data,subData: SubBudgetPlanner, clickedCreate: String) {
         bottomSheetDialog =
             BottomSheetDialog(this@BudgetPlannerActivity, R.style.NoBackgroundDialogTheme)
         val view = LayoutInflater.from(this@BudgetPlannerActivity)
@@ -292,18 +305,21 @@ class BudgetPlannerActivity :
         val timeDifference = currentTime - adTime
 
         btnDone.setOnClickListener {
+            val userToken = sessionManager.getString(SessionManager.USERTOKEN)
             if (timeDifference > fiveMinutesInMillis) {
                 AdController.showInterAd(this@BudgetPlannerActivity, null, 0) {
                     if (edtAccount.text.toString().isNotEmpty()) {
                         if (edtAccountCode.text.toString().isNotEmpty()) {
                             if (edtAmount.valueString.toString().isNotEmpty()) {
-                                viewModel.setDataInCreateAccountListData(
-                                    selectedMenuID,
-                                    BudgetData.id!!,
-                                    edtAccount.text.toString(),
-                                    edtAccountCode.text.toString(),
-                                    edtAmount.valueString.toString()
-                                )
+                                if (userToken != null) {
+                                    viewModel.setDataInCreateAccountListData(
+                                        selectedMenuID,
+                                        BudgetData.id!!,
+                                        edtAccount.text.toString(),
+                                        edtAccountCode.text.toString(),
+                                        edtAmount.valueString.toString(),userToken
+                                    )
+                                }
                                 bottomSheetDialog!!.dismiss()
                             } else
 
@@ -320,13 +336,16 @@ class BudgetPlannerActivity :
                 if (edtAccount.text.toString().isNotEmpty()) {
                     if (edtAccountCode.text.toString().isNotEmpty()) {
                         if (edtAmount.valueString.toString().isNotEmpty()) {
-                            viewModel.setDataInCreateAccountListData(
-                                selectedMenuID,
-                                BudgetData.id!!,
-                                edtAccount.text.toString(),
-                                edtAccountCode.text.toString(),
-                                edtAmount.valueString.toString()
-                            )
+                            val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+                            if (userToken != null) {
+                                viewModel.setDataInCreateAccountListData(
+                                    selectedMenuID,
+                                    BudgetData.id!!,
+                                    edtAccount.text.toString(),
+                                    edtAccountCode.text.toString(),
+                                    edtAmount.valueString.toString(),userToken
+                                )
+                            }
                             bottomSheetDialog!!.dismiss()
                         } else
 

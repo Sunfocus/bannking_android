@@ -6,53 +6,88 @@
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
     android:background="@color/white"
+    android:id="@+id/cvListBudget"
     android:minWidth="150dp"
     android:minHeight="60dp"
     app:cardCornerRadius="5dp"
     app:cardElevation="4dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_gravity="center_vertical"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="15dp"
-        android:weightSum="1">
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/LLBudget"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="15dp"
+            android:weightSum="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
 
-        <ImageView
-            android:id="@+id/img_budget_color"
-            android:layout_width="0dp"
-            android:layout_height="25dp"
-            android:layout_weight="0.07" />
+            <ImageView
+                android:id="@+id/img_budget_color"
+                android:layout_width="0dp"
+                android:layout_height="25dp"
+                android:layout_weight="0.07" />
 
-        <TextView
-            android:id="@+id/txt_title"
-            android:layout_width="0dp"
+            <TextView
+                android:id="@+id/txt_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.6"
+                android:fontFamily="@font/source_sans_regular"
+                android:paddingStart="10dp"
+                android:textColor="@color/clr_text"
+                android:textStyle="bold"
+                tools:text="@string/str_rent_or_mortgage" />
+
+            <TextView
+                android:id="@+id/txt_selected"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.33"
+                android:fontFamily="@font/source_sans_regular"
+                android:paddingStart="10dp"
+                android:text="@string/str_selected"
+                android:textAlignment="center"
+                android:textColor="@color/clr_red"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvChildBudget"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.6"
-            android:fontFamily="@font/source_sans_regular"
-            android:paddingStart="10dp"
-            android:textColor="@color/clr_text"
-            android:textStyle="bold"
-            tools:text="@string/str_rent_or_mortgage" />
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/LLBudget"
+            tools:listitem="@layout/item_budget_child" />
 
-        <TextView
-            android:id="@+id/txt_selected"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.33"
-            android:fontFamily="@font/source_sans_regular"
-            android:paddingStart="10dp"
-            android:text="@string/str_selected"
-            android:textAlignment="center"
-            android:textColor="@color/clr_red"
-            android:textStyle="bold"
-            android:visibility="gone" />
-
-
-    </LinearLayout>
-
-
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgFloatingChild"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/circle_shape"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/ic_floating"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvChildBudget" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

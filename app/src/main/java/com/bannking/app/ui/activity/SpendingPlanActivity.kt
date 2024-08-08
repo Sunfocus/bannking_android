@@ -1,8 +1,10 @@
 package com.bannking.app.ui.activity
 
 import android.content.Intent
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.bannking.app.R
+import com.bannking.app.UiExtension
 import com.bannking.app.adapter.SpendingAdapter
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.core.BaseViewModel
@@ -28,6 +30,21 @@ class SpendingPlanActivity :
     }
 
     override fun initialize() {
+        if (UiExtension.isDarkModeEnabled()) {
+            binding!!.rlSpending.setBackgroundColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.tvBankingHere.setTextColor(ContextCompat.getColor(this, R.color.white))
+        } else {
+            binding!!.rlSpending.setBackgroundColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.clr_card_background
+                )
+            )
+            binding!!.tvBankingHere.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.black))
+        }
+
         list = ArrayList()
         adapter = SpendingAdapter()
     }
@@ -75,6 +92,7 @@ class SpendingPlanActivity :
                 val intent = Intent(this@SpendingPlanActivity, AccountMenuNewActivity::class.java)
                 intent.putExtra("ComeFrom", "Navigation")
                 intent.putExtra("Headermodel", getIntent.getSerializableExtra("Headermodel"))
+                intent.putExtra("accountList", getIntent.getSerializableExtra("accountList"))
                 startActivityForResult(intent, Constants.MAIN_TO_MENU)
             }
             resources.getString(R.string.str_expenses) -> {

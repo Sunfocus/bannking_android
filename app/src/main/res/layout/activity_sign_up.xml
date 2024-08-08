@@ -13,11 +13,11 @@
         android:layout_height="?actionBarSize"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:src="@drawable/ic_back_white" />
+        android:src="@drawable/ic_back_white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/ll_logos"
@@ -40,7 +40,7 @@
         android:id="@+id/tvItsFree"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:text="@string/it_s_free"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
@@ -58,10 +58,10 @@
         android:backgroundTint="@color/white"
         android:hint="@string/str_email"
         android:minHeight="45dp"
-        android:textSize="14sp"
         android:paddingHorizontal="10dp"
         android:textColor="@color/black"
         android:textColorHint="@color/clr_dark_gray"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvItsFree" />
@@ -76,10 +76,10 @@
         android:backgroundTint="@color/white"
         android:hint="@string/first_name"
         android:minHeight="45dp"
-        android:textSize="14sp"
         android:paddingHorizontal="10dp"
         android:textColor="@color/black"
         android:textColorHint="@color/clr_dark_gray"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edt_email" />
@@ -89,7 +89,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="40dp"
-        android:textSize="14sp"
         android:layout_marginTop="15dp"
         android:background="@drawable/edittext_border_shape"
         android:backgroundTint="@color/white"
@@ -98,6 +97,7 @@
         android:paddingHorizontal="10dp"
         android:textColor="@color/black"
         android:textColorHint="@color/clr_dark_gray"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etFirstName" />
@@ -219,9 +219,9 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/and"
             android:layout_marginStart="2dp"
             android:layout_marginEnd="2dp"
+            android:text="@string/and"
             android:textColor="@color/white"
             android:textSize="12sp" />
 
@@ -234,6 +234,7 @@
             android:textSize="12sp" />
 
     </LinearLayout>
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_sign_up"
         android:layout_width="match_parent"
@@ -246,17 +247,27 @@
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/llPrivacyTerm" />
 
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/signInGoogle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:layout_marginHorizontal="30dp"
+        app:layout_constraintTop_toBottomOf="@+id/btn_sign_up" />
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/txt_sing_in"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:text="@string/have_an_account"
         android:textColor="@color/white"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@+id/btn_sign_up"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signInGoogle" />
 
     <LinearLayout
         android:id="@+id/LLVersion"

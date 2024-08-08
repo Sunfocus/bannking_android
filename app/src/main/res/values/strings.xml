@@ -41,7 +41,7 @@
     <string name="str_profile">Profile</string>
     <string name="str_gmail">ibeorstore@gmail.com</string>
     <string name="str_name">Mike</string>
-    <string name="str_languages">Languages</string>
+    <string name="str_languages">Change Language</string>
     <string name="str_remove_all_ads">Remove all Ads</string>
     <string name="str_select_your_currency">Select your Currency</string>
     <string name="str_change_password">Change Password</string>
@@ -50,7 +50,7 @@
     <string name="str_restore_purchase">Restore Purchase</string>
     <string name="str_rate_app">Rate App</string>
     <string name="str_upgrade">Upgrade</string>
-    <string name="str_sound">Sound</string>
+    <string name="str_sound">Voice reader</string>
     <string name="str_logout">Logout</string>
     <string name="str_delete_my_account">Delete My Account</string>
     <string name="str_version">Version </string>
@@ -158,8 +158,10 @@
     <string name="str_confirm">Confirm</string>
     <string name="str_your_budget_title_created_successfully">Your Budget Title Created Successfully</string>
     <string name="str_your_budget_title_created_unsuccessfully">Your Budget Title Created Unsuccessfully</string>
+    <string name="str_your_sub_budget_title_created_unsuccessfully">Your Sub-Budget Title Created Unsuccessfully</string>
     <string name="str_please_choose_any_color">Please Choose Any Color</string>
     <string name="str_please_enter_budget_name">Please Enter Budget Name</string>
+    <string name="str_please_enter_sub_budget_name">Please Enter Sub-Budget Name</string>
     <string name="str_please_enter_amount">Please Enter Amount</string>
     <string name="str_please_enter_account_code">Please Enter Account code</string>
     <string name="str_please_enter_account_name">Please Enter Account name</string>
@@ -246,6 +248,7 @@
     <string name="str_bill_organizer">Bill Organizer</string>
     <string name="str_upgrade_include">UPGRADE INCLUDE</string>
     <string name="str_purchase_description">By tapping continue, your payment will be charged to your iTunes account,and your subscription will automatically renew for the same package length at the same price until youcancel in settings in the iTunes store at least 24 hours prior to the end of the current period.By tapping “Continue” you agree to our \n<u><font color='#FD1C1C'>Privacy Policy</font></u>   and <u><font color='#FD1C1C'>Terms.</font></u> </string>
+    <string name="str_purchase_description_night"><font color='#FFFFFF'>By tapping continue, your payment will be charged to your iTunes account,and your subscription will automatically renew for the same package length at the same price until youcancel in settings in the iTunes store at least 24 hours prior to the end of the current period.By tapping “Continue” you agree to our \n</font><u><font color='#FD1C1C'>Privacy Policy</font></u><font color='#FFFFFF'>   and </font><u><font color='#FD1C1C'>Terms.</font></u> </string>
     <string name="str_not_same_password">Password and confirm password do not match</string>
     <string name="language_pack_missing">This language speech pack needs to be installed</string>
     <string name="language_not_supported">This language speech is currently not supported</string>
@@ -275,5 +278,13 @@
     <string name="let_s_get_started">Let\'s get started</string>
     <string name="_3_days_free_trial">3 Days free Trial</string>
     <string name="log_in">Log In</string>
+    <string name="account_info">Account info</string>
+    <string name="help_privacy"><![CDATA[Help & Privacy]]></string>
+    <string name="link_bank">Link Bank</string>
+    <string name="security">Security</string>
+    <string name="refrain_from_tapping">Refrain from tapping below unless you wish to permanently delete your account. Deleting your account is irreversible.</string>
+    <string name="enable_faceid">Enable FaceID</string>
+    <string name="day_night_mode"><![CDATA[Day & Night Mode]]></string>
+    <string name="refer_a_friend">Refer a Friend</string>
 
 </resources>

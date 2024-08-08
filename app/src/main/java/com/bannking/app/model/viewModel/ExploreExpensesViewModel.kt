@@ -21,7 +21,7 @@ class ExploreExpensesViewModel(val App: Application) : BaseViewModel(App) {
     var progressObservable: MutableLiveData<Boolean> = MutableLiveData(null)
 
 
-    fun setDataInExploreExpensesDataList() {
+    fun setDataInExploreExpensesDataList(userToken: String?) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
             val apiBody = JsonObject()
@@ -32,7 +32,7 @@ class ExploreExpensesViewModel(val App: Application) : BaseViewModel(App) {
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance!!.myApi.exploreExpenses(apiBody.toString())
+            val call = RetrofitClient.instance!!.myApi.exploreExpenses(userToken!!)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false

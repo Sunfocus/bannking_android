@@ -5,9 +5,10 @@ import com.google.gson.annotations.SerializedName
 
 data class UserModel(
 
-    @SerializedName("status") var status: String? = null,
+    @SerializedName("status") var status: Int? = null,
     @SerializedName("message") var message: String? = null,
-    @SerializedName("data") var data: Data? = Data()
+    @SerializedName("data") var data: Data? = Data(),
+    @SerializedName("extraData") var extraData: String? = null
 
 
 )
@@ -19,11 +20,19 @@ data class Data(
     @SerializedName("name") var name: String? = null,
     @SerializedName("email") var email: String? = null,
     @SerializedName("language_id") var languageId: Int? = null,
-    @SerializedName("language_name") var languageName: String? = null,
+    @SerializedName("subscriptionStatus") var subscriptionStatus: Int? = null,
+    @SerializedName("face_id_status") var face_id_status: Boolean? = null,
+    @SerializedName("notification_status") var notification_status: Boolean? = null,
+//    @SerializedName("language_name") var languageName: String? = null,
+    @SerializedName("language") var language: Language? = Language(),
     @SerializedName("currency_id") var currencyId: Int? = null,
-    @SerializedName("currency_name") var currencyName: String? = null,
-    @SerializedName("image") var image: String? = null,
+//    @SerializedName("currency_name") var currencyName: String? = null,
+    @SerializedName("currency") var currency: Currency? =Currency(),
+    @SerializedName("profile_image") var image: String? = null,
     @SerializedName("notification") var notification: String? = null,
     @SerializedName("premium") var premium: Boolean? = null
 
 )
+
+data class Currency( @SerializedName("name") var name: String? = null)
+data class Language( @SerializedName("name") var name: String? = null)

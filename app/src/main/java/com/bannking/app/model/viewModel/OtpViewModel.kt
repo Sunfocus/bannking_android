@@ -58,12 +58,45 @@ class OtpViewModel(val App: Application) : BaseViewModel(app = App) {
             }
         })
     }
+    fun setDataInOtpListForget(strEmail: String, strTypeNumber: String,name: String) {
+        progressObservable.value = true
+        val apiBody = JsonObject()
+        try {
+            apiBody.addProperty("security", Constants.SECURITY_1)
+            apiBody.addProperty("username", strEmail)
+            apiBody.addProperty("type", strTypeNumber)
+            apiBody.addProperty("name", name)
+
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+        val call = RetrofitClient.instance!!.myApi.sendOtpForget(apiBody.toString())
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                progressObservable.value = false
+                if (response.isSuccessful) {
+                    if (response.code() in 199..299) {
+                        otpList.value = CommonResponseModel(response.body(), response.code())
+                    } else if (response.code() in 400..500) {
+                        assert(response.errorBody() != null)
+                        val errorBody = response.errorBody().toString()
+                        val jsonObject: JsonObject = JsonParser.parseString(errorBody).asJsonObject
+                        otpList.value = CommonResponseModel(jsonObject, response.code())
+                    }
+                } else otpList.value = CommonResponseModel(null, 500)
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                progressObservable.value = false
+                otpList.value = CommonResponseModel(null, 500)
+            }
+        })
+    }
 
     fun setDataInRegisterDataList(
         strEmail: String,
         strUsername: String,
         strPassword: String,
-        fcmToken: String?,
         country: String,
         name: String
     ) {
@@ -74,9 +107,8 @@ class OtpViewModel(val App: Application) : BaseViewModel(app = App) {
             apiBody.addProperty("username", strUsername)
             apiBody.addProperty("email", strEmail)
             apiBody.addProperty("password", strPassword)
-            apiBody.addProperty("token", fcmToken)
             apiBody.addProperty("name", name)
-            apiBody.addProperty("country", country)
+            apiBody.addProperty("country_id", country)
         } catch (e: JSONException) {
             e.printStackTrace()
         }

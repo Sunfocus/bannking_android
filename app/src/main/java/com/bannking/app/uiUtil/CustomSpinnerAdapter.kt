@@ -5,8 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.bannking.app.R
+import com.bannking.app.UiExtension
 import com.bannking.app.model.retrofitResponseModel.typeTransactionModel.Data
 
 class CustomSpinnerAdapter() : BaseAdapter() {
@@ -31,6 +34,15 @@ class CustomSpinnerAdapter() : BaseAdapter() {
             view = convertView
             vh = view.tag as ItemHolder
         }
+
+        if (UiExtension.isDarkModeEnabled()) {
+            vh.rlSpinnerCD.setBackgroundColor(ContextCompat.getColor(context!!,R.color.black))
+            vh.label.setTextColor(ContextCompat.getColor(context!!, R.color.white))
+        } else {
+            vh.rlSpinnerCD.setBackgroundColor(ContextCompat.getColor(context!!,R.color.white))
+            vh.label.setTextColor(ContextCompat.getColor(context!!, R.color.black))
+        }
+
         vh.label.text = list?.get(position)?.name
 
         return view
@@ -59,9 +71,11 @@ class CustomSpinnerAdapter() : BaseAdapter() {
 
     private class ItemHolder(row: View?) {
         val label: TextView
+        val rlSpinnerCD: RelativeLayout
 
         init {
             label = row?.findViewById(R.id.txt_name) as TextView
+            rlSpinnerCD = row.findViewById(R.id.rlSpinnerCD) as RelativeLayout
         }
     }
 }

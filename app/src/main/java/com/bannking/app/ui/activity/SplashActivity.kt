@@ -41,7 +41,7 @@ class SplashActivity :
     override fun initialize() {
         getCurrentLanguage()?.let { Log.e("getCurrentLanguage :", it.displayName) }
         checkPurchases = arrayListOf()
-        viewModel.setDataInAppVersionDataList()
+//        viewModel.setDataInAppVersionDataList()
 //        if (sessionManager.getUserDetails(SessionManager.userData) != null) {
 //            viewModel.setPremiumStatusDataList()
 //        }
@@ -54,7 +54,13 @@ class SplashActivity :
 
     override fun observe() {
         with(viewModel) {
-            appVersionDataList.observe(this@SplashActivity) { modelResponse ->
+            if (sessionManager.getUserDetails(SessionManager.userData) != null) {
+//                viewModel.setPremiumStatusDataList()
+                passActivity()
+            } else {
+                passActivity()
+            }
+           /* appVersionDataList.observe(this@SplashActivity) { modelResponse ->
                 if (modelResponse != null) {
                     if (modelResponse.code in 199..299) {
                         val model =
@@ -77,7 +83,7 @@ class SplashActivity :
                         passActivity()
                     }
                 }
-            }
+            }*/
             getPremiumStatusDataList.observe(this@SplashActivity) { isPremium ->
                 if (isPremium != null) {
                     if (isPremium.code in 199..299) {
@@ -85,7 +91,7 @@ class SplashActivity :
                             isPremium.apiResponse.toString(),
                             PremiumCheckModel::class.java
                         )
-                        if (responseModel.status.equals(Constants.STATUSSUCCESS)) {
+                        if (responseModel.status == 200) {
                             if (responseModel.isPremiumUser == true) {
                                 inAppPurchaseSM.setBoolean(SessionManager.isPremium, true)
                             } else if (responseModel.isPremiumUser == false) {
@@ -106,16 +112,25 @@ class SplashActivity :
                 if (strToken.isEmpty()) {
                     passActivity()
                 } else {
+                    val lastActiveTime = sessionManager.getLastActiveTime()
+                    val currentTime = System.currentTimeMillis()
                     sessionManager.setString("SetFcm", strToken)
                     val isLogin = sessionManager.getBoolean(SessionManager.isLogin)
                     FCM_TOKEN.let {
                         if (it?.isNotEmpty() == true) {
                             if (isLogin) {
-                                Handler().postDelayed({
-                                    sessionManager.setBoolean(SessionManager.isDeleteORLogOut, false)
-                                    startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-                                    finish()
-                                }, SPLASH_SCREEN_TIME_OUT.toLong())
+                                if (currentTime - lastActiveTime > 3600000) { // 1 hour in milliseconds
+                                    Handler().postDelayed({
+                                        startActivity(Intent(this@SplashActivity, SignInActivity::class.java))
+                                        finish()
+                                    }, SPLASH_SCREEN_TIME_OUT.toLong())
+                                } else {
+                                    Handler().postDelayed({
+                                        sessionManager.setBoolean(SessionManager.isDeleteORLogOut, false)
+                                        startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                                        finish()
+                                    }, SPLASH_SCREEN_TIME_OUT.toLong())
+                                }
                             } else {
                                 Handler().postDelayed({
                                     startActivity(

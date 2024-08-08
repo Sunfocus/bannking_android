@@ -91,9 +91,9 @@
                     android:weightSum="3">
 
                     <TextView
+                        android:id="@+id/tvAccountSubBudeget"
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:background="@color/white"
                         android:fontFamily="@font/source_sans_regular"
                         android:padding="3dp"
                         android:text="@string/str_account_name"
@@ -125,7 +125,7 @@
                         android:layout_marginTop="1dp"
                         android:layout_marginBottom="1dp"
                         android:layout_weight="1"
-                        android:background="@color/white"
+
                         android:button="@drawable/checkbox_blue_shape"
                         android:buttonTint="@android:color/transparent"
                         android:buttonTintMode="src_over"
@@ -138,6 +138,7 @@
                     android:weightSum="3">
 
                     <TextView
+                        android:id="@+id/tvAccountCodeSUbBudeget"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:fontFamily="@font/source_sans_regular"
@@ -173,7 +174,7 @@
                         android:layout_marginTop="1dp"
                         android:layout_marginBottom="1dp"
                         android:layout_weight="1"
-                        android:background="@color/white"
+
                         android:button="@drawable/checkbox_blue_shape"
                         android:buttonTint="@android:color/transparent"
                         android:buttonTintMode="src_over"
@@ -188,9 +189,9 @@
                     android:weightSum="3">
 
                     <TextView
+                        android:id="@+id/tvAmountSubBudget"
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:background="@color/white"
                         android:fontFamily="@font/source_sans_regular"
                         android:padding="3dp"
                         android:text="@string/str_amount"
@@ -204,10 +205,10 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/iconSubBudget"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
-                            android:background="@color/white"
                             android:fontFamily="@font/source_sans_regular"
                             android:text="$"
                             android:textAlignment="viewStart"
@@ -246,7 +247,7 @@
                         android:layout_marginTop="1dp"
                         android:layout_marginBottom="1dp"
                         android:layout_weight="1"
-                        android:background="@color/white"
+
                         android:button="@drawable/checkbox_blue_shape"
                         android:buttonTint="@android:color/transparent"
                         android:buttonTintMode="src_over"

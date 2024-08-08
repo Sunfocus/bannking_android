@@ -40,8 +40,8 @@
     <string name="str_profile">الملف الشخصي</string>
     <string name="str_gmail">ibeorstore@gmail.com</string>
     <string name="str_name">مايك</string>
-    <string name="str_languages">اللغات</string>
-    <string name="str_sound">صوت</string>
+    <string name="str_languages">تغيير اللغات</string>
+    <string name="str_sound">قارئ الصوت</string>
     <string name="str_remove_all_ads">إزالة جميع الإعلانات</string>
     <string name="str_select_your_currency">حدد عملتك</string>
     <string name="str_change_password">تغيير كلمة المرور</string>
@@ -268,6 +268,9 @@
     <string name="let_s_get_started">هيا بنا نبدأ</string>
     <string name="_3_days_free_trial">3 أيام تجريبية مجانية</string>
     <string name="log_in">تسجيل الدخول</string>
+    <string name="account_info">معلومات الحساب</string>
+    <string name="link_bank">رابط البنك</string>
+    <string name="help_privacy">المساعدة والخصوصية</string>
 
 </resources>
 

@@ -3,6 +3,7 @@ package com.bannking.app.core
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import com.bannking.app.model.retrofitResponseModel.userModel.Data
@@ -67,7 +68,15 @@ abstract class BaseActivity<VM : BaseViewModel, Binding : ViewBinding?>(private 
         //Use for ViewModelObserver
         observe()
 
-
+        val dayNight = sessionManager.getBoolean(SessionManager.DAYNIGHT)
+        setThemeMode(dayNight)
+    }
+    private fun setThemeMode(isNightMode: Boolean) {
+        val nightMode = if (isNightMode)
+            AppCompatDelegate.MODE_NIGHT_YES
+        else
+            AppCompatDelegate.MODE_NIGHT_NO
+        AppCompatDelegate.setDefaultNightMode(nightMode)
     }
 
     protected abstract fun getBinding(): Binding

@@ -62,11 +62,11 @@ class ForgetProfileVerifyOtpActivity :
                 if (apiResponse != null) {
                     if (apiResponse.code in 199..299) {
                         val model = gson.fromJson(apiResponse.apiResponse, OtpModel::class.java)
-                        if (model.status.equals(Constants.STATUSSUCCESS)) {
+                        if (model.status == 200 ) {
                             dialogClass.showSuccessfullyDialog(model.message.toString())
 //                            Toast.makeText(this@ForgetProfileVerifyOtpActivity, model.message + " " + model.note, Toast.LENGTH_SHORT)
 //                                .show()
-                            otp = model.otp.toString()
+                            otp = model.data!!.otp.toString()
                         } else {
                             dialogClass.showError(model.message.toString())
 //                            Toast.makeText(this@ForgetProfileVerifyOtpActivity, "" + model.message, Toast.LENGTH_SHORT).show()
@@ -83,7 +83,7 @@ class ForgetProfileVerifyOtpActivity :
                 if (it != null) {
                     if (it.code in 199..299) {
                         val model = gson.fromJson(it.apiResponse, CommonResponseApi::class.java)
-                        if (model.status.equals(Constants.STATUSSUCCESS)) {
+                        if (model.status == 200) {
 //                            Toast.makeText(
 //                                this@ForgetProfileVerifyOtpActivity,
 //                                model.message,
@@ -143,7 +143,7 @@ class ForgetProfileVerifyOtpActivity :
             txtResendOtp.setOnClickListener {
                 if (txtResendOtp.text.toString() == resources.getString(R.string.str_re_send_code)) {
                     reSendOtpTimer()
-                    viewModel.setDataInOtpList(email, Constants.SECURITY_2, "")
+                    viewModel.setDataInOtpListForget(email, Constants.SECURITY_2, "")
                 } else {
 //                    Toast.makeText(this@ForgetProfileVerifyOtpActivity, resources.getString(R.string.str_please_wait),
 //                        Toast.LENGTH_SHORT).show()

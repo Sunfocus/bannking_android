@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.bannking.app.R
+import com.bannking.app.UiExtension
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.databinding.ActivityUpgradeNewBinding
 import com.bannking.app.google_iab.BillingConnector
@@ -44,7 +45,18 @@ class UpgradeActivity :
         this.viewModel = viewModel
     }
 
-    override fun initialize() {}
+    override fun initialize() {
+        if (UiExtension.isDarkModeEnabled()) {
+            binding!!.txtPurchaseDesc.setText(R.string.str_purchase_description_night)
+            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.tvFreeTrial.setTextColor(ContextCompat.getColor(this, R.color.white))
+        } else {
+            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.black))
+            binding!!.txtPurchaseDesc.setText(R.string.str_purchase_description)
+            binding!!.tvFreeTrial.setTextColor(ContextCompat.getColor(this, R.color.black))
+
+        }
+    }
 
     override fun setMethod() {
         initializeBillingClient()
@@ -60,7 +72,7 @@ class UpgradeActivity :
                         val model = gson.fromJson(
                             checkSubscription.apiResponse, CommonResponseApi::class.java
                         )
-                        if (model.status.equals(Constants.STATUSSUCCESS, true)) {
+                        if (model.status == 200) {
 //                            Toast.makeText(
 //                                this@UpgradeActivity,
 //                                userModel?.username + "Purchase Successfully",
@@ -86,7 +98,7 @@ class UpgradeActivity :
                         val model = gson.fromJson(
                             checkSubscription.apiResponse, CommonResponseApi::class.java
                         )
-                        if (model.status.equals(Constants.STATUSSUCCESS, true)) {
+                        if (model.status == 200) {
 //                            Toast.makeText(
 //                                this@UpgradeActivity,
 //                                userModel?.username + "Purchase Successfully",
@@ -480,22 +492,25 @@ class UpgradeActivity :
                     purchaseResponse.productId?.let {
                         purchaseResponse.purchaseToken?.let { it1 ->
                             inAppPurchaseSM.setBoolean(SessionManager.isPremium, true)
-                            if (it == Constants.life_time_subscription_id){
+                            //amit
+                            val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+                            Log.d("dsfdsfdsfdsf",it)
+                            purchaseResponse.purchaseTime?.let { it2 ->
+                                viewModel.setDataInAccountTitleListNew(
+                                    it1, it, it2, purchaseResponse!!.orderId!!,userToken
+                                )
+                            }
+
+                           /* if (it == Constants.life_time_subscription_id){
                                 purchaseResponse.purchaseTime?.let { it2 ->
                                     viewModel.setDataInAccountTitleList(
                                         it1, it, it2, "1"
                                     )
                                 }
                             }else{
-                                //amit
-                                Log.d("dsfdsfdsfdsf",it)
-                                purchaseResponse.purchaseTime?.let { it2 ->
-                                    viewModel.setDataInAccountTitleListNew(
-                                        it1, it, it2, "1"
-                                    )
-                                }
 
-                            }
+
+                            }*/
                         }
                     }
                     product = purchaseInfo?.product.toString()

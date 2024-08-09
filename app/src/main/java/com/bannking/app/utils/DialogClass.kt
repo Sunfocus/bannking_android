@@ -147,11 +147,13 @@ class DialogClass(private val context: Context) {
                 R.drawable.round_layout_otp_night
             )
             txtSucessfulyMessage.setTextColor(ContextCompat.getColor(context, R.color.white))
+            btnOk.setTextColor(ContextCompat.getColor(context, R.color.white))
         }else{
             llSuccessDialog.background = context.drawable(
                 R.drawable.round_layout_otp
             )
             txtSucessfulyMessage.setTextColor(ContextCompat.getColor(context, R.color.black))
+            btnOk.setTextColor(ContextCompat.getColor(context, R.color.clr_text_blu))
 
         }
         dialog.show()
@@ -185,6 +187,21 @@ class DialogClass(private val context: Context) {
         dialogServer.setContentView(R.layout.dialog_server_error)
         dialogServer.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         val txtOk: TextView = dialogServer.findViewById(R.id.txt_ok)
+        txtOk.setOnClickListener {
+            dialogServer.dismiss()
+        }
+        if (!dialogServer.isShowing) {
+            dialogServer.show()
+        }
+    }
+    fun showErrorMessageDialog(message: String?) {
+//        dialogServer.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialogServer.setCancelable(false)
+        dialogServer.setContentView(R.layout.dialog_server_error)
+        dialogServer.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val txtOk: TextView = dialogServer.findViewById(R.id.txt_ok)
+        val txt_message: TextView = dialogServer.findViewById(R.id.txt_message)
+        txt_message.text =  message?:"Oops, Something went wrong, please try again later"
         txtOk.setOnClickListener {
             dialogServer.dismiss()
         }

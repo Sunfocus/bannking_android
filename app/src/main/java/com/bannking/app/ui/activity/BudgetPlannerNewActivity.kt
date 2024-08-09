@@ -20,6 +20,7 @@ import com.bannking.app.databinding.ActivityBudgetPlannerBinding
 import com.bannking.app.databinding.BottomshitCreateBudgetPlannerBinding
 import com.bannking.app.databinding.SubBudgetBottomsheetBinding
 import com.bannking.app.model.CommonResponseApi
+import com.bannking.app.model.ErrorResponse
 import com.bannking.app.model.retrofitResponseModel.budgetPlannerModel.BudgetPlannerModel
 import com.bannking.app.model.retrofitResponseModel.budgetPlannerModel.Data
 import com.bannking.app.model.retrofitResponseModel.budgetPlannerModel.SubBudgetPlanner
@@ -48,7 +49,7 @@ class BudgetPlannerNewActivity :
     lateinit var viewModel: BudgetPlannerViewModel
     private lateinit var budgetList: ArrayList<Data>
     private var position = ""
-
+    private lateinit var savedSessionManagerCurrency: SessionManager
 
     override fun getBinding(): ActivityBudgetPlannerBinding {
         return ActivityBudgetPlannerBinding.inflate(layoutInflater)
@@ -56,12 +57,13 @@ class BudgetPlannerNewActivity :
 
     override fun initViewModel(viewModel: BudgetPlannerViewModel) {
         this.viewModel = viewModel
-
+        savedSessionManagerCurrency =
+            SessionManager(this@BudgetPlannerNewActivity, SessionManager.CURRENCY)
     }
 
     private fun uiChangeColor() {
         if (UiExtension.isDarkModeEnabled()) {
-            binding!!.rlBuddget.setBackgroundColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.rlBuddget.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
 
         } else {
@@ -184,7 +186,7 @@ class BudgetPlannerNewActivity :
         }
         if (UiExtension.isDarkModeEnabled()) {
             bottomBinding.linearLayout.backgroundTintList =
-                ContextCompat.getColorStateList(this, R.color.black)
+                ContextCompat.getColorStateList(this, R.color.dark_mode)
             bottomBinding.edtBudgetTitle.setHintTextColor(
                 ContextCompat.getColor(
                     this,
@@ -303,7 +305,7 @@ class BudgetPlannerNewActivity :
         }
         if (UiExtension.isDarkModeEnabled()) {
             bottomBinding.linearLayout.backgroundTintList =
-                ContextCompat.getColorStateList(this, R.color.black)
+                ContextCompat.getColorStateList(this, R.color.dark_mode)
             bottomBinding.etSubBudgetTitle.setHintTextColor(
                 ContextCompat.getColor(
                     this,
@@ -408,7 +410,7 @@ class BudgetPlannerNewActivity :
 
         ) {
         if (UiExtension.isDarkModeEnabled()) {
-            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.black)
+            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.dark_mode)
             iconAmount.setTextColor(ContextCompat.getColor(this, R.color.white))
             edtAmount.setTextColor(ContextCompat.getColor(this, R.color.white))
             tvAmountSubBudget.setTextColor(ContextCompat.getColor(this, R.color.white))
@@ -448,6 +450,34 @@ class BudgetPlannerNewActivity :
         val tvAccountCodeSUbBudeget: TextView = view.findViewById(R.id.tvAccountCodeSUbBudeget)
         val tvAccountSubBudeget: TextView = view.findViewById(R.id.tvAccountSubBudeget)
 
+
+        val currencyCode = savedSessionManagerCurrency.getCurrency()
+        when (currencyCode) {
+            "1" -> {
+                iconSubBudget.text = "$"
+            }
+
+            "2" -> {
+                iconSubBudget.text = "SAR"
+            }
+
+            "3" -> {
+                iconSubBudget.text = "AED"
+            }
+
+            "4" -> {
+                iconSubBudget.text = "QAR"
+            }
+
+            "5" -> {
+                iconSubBudget.text = "€"
+            }
+
+            "6" -> {
+                iconSubBudget.text = "£"
+            }
+        }
+
         setCreateTranUiColor(
             view,
             iconSubBudget,
@@ -486,7 +516,7 @@ class BudgetPlannerNewActivity :
                                 subBudgetID = BudgetData.id!!,
                                 budgetId = BudgetData.budget_id.toString(),
                                 accountCode = edtAccountCode.text.toString(),
-                                amount = edtAmount.text.toString(),
+                                amount = edtAmount.text.toString().replace(",",""),
                                 accountName = edtAccount.text.toString(),
                                 accTitleId = intent.getStringExtra("SelectedItemMenu").toString()
                             )
@@ -594,7 +624,13 @@ class BudgetPlannerNewActivity :
                                 dialogClass.showServerErrorDialog()
                             }
                         }
-                    } else dialogClass.showServerErrorDialog()
+                    } else {
+                        val errorBodyString = response.errorBody()?.string()
+                        val errorModel = gson.fromJson(errorBodyString, ErrorResponse::class.java)
+                        if (errorModel.message.contains("Please upgrade to unlock premium features..")){
+                            dialogClass.showAccountNotSubscriptionDialog(errorModel.message.toString())
+                        }else dialogClass.showErrorMessageDialog(errorModel.message)
+                    }
                 }
 
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {

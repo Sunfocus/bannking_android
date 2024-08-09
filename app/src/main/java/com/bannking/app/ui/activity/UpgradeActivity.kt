@@ -50,7 +50,9 @@ class UpgradeActivity :
             binding!!.txtPurchaseDesc.setText(R.string.str_purchase_description_night)
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
             binding!!.tvFreeTrial.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.rlUpgrade.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
         } else {
+            binding!!.rlUpgrade.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.black))
             binding!!.txtPurchaseDesc.setText(R.string.str_purchase_description)
             binding!!.tvFreeTrial.setTextColor(ContextCompat.getColor(this, R.color.black))

@@ -37,10 +37,13 @@ class AccountMenuWithSavedAdapterNew(
         val model = list?.get(position)
         if (UiExtension.isDarkModeEnabled()) {
             holder.cardAccount.setBackgroundResource(R.drawable.corner_radius_stroke) // Dark mode background color
+            holder.txtTitle.setTextColor(ContextCompat.getColor(context!!, R.color.white))
         } else {
             holder.cardAccount.backgroundTintList = ContextCompat.getColorStateList(
                 context!!, R.color.white
             ) // Light mode background color
+            holder.txtTitle.setTextColor(ContextCompat.getColor(context!!, R.color.clr_text_blu))
+
         }
         if (position == 0) {
             holder.txtTitle.text = list?.get(0)?.name
@@ -96,6 +99,7 @@ class AccountMenuWithSavedAdapterNew(
             intent.putExtra("SelectedItemMenu", model?.id)
             intent.putExtra("position", position.toString())
             (context as AccountMenuNewActivity).resultLauncher.launch(intent)
+            (context as AccountMenuNewActivity).finish()
         }
 
         holder.imgDelete.setOnClickListener {

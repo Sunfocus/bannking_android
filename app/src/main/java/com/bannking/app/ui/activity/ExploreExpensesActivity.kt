@@ -42,6 +42,7 @@ class ExploreExpensesActivity :
     }
 
     override fun initialize() {
+        uiColor()
 //        adapter = ExploreExpensesAdapter(this@ExploreExpensesActivity, list)
 //        binding!!.rvExploreExpenses.adapter = adapter
     }
@@ -50,6 +51,18 @@ class ExploreExpensesActivity :
         setOnClickListener()
 
 
+    }
+    private fun uiColor(){
+        if (UiExtension.isDarkModeEnabled()) {
+            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.tvExplore.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.rlExplore.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
+        } else {
+            binding!!.rlExplore.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.black))
+            binding!!.tvExplore.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+
+        }
     }
 
 

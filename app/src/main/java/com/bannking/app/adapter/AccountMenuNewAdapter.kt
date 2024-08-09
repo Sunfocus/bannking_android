@@ -80,6 +80,7 @@ class AccountMenuNewAdapter : RecyclerView.Adapter<AccountMenuNewAdapter.ViewHol
         holder.txtTitle.text = list!![position].name
 
         if (UiExtension.isDarkModeEnabled()) {
+            holder.txtTitle.setTextColor(ContextCompat.getColor(context!!, R.color.white))
             if (model.isSelected) {
                 holder.tvSelected.visibility = View.VISIBLE
                 holder.cvMenu.background = context!!.drawable(R.drawable.drawable_selected_night)
@@ -90,6 +91,7 @@ class AccountMenuNewAdapter : RecyclerView.Adapter<AccountMenuNewAdapter.ViewHol
                 )
             }
         } else {
+            holder.txtTitle.setTextColor(ContextCompat.getColor(context!!, R.color.clr_text_blu))
             if (model.isSelected) {
                 holder.tvSelected.visibility = View.VISIBLE
                 holder.cvMenu.background = context!!.drawable(R.drawable.drawable_selected)

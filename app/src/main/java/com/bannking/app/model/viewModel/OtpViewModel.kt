@@ -1,11 +1,14 @@
 package com.bannking.app.model.viewModel
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.bannking.app.UiExtension.FCM_TOKEN
 import com.bannking.app.core.BaseViewModel
 import com.bannking.app.core.CommonResponseModel
+import com.bannking.app.model.ErrorResponse
 import com.bannking.app.network.RetrofitClient
+import com.bannking.app.network.okhttploginterceptor.LoggingInterceptor.Companion.gson
 import com.bannking.app.utils.Constants
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -22,6 +25,7 @@ class OtpViewModel(val App: Application) : BaseViewModel(app = App) {
     var registerDataList: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
     var accountForgetData: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
     var forgotPassword: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
+    var errorResponse: MutableLiveData<String> = MutableLiveData(null)
 
 
     fun setDataInOtpList(strEmail: String, strTypeNumber: String,name: String) {
@@ -126,7 +130,12 @@ class OtpViewModel(val App: Application) : BaseViewModel(app = App) {
                         val jsonObject: JsonObject = JsonParser.parseString(errorBody).asJsonObject
                         registerDataList.value = CommonResponseModel(jsonObject, response.code())
                     }
-                } else registerDataList.value = CommonResponseModel(null, 500)
+                } else {
+                    val errorBodyString = response.errorBody()?.string()
+                    val mainModel = gson.fromJson(errorBodyString, ErrorResponse::class.java)
+                    errorResponse.value = mainModel.message
+                    registerDataList.value = CommonResponseModel(null, 500)
+                }
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {

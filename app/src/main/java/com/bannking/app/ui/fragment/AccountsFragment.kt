@@ -51,10 +51,11 @@ class AccountsFragment : Fragment() {
             mBinding!!.rlAccount.backgroundTintList =
                 ContextCompat.getColorStateList(
                     requireActivity(),
-                    R.color.black
+                    R.color.dark_mode
                 ) // Dark mode background color
             mBinding!!.tvTrackAccount.setTextColor(ContextCompat.getColor(requireActivity(), R.color.white))
             mBinding!!.tvManual.setTextColor(ContextCompat.getColor(requireActivity(), R.color.white))
+            mBinding!!.txtInformation.setTextColor(ContextCompat.getColor(requireActivity(), R.color.white))
         } else {
             mBinding!!.rlAccount.backgroundTintList =
                 ContextCompat.getColorStateList(
@@ -62,6 +63,7 @@ class AccountsFragment : Fragment() {
                     R.color.clr_wild_sand
                 ) // Light mode background color
             mBinding!!.tvTrackAccount.setTextColor(ContextCompat.getColor(requireActivity(), R.color.black))
+            mBinding!!.txtInformation.setTextColor(ContextCompat.getColor(requireActivity(), R.color.black))
             mBinding!!.tvManual.setTextColor(ContextCompat.getColor(requireActivity(), R.color.grey))
         }
     }

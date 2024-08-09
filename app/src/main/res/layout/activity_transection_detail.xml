@@ -91,7 +91,7 @@
                         android:layout_marginTop="3dp"
                         android:fontFamily="@font/source_sans_regular"
                         android:singleLine="true"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/clr_text_blu"
                         android:textSize="28sp"
                         tools:text="$445.49" />
 
@@ -146,7 +146,7 @@
                     android:layout_weight="0.319"
                     android:text="@string/str_transfer"
                     android:textAlignment="center"
-                    android:textColor="@color/colorPrimary" />
+                    android:textColor="@color/clr_text_blu" />
 
                 <View
                     android:layout_width="0dp"

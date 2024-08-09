@@ -70,7 +70,7 @@ class AccountCreatedFragment :
             mBinding.LLVp.backgroundTintList =
                 ContextCompat.getColorStateList(
                     requireActivity(),
-                    R.color.black
+                    R.color.dark_mode
                 ) // Dark mode background color
             mBinding.txtInformation.setTextColor(ContextCompat.getColor(requireActivity(), R.color.white))
         } else {

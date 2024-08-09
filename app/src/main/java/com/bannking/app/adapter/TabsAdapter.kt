@@ -17,6 +17,9 @@ import com.bannking.app.utils.MoreDotClick
 import com.bannking.app.utils.OnClickAnnouncement
 import com.bannking.app.utils.OnClickAnnouncementDialog
 import com.bannking.app.utils.SessionManager
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.Locale
 
 class TabsAdapter(
     private val context: Context,
@@ -55,7 +58,17 @@ class TabsAdapter(
             mBinding!!.txtAstric.setTextColor(ContextCompat.getColor(context, R.color.white))
             mBinding!!.txtAccountCode.setTextColor(ContextCompat.getColor(context, R.color.white))
             mBinding!!.tvAvail.setTextColor(ContextCompat.getColor(context, R.color.white))
+            if (getAmount(list!![position].amount.toString()).startsWith( "-")) {
+                mBinding!!.txtAmount.setTextColor(context.resources.getColor(R.color.clr_red))
+            }else{
+                mBinding!!.txtAmount.setTextColor(context.resources.getColor(R.color.white))
+            }
         } else {
+            if (getAmount(list!![position].amount.toString()).startsWith( "-")) {
+                mBinding!!.txtAmount.setTextColor(context.resources.getColor(R.color.clr_red))
+            }else{
+                mBinding!!.txtAmount.setTextColor(context.resources.getColor(R.color.clr_blue))
+            }
             mBinding!!.llAccountList.backgroundTintList =
                 ContextCompat.getColorStateList(
                     context,
@@ -81,11 +94,14 @@ class TabsAdapter(
 
 
         if (getAmount(list!![position].amount.toString()).startsWith( "-")) {
+            val amount = formatMoney(list!![position].amount!!.toDouble())
             mBinding!!.txtAmount.setTextColor(context.resources.getColor(R.color.clr_red))
-            mBinding!!.txtAmount.text = "${list!![position].currency!!.icon}${list!![position].amount}"
+            mBinding!!.txtAmount.text = "${list!![position].currency!!.icon}${amount}"
         } else {
-            mBinding!!.txtAmount.setTextColor(context.resources.getColor(R.color.clr_blue))
-            mBinding!!.txtAmount.text = "${list!![position].currency!!.icon}${list!![position].amount}"
+            val amount = formatMoney(list!![position].amount!!.toDouble())
+            Log.e("asdjghjsadsda",amount)
+//            mBinding!!.txtAmount.setTextColor(context.resources.getColor(R.color.clr_blue))
+            mBinding!!.txtAmount.text = "${list!![position].currency!!.icon}${amount}"
         }
 
 
@@ -120,6 +136,11 @@ class TabsAdapter(
 
 
     }
+    private fun formatMoney(value: Double): String {
+        val decimalFormat = DecimalFormat("#,###.0#")
+        return decimalFormat.format(value)
+    }
+
 
     fun getAmount(amount : String) : String {
         return amount.replace("[^0-9.-]".toRegex(), "")

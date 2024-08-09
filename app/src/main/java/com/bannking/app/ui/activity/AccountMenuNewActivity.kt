@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -56,9 +57,10 @@ class AccountMenuNewActivity :
         viewModel.setDataInAccountTitleList(userToken)
     }
 
+
     private fun uiChangeColor(){
         if (UiExtension.isDarkModeEnabled()) {
-            binding!!.cvAccountMenu.setBackgroundColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.cvAccountMenu.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
 
         } else {
@@ -354,15 +356,18 @@ class AccountMenuNewActivity :
 
         val btnSubmit = view.findViewById<Button>(R.id.btn_submit)
         val edtCreateTitle = view.findViewById<EditText>(R.id.edt_create_title)
+        val tvCreateOwn = view.findViewById<TextView>(R.id.tvCreateOwn)
 
         if (UiExtension.isDarkModeEnabled()) {
-            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.black)
+            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.dark_mode)
             edtCreateTitle.setHintTextColor(ContextCompat.getColor(this, R.color.white))
             edtCreateTitle.setTextColor(ContextCompat.getColor(this, R.color.white))
+            tvCreateOwn.setTextColor(ContextCompat.getColor(this, R.color.white))
         }else{
             view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.white)
             edtCreateTitle.setHintTextColor(ContextCompat.getColor(this, R.color.grey))
             edtCreateTitle.setTextColor(ContextCompat.getColor(this, R.color.black))
+            tvCreateOwn.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
         }
 
         btnSubmit.setOnClickListener {
@@ -444,6 +449,7 @@ class AccountMenuNewActivity :
             })
         }
     }
+
 
     override fun onResume() {
         super.onResume()

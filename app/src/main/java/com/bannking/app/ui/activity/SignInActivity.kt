@@ -3,7 +3,6 @@ package com.bannking.app.ui.activity
 import android.content.Intent
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
-import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricPrompt
@@ -16,6 +15,7 @@ import com.bannking.app.UiExtension.getCurrentLanguage
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.core.CommonResponseModel
 import com.bannking.app.databinding.ActivitySigninBinding
+import com.bannking.app.model.ErrorResponse
 import com.bannking.app.model.retrofitResponseModel.userModel.UserModel
 import com.bannking.app.model.viewModel.SignInViewModel
 import com.bannking.app.network.RetrofitClient
@@ -498,6 +498,12 @@ class SignInActivity :
                         } else if (response.code() in 400..500) {
                             dialogClass.showServerErrorDialog()
                         }
+                    }else {
+                        val errorBodyString = response.errorBody()?.string()
+                        val mainModel = gson.fromJson(errorBodyString, ErrorResponse::class.java)
+                            dialogClass.hideLoadingDialog()
+                            dialogClass.showErrorMessageDialog(mainModel.message)
+
                     }
                 }
 

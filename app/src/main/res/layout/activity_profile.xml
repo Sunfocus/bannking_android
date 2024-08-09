@@ -77,6 +77,15 @@
                 android:textDirection="anyRtl"
                 app:drawableEndCompat="@drawable/ic_edit_pen"
                 tools:text="@string/str_gmail" />
+            <TextView
+                android:id="@+id/tvVerified"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="10dp"
+                android:textAlignment="viewStart"
+                android:textColor="@color/clr_red"
+                android:textDirection="anyRtl"
+                tools:text="Unverified email" />
 
             <TextView
                 android:id="@+id/txt_username"
@@ -134,6 +143,7 @@
                         android:src="@drawable/profile_info" />
 
                     <TextView
+                        android:id="@+id/tvProfileInfo"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.6"
@@ -181,6 +191,7 @@
                         android:src="@drawable/ic_announce" />
 
                     <TextView
+                        android:id="@+id/tvVoiceReader"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.6"
@@ -230,6 +241,7 @@
                         android:src="@drawable/change_currency" />
 
                     <TextView
+                        android:id="@+id/tvCurrency"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.6"
@@ -278,6 +290,7 @@
                         android:src="@drawable/bank" />
 
                     <TextView
+                        android:id="@+id/tvLinkBank"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.6"
@@ -325,6 +338,7 @@
                         android:src="@drawable/language" />
 
                     <TextView
+                        android:id="@+id/tvChangeLang"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.6"
@@ -372,6 +386,7 @@
                         android:src="@drawable/day_and_night" />
 
                     <TextView
+                        android:id="@+id/tvDayNight"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.5"
@@ -422,6 +437,7 @@
                         android:src="@drawable/refer" />
 
                     <TextView
+                        android:id="@+id/tvReferFriend"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.5"
@@ -462,6 +478,7 @@
                         android:src="@drawable/ic_remove_ads" />
 
                     <TextView
+                        android:id="@+id/tvRemoveAd"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.6"
@@ -503,6 +520,7 @@
                         android:src="@drawable/ic_star" />
 
                     <TextView
+                        android:id="@+id/tvRateApp"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.6"
@@ -542,6 +560,7 @@
                         android:scaleType="centerInside"
                         android:src="@drawable/help_and_privacy" />
                     <TextView
+                        android:id="@+id/tvHelpPrivacy"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.6"

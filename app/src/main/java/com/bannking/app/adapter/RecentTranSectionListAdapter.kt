@@ -12,6 +12,7 @@ import com.bannking.app.R
 import com.bannking.app.UiExtension
 import com.bannking.app.databinding.ItemTransactionBinding
 import com.bannking.app.model.retrofitResponseModel.tranSectionListModel.Data
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -41,7 +42,7 @@ class RecentTranSectionListAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (UiExtension.isDarkModeEnabled()) {
             mBinding!!.cvListTD.setBackgroundResource(R.drawable.corner_radius_stroke)
-            mBinding!!.llTDList.setBackgroundColor(ContextCompat.getColor(context, R.color.black))
+            mBinding!!.llTDList.setBackgroundColor(ContextCompat.getColor(context, R.color.dark_mode))
             mBinding!!.txtTransactionTitle.setTextColor(
                 ContextCompat.getColor(
                     context,
@@ -55,6 +56,7 @@ class RecentTranSectionListAdapter(
                 )
             )
             mBinding!!.txtOrigId.setTextColor(ContextCompat.getColor(context, R.color.white))
+            mBinding!!.txtTotalAmount.setTextColor(ContextCompat.getColor(context, R.color.white))
             mBinding!!.txtTransactionId.setTextColor(ContextCompat.getColor(context, R.color.white))
             mBinding!!.txtTransactionDate.setTextColor(
                 ContextCompat.getColor(
@@ -63,6 +65,7 @@ class RecentTranSectionListAdapter(
                 )
             )
         } else {
+            mBinding!!.txtTotalAmount.setTextColor(ContextCompat.getColor(context, R.color.clr_text_blu))
             mBinding!!.cvListTD.backgroundTintList = ContextCompat.getColorStateList(
                 context, R.color.white
             )
@@ -175,9 +178,9 @@ class RecentTranSectionListAdapter(
 
         mBinding!!.txtTransactionDate.text = formattedDate
 //            list[position].transactionDate.toString().getDateMMMDDYYYY()
-
+        val amount = formatMoney(list[position].totalAmount!!.toDouble())
         mBinding!!.txtTotalAmount.text =
-            list[position].account_data!!.currency!!.icon + list[position].totalAmount.toString()
+            list[position].account_data!!.currency!!.icon + amount.toString()
 //        mBinding!!.txtTransactionDescription.text = list[position].transactionTitle.toString()
 
 
@@ -192,7 +195,10 @@ class RecentTranSectionListAdapter(
         }
 
     }
-
+    private fun formatMoney(value: Double): String {
+        val decimalFormat = DecimalFormat("#,###.0#")
+        return decimalFormat.format(value)
+    }
     override fun getItemCount(): Int {
         return list.size
     }

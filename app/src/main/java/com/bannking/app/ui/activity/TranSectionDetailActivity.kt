@@ -31,6 +31,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -73,9 +74,13 @@ class TranSectionDetailActivity :
     @SuppressLint("SetTextI18n")
     override fun initialize() {
         if (UiExtension.isDarkModeEnabled()) {
-            binding!!.rlMainTD.setBackgroundColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.rlMainTD.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
             binding!!.txtTransactionName.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.txtTransactionAmount.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.txtPay.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.txtTransfer.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.txtCreatePayment.setTextColor(ContextCompat.getColor(this, R.color.white))
             binding!!.txtTransactionNameSmall.setTextColor(
                 ContextCompat.getColor(
                     this,
@@ -85,6 +90,10 @@ class TranSectionDetailActivity :
             binding!!.tvAvailTD.setTextColor(ContextCompat.getColor(this, R.color.white))
             binding!!.txtRecentTransaction.setTextColor(ContextCompat.getColor(this, R.color.white))
         } else {
+            binding!!.txtTransactionAmount.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.txtPay.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.txtTransfer.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.txtCreatePayment.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
             binding!!.rlMainTD.setBackgroundColor(
                 ContextCompat.getColor(
                     this,
@@ -135,18 +144,18 @@ class TranSectionDetailActivity :
             strAccountCode = intent.extras!!.getString("account_code")  // Account Code for print
             Id = intent.extras!!.getString("Id")  //Account Id
             icon = intent.extras!!.getString("icon")  // currency icon
-
+            val amount = formatMoney(strAmount!!.toDouble())
             binding!!.txtTransactionName.text =
                 account.toString() + " ..." + strAccountCode.toString()
             binding!!.txtTransactionNameSmall.text =
                 account.toString() + " ..." + strAccountCode.toString()
-            binding!!.txtTransactionAmount.text = icon.toString() + strAmount.toString()
+            binding!!.txtTransactionAmount.text = icon.toString() + amount.toString()
 
             if (getAmount(strAmount.toString()).startsWith("-")) {
                 binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_red))
-            } else {
+            }/* else {
                 binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_blue))
-            }
+            }*/
             val userToken = sessionManager.getString(SessionManager.USERTOKEN)
             viewModel.setDataInRecentTransactionListData(Id!!, userToken)
         }
@@ -175,14 +184,15 @@ class TranSectionDetailActivity :
                                 list = mainModel.data
                                 setAdapter()
                                 Log.d("sdfsdfdsfdsf", list.toString())
+                                val amount = formatMoney(mainModel.extraData!!.toDouble())
                                 binding!!.txtTransactionAmount.text =
-                                    icon.toString() + mainModel.extraData
+                                    icon.toString() + amount
 
                                 if (getAmount(mainModel.extraData.toString()).startsWith("-")) {
                                     binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_red))
-                                } else {
+                                } /*else {
                                     binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_blue))
-                                }
+                                }*/
 
                                 strAmount = mainModel.data[0].totalAmount
 //                                adapter?.updateList(reverseList)
@@ -226,14 +236,14 @@ class TranSectionDetailActivity :
                             if (model.status == 200) {
                                 val userToken = sessionManager.getString(SessionManager.USERTOKEN)
                                 viewModel.setDataInRecentTransactionListData(Id!!, userToken)
-                                Log.d("Asdkjsafhjkds", transectionCreate.toString())
-                                binding!!.txtTransactionAmount.text = icon.toString() + model.amount
+//                                val amount = formatMoney(model.amount!!.toDouble())
+//                                binding!!.txtTransactionAmount.text = icon.toString() + amount
 
                                 if (getAmount(model.amount.toString()).startsWith("-")) {
                                     binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_red))
-                                } else {
+                                } /*else {
                                     binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_blue))
-                                }
+                                }*/
 
                                 strAmount = model.amount
                             } else if (model.status == 200) {
@@ -264,17 +274,19 @@ class TranSectionDetailActivity :
                                 UpdateAccountModel::class.java
                             )
                             if (model.status == 200) {
+                                val amount = formatMoney(model.data!!.amount!!.toDouble())
+
                                 binding!!.txtTransactionName.text =
                                     "${model.data!!.account} ...${model.data!!.account_code}"
                                 binding!!.txtTransactionNameSmall.text =
                                     "${model.data!!.account} ...${model.data!!.account_code}"
-                                binding!!.txtTransactionAmount.text = "$icon${model.data!!}"
+                                binding!!.txtTransactionAmount.text = "$icon${amount}"
 
                                 if (getAmount(model.data!!.toString()).startsWith("-")) {
                                     binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_red))
-                                } else {
+                                } /*else {
                                     binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_blue))
-                                }
+                                }*/
 
                                 strAccountCode = model.data!!.account_code
                                 account = model.data!!.account
@@ -349,19 +361,25 @@ class TranSectionDetailActivity :
             if (result.resultCode == 1112) {
                 if (data?.hasExtra("CurrentAmount") == true) {
                     strAmount = data.extras!!.getString("CurrentAmount")
-                    binding!!.txtTransactionAmount.text = icon.toString() + strAmount
+                    val amount = formatMoney(strAmount!!.toDouble())
+                    binding!!.txtTransactionAmount.text = icon.toString() + amount
 
                     if (getAmount(strAmount.toString()).startsWith("-")) {
                         binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_red))
-                    } else {
+                    } /*else {
                         binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_blue))
-                    }
+                    }*/
                 }
                 val userToken = sessionManager.getString(SessionManager.USERTOKEN)
                 viewModel.setDataInRecentTransactionListData(Id!!, userToken)
             }
         }
 
+
+    private fun formatMoney(value: Double): String {
+        val decimalFormat = DecimalFormat("#,###.0#")
+        return decimalFormat.format(value)
+    }
     private var payrRsultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val data: Intent? = result.data
@@ -369,13 +387,14 @@ class TranSectionDetailActivity :
                 if (data?.hasExtra("amount") == true) {
                     if (data.extras!!.getString("amount")?.isNotEmpty() == true) {
                         strAmount = data.extras!!.getString("amount")
-                        binding!!.txtTransactionAmount.text = icon.toString() + strAmount
+                        val amount = formatMoney(strAmount!!.toDouble())
+                        binding!!.txtTransactionAmount.text = icon.toString() + amount
 
                         if (getAmount(strAmount.toString()).startsWith("-")) {
                             binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_red))
-                        } else {
+                        } /*else {
                             binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_blue))
-                        }
+                        }*/
                     }
                 }
                 val userToken = sessionManager.getString(SessionManager.USERTOKEN)
@@ -398,8 +417,22 @@ class TranSectionDetailActivity :
         val edtAccount: EditText = view.findViewById(R.id.edt_account)
         val edtAccountCode: EditText = view.findViewById(R.id.edt_account_code)
         val edtAmount: EasyMoneyEditText = view.findViewById(R.id.edt_amount)
+        val iconSubBudget: TextView = view.findViewById(R.id.iconSubBudget)
+        val tvAmountSubBudget: TextView = view.findViewById(R.id.tvAmountSubBudget)
+        val tvAccountCodeSUbBudeget: TextView = view.findViewById(R.id.tvAccountCodeSUbBudeget)
+        val tvAccountSubBudeget: TextView = view.findViewById(R.id.tvAccountSubBudeget)
         val strdone: String = getString(R.string.str_done)
 
+        setEditTranUiColor(
+            view,
+            iconSubBudget,
+            edtAmount,
+            tvAmountSubBudget,
+            edtAccountCode,
+            tvAccountCodeSUbBudeget,
+            edtAccount,
+            tvAccountSubBudeget
+        )
         btnDone.text = strdone
         edtAccount.setText(account.toString())
         edtAccountCode.setText(strAccountCode)
@@ -496,18 +529,23 @@ class TranSectionDetailActivity :
             }
 
             "2" -> {
+                iconAmount.text = "SAR"
             }
 
             "3" -> {
+                iconAmount.text = "AED"
             }
 
             "4" -> {
+                iconAmount.text = "QAR"
             }
 
             "5" -> {
+                iconAmount.text = "€"
             }
 
             "6" -> {
+                iconAmount.text = "£"
             }
         }
 
@@ -598,6 +636,46 @@ class TranSectionDetailActivity :
         }
     }
 
+    private fun setEditTranUiColor(
+        view: View,
+        iconAmount: TextView,
+        edtAmount: EasyMoneyEditText,
+        tvAmountSubBudget: TextView,
+        edtAccountCode: EditText,
+        tvAccountCodeSUbBudeget: TextView,
+        edtAccount: EditText,
+        tvAccountSubBudeget: TextView,
+
+        ) {
+        if (UiExtension.isDarkModeEnabled()) {
+            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.dark_mode)
+            iconAmount.setTextColor(ContextCompat.getColor(this, R.color.white))
+            edtAmount.setTextColor(ContextCompat.getColor(this, R.color.white))
+            tvAmountSubBudget.setTextColor(ContextCompat.getColor(this, R.color.white))
+            edtAccountCode.setTextColor(ContextCompat.getColor(this, R.color.white))
+            tvAccountCodeSUbBudeget.setTextColor(ContextCompat.getColor(this, R.color.white))
+            edtAccount.setTextColor(ContextCompat.getColor(this, R.color.white))
+            tvAccountSubBudeget.setTextColor(ContextCompat.getColor(this, R.color.white))
+            edtAmount.setHintTextColor(ContextCompat.getColor(this, R.color.white))
+            edtAccountCode.setHintTextColor(ContextCompat.getColor(this, R.color.white))
+            edtAccount.setHintTextColor(ContextCompat.getColor(this, R.color.white))
+        } else {
+            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.white)
+            iconAmount.setTextColor(ContextCompat.getColor(this, R.color.black))
+            edtAmount.setTextColor(ContextCompat.getColor(this, R.color.black))
+            tvAmountSubBudget.setTextColor(ContextCompat.getColor(this, R.color.black))
+            edtAccountCode.setTextColor(ContextCompat.getColor(this, R.color.black))
+            tvAccountCodeSUbBudeget.setTextColor(ContextCompat.getColor(this, R.color.black))
+            edtAccount.setTextColor(ContextCompat.getColor(this, R.color.black))
+            tvAccountSubBudeget.setTextColor(ContextCompat.getColor(this, R.color.black))
+            edtAmount.setHintTextColor(ContextCompat.getColor(this, R.color.grey))
+            edtAccountCode.setHintTextColor(ContextCompat.getColor(this, R.color.grey))
+            edtAccount.setHintTextColor(ContextCompat.getColor(this, R.color.grey))
+
+        }
+    }
+
+
     private fun setCreateTranUiColor(
         view: View,
         txtDatePicker: TextView,
@@ -611,8 +689,8 @@ class TranSectionDetailActivity :
         iconAmount: TextView
     ) {
         if (UiExtension.isDarkModeEnabled()) {
-            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.black)
-            tableCT.setBackgroundColor(Color.BLACK)
+            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.dark_mode)
+            tableCT.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
             tvTP.setTextColor(ContextCompat.getColor(this, R.color.white))
             tvTitle.setTextColor(ContextCompat.getColor(this, R.color.white))
             transitionTitle.setTextColor(ContextCompat.getColor(this, R.color.white))
@@ -624,16 +702,16 @@ class TranSectionDetailActivity :
             txtTransactionAmount.setHintTextColor(ContextCompat.getColor(this, R.color.white))
             txtDatePicker.setHintTextColor(ContextCompat.getColor(this, R.color.white))
             tvDate.setTextColor(ContextCompat.getColor(this, R.color.white))
-            tvTP.setBackgroundColor(Color.BLACK)
-            tvDate.setBackgroundColor(Color.BLACK)
-            tvTitle.setBackgroundColor(Color.BLACK)
-            transitionTitle.setBackgroundColor(Color.BLACK)
-            txtTransactionAmount.setBackgroundColor(Color.BLACK)
-            tvAmount.setBackgroundColor(Color.BLACK)
-            txtDatePicker.setBackgroundColor(Color.BLACK)
+            tvTP.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
+            tvDate.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
+            tvTitle.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
+            transitionTitle.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
+            txtTransactionAmount.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
+            tvAmount.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
+            txtDatePicker.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
         } else {
             view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.white)
-            tableCT.setBackgroundColor(Color.WHITE)
+            tableCT.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
             tvTP.setTextColor(ContextCompat.getColor(this, R.color.black))
             tvTitle.setTextColor(ContextCompat.getColor(this, R.color.black))
             transitionTitle.setTextColor(ContextCompat.getColor(this, R.color.black))
@@ -650,13 +728,13 @@ class TranSectionDetailActivity :
             )
             txtDatePicker.setHintTextColor(ContextCompat.getColor(this, R.color.clr_dark_gray))
             tvDate.setTextColor(ContextCompat.getColor(this, R.color.black))
-            tvDate.setBackgroundColor(Color.WHITE)
-            tvTP.setBackgroundColor(Color.WHITE)
-            transitionTitle.setBackgroundColor(Color.WHITE)
-            tvTitle.setBackgroundColor(Color.WHITE)
-            tvAmount.setBackgroundColor(Color.WHITE)
-            txtTransactionAmount.setBackgroundColor(Color.WHITE)
-            txtDatePicker.setBackgroundColor(Color.WHITE)
+            tvDate.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
+            tvTP.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
+            transitionTitle.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
+            tvTitle.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
+            tvAmount.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
+            txtTransactionAmount.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
+            txtDatePicker.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
         }
     }
 

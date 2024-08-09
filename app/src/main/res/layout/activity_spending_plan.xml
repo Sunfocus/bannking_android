@@ -40,6 +40,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvSpending"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/source_sans_regular"
@@ -69,7 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/ll_buttons"
         android:layout_below="@+id/ll_title"
-        android:layout_marginHorizontal="25dp"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginVertical="30dp"
         android:overScrollMode="never"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"

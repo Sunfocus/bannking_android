@@ -247,6 +247,7 @@
                             android:src="@drawable/baseline_security_24" />
 
                         <TextView
+                            android:id="@+id/tvChangePassEP"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.6"
@@ -284,12 +285,13 @@
                             android:src="@drawable/baseline_lock_24" />
 
                         <TextView
+                            android:id="@+id/tvFaceIdEP"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.5"
                             android:fontFamily="@font/source_sans_regular"
                             android:gravity="center_vertical"
-                            android:text="Enable FaceID"
+                            android:text="@string/enable_faceid"
                             android:textColor="@color/clr_text_blu"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -332,6 +334,7 @@
                         android:id="@+id/tvRefrain"
                         android:textColor="@color/black"
                         android:textSize="12sp"
+                        android:layout_marginTop="10dp"
                         android:layout_marginHorizontal="20dp"
                         android:text="@string/refrain_from_tapping"
                         android:layout_height="wrap_content" />

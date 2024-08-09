@@ -20,6 +20,7 @@ data class Data(
     @SerializedName("name") var name: String? = null,
     @SerializedName("email") var email: String? = null,
     @SerializedName("language_id") var languageId: Int? = null,
+    @SerializedName("is_email_verified") var is_email_verified: Int? = null,
     @SerializedName("subscriptionStatus") var subscriptionStatus: Int? = null,
     @SerializedName("face_id_status") var face_id_status: Boolean? = null,
     @SerializedName("notification_status") var notification_status: Boolean? = null,

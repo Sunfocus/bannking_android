@@ -16,6 +16,7 @@ import com.bannking.app.R
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.core.CommonResponseModel
 import com.bannking.app.databinding.ActivitySignUpBinding
+import com.bannking.app.model.ErrorResponse
 import com.bannking.app.model.retrofitResponseModel.otpModel.OtpModel
 import com.bannking.app.model.retrofitResponseModel.userModel.UserModel
 import com.bannking.app.model.viewModel.OtpViewModel
@@ -101,6 +102,11 @@ class SignUpActivity : BaseActivity<OtpViewModel, ActivitySignUpBinding>(OtpView
 
                         }
                     }
+                }
+            }
+            errorResponse.observe(this@SignUpActivity){message->
+                if (message!=null){
+                    dialogClass.showErrorMessageDialog(message)
                 }
             }
             otpList.observe(this@SignUpActivity) { apiResponse ->
@@ -272,6 +278,11 @@ class SignUpActivity : BaseActivity<OtpViewModel, ActivitySignUpBinding>(OtpView
                     } else if (response.code() in 400..500) {
                         dialogClass.showServerErrorDialog()
                     }
+                }else{
+                    val errorBodyString = response.errorBody()?.string()
+                    val mainModel = gson.fromJson(errorBodyString, ErrorResponse::class.java)
+                    dialogClass.hideLoadingDialog()
+                    dialogClass.showErrorMessageDialog(mainModel.message)
                 }
             }
 

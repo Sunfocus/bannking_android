@@ -188,7 +188,7 @@ class ProfileActivity :
             binding!!.pfScroll.backgroundTintList =
                 ContextCompat.getColorStateList(
                     this,
-                    R.color.black
+                    R.color.dark_mode
                 )
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
             binding!!.ivHelp.setColorFilter(this.resources.getColor(R.color.white))
@@ -197,6 +197,16 @@ class ProfileActivity :
             binding!!.ivLanguage.setColorFilter(this.resources.getColor(R.color.white))
             binding!!.ivRateApp.setColorFilter(this.resources.getColor(R.color.white))
             binding!!.txtAppVersion.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvProfileInfo.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvVoiceReader.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvCurrency.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvLinkBank.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvChangeLang.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvDayNight.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvReferFriend.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvRemoveAd.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvRateApp.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvHelpPrivacy.setTextColor(ContextCompat.getColor(this, R.color.white))
         } else {
             binding!!.pfScroll.backgroundTintList =
                 ContextCompat.getColorStateList(
@@ -210,12 +220,24 @@ class ProfileActivity :
             binding!!.ivHelp.setColorFilter(this.resources.getColor(R.color.black))
             binding!!.ivBank.setColorFilter(this.resources.getColor(R.color.black))
             binding!!.ivCurrency.setColorFilter(this.resources.getColor(R.color.black))
+
+            binding!!.tvProfileInfo.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.tvVoiceReader.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.tvCurrency.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.tvLinkBank.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.tvChangeLang.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.tvDayNight.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.tvReferFriend.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.tvRemoveAd.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.tvRateApp.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.tvHelpPrivacy.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
         }
     }
 
     override fun initialize() {
         uiColor()
         updateUi(userModel)
+
 
     }
 
@@ -475,6 +497,13 @@ class ProfileActivity :
 
             })*/
 
+        if (setdata.is_email_verified == 1){
+            binding!!.tvVerified.text = "Verified"
+            binding!!.tvVerified.setTextColor(ContextCompat.getColor(this,R.color.clr_green))
+        }else{
+            binding!!.tvVerified.text = "Unverified email"
+            binding!!.tvVerified.setTextColor(ContextCompat.getColor(this,R.color.clr_red))
+        }
         binding!!.txtUsername.text = setdata.name.toString()
         binding!!.txtEmailId.text = setdata.email
         binding!!.txtAppVersion.text =
@@ -500,7 +529,11 @@ class ProfileActivity :
     private fun setOnClickListener() {
         with(binding!!) {
 
-
+            tvVerified.setOnClickListener {
+                if (userModel!!.is_email_verified!=1){
+                    Toast.makeText(this@ProfileActivity, "Verification email has been sent! Please check your inbox and click the link to verify your email.", Toast.LENGTH_SHORT).show()
+                }
+            }
             imgNotification.setOnClickListener {
                 startActivity(Intent(this@ProfileActivity, NotificationActivity::class.java))
             }
@@ -620,7 +653,7 @@ class ProfileActivity :
 
         if (UiExtension.isDarkModeEnabled()) {
             linearLayoutSound.backgroundTintList =
-                ContextCompat.getColorStateList(this, R.color.black)
+                ContextCompat.getColorStateList(this, R.color.dark_mode)
             btn_femaleVoice.setTextColor(Color.WHITE)
             btn_maleVoice.setTextColor(Color.WHITE)
 //            drawableLeftMale.setTint(Color.WHITE)
@@ -838,7 +871,7 @@ class ProfileActivity :
 
     private fun openCurrencyBottomedDialog(view: View) {
         if (UiExtension.isDarkModeEnabled()) {
-            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.black)
+            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.dark_mode)
 
         } else {
             view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.white)
@@ -852,7 +885,7 @@ class ProfileActivity :
 
     private fun openLanguageBottomedDialog(view: View) {
         if (UiExtension.isDarkModeEnabled()) {
-            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.black)
+            view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.dark_mode)
 
         } else {
             view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.white)

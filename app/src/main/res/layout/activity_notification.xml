@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/llNotification"
     android:background="@color/clr_tab_frag"
     android:orientation="vertical"
     tools:context=".ui.activity.NotificationActivity">
@@ -23,6 +24,7 @@
             android:src="@drawable/ic_back" />
 
         <TextView
+            android:id="@+id/tvNotification"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.6"

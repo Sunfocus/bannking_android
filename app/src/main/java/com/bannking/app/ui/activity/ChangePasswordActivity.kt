@@ -1,6 +1,7 @@
 package com.bannking.app.ui.activity
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.text.method.PasswordTransformationMethod
 import androidx.core.content.ContextCompat
 import com.bannking.app.R
@@ -27,6 +28,7 @@ class ChangePasswordActivity :
     private fun uiColor(){
         if (UiExtension.isDarkModeEnabled()) {
             binding!!.tvChangePass.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.llChangePassword.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_mode))
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
             binding!!.edtOldPassword.setTextColor(ContextCompat.getColor(this, R.color.white))
             binding!!.edtNewPassword.setTextColor(ContextCompat.getColor(this, R.color.white))
@@ -35,7 +37,7 @@ class ChangePasswordActivity :
             binding!!.edtNewPassword.setHintTextColor(ContextCompat.getColor(this, R.color.white))
             binding!!.edtConfirmPassword.setHintTextColor(ContextCompat.getColor(this, R.color.white))
         } else {
-
+            binding!!.llChangePassword.setBackgroundColor(ContextCompat.getColor(this,R.color.white))
             binding!!.tvChangePass.setTextColor(ContextCompat.getColor(this, R.color.black))
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.black))
             binding!!.edtOldPassword.setTextColor(ContextCompat.getColor(this, R.color.black))

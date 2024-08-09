@@ -31,9 +31,10 @@ class SpendingPlanActivity :
 
     override fun initialize() {
         if (UiExtension.isDarkModeEnabled()) {
-            binding!!.rlSpending.setBackgroundColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.rlSpending.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
             binding!!.tvBankingHere.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvSpending.setTextColor(ContextCompat.getColor(this, R.color.white))
         } else {
             binding!!.rlSpending.setBackgroundColor(
                 ContextCompat.getColor(
@@ -42,6 +43,7 @@ class SpendingPlanActivity :
                 )
             )
             binding!!.tvBankingHere.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding!!.tvSpending.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.black))
         }
 

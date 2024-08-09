@@ -17,6 +17,7 @@
         android:paddingBottom="30dp">
 
         <TextView
+            android:id="@+id/tvCreateOwn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/source_sans_regular"

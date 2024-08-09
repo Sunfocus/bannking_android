@@ -36,7 +36,7 @@ class CustomSpinnerAdapter() : BaseAdapter() {
         }
 
         if (UiExtension.isDarkModeEnabled()) {
-            vh.rlSpinnerCD.setBackgroundColor(ContextCompat.getColor(context!!,R.color.black))
+            vh.rlSpinnerCD.setBackgroundColor(ContextCompat.getColor(context!!,R.color.dark_mode))
             vh.label.setTextColor(ContextCompat.getColor(context!!, R.color.white))
         } else {
             vh.rlSpinnerCD.setBackgroundColor(ContextCompat.getColor(context!!,R.color.white))

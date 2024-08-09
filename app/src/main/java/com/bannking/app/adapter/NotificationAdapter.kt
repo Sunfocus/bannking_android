@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bannking.app.R
+import com.bannking.app.UiExtension
 import com.bannking.app.databinding.ItemNotificationBinding
 import com.bannking.app.model.retrofitResponseModel.notificationModel.Data
 import com.bannking.app.model.retrofitResponseModel.notificationModel.Notification
@@ -46,6 +47,20 @@ class NotificationAdapter : RecyclerView.Adapter<NotificationAdapter.ViewHolder>
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
+        if (UiExtension.isDarkModeEnabled()) {
+            mBinding!!.txtNotificationTitle.setTextColor(ContextCompat.getColor(context!!, R.color.white))
+            mBinding!!.txtNotificationMessage.setTextColor(ContextCompat.getColor(context!!, R.color.white))
+            mBinding!!.txtNotificationDate.setTextColor(ContextCompat.getColor(context!!, R.color.white))
+            mBinding!!.llNotification.setBackgroundColor(ContextCompat.getColor(context!!, R.color.dark_mode_nav))
+
+        } else {
+            mBinding!!.txtNotificationTitle.setTextColor(ContextCompat.getColor(context!!, R.color.black))
+            mBinding!!.txtNotificationMessage.setTextColor(ContextCompat.getColor(context!!, R.color.black))
+            mBinding!!.txtNotificationDate.setTextColor(ContextCompat.getColor(context!!, R.color.black))
+            mBinding!!.llNotification.setBackgroundColor(ContextCompat.getColor(context!!, R.color.white))
+
+        }
 
         if (position % 3 == 0) {
             mBinding!!.imgNotification.background.setTint(

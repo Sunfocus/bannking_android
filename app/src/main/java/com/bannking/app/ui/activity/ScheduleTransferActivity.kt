@@ -38,7 +38,7 @@ class ScheduleTransferActivity :
     private var mYear = 0
     private var mMonth = 0
     private var mDay = 0
-
+    private lateinit var savedSessionManagerCurrency: SessionManager
 
     lateinit var viewModel: PayAndTransferViewModel
     lateinit var accountFromId: String
@@ -66,6 +66,8 @@ class ScheduleTransferActivity :
         if (userToken != null) {
             viewModel.setDataInAccountList(userToken)
         }
+        savedSessionManagerCurrency =
+            SessionManager(this@ScheduleTransferActivity, SessionManager.CURRENCY)
     }
 
     private fun setUIColor() {
@@ -73,7 +75,7 @@ class ScheduleTransferActivity :
             binding!!.rlTransfer.backgroundTintList =
                 ContextCompat.getColorStateList(
                     this,
-                    R.color.black
+                    R.color.dark_mode
                 )
             binding!!.tvTF.setTextColor(ContextCompat.getColor(this, R.color.white))
             binding!!.txtTransferDate.setTextColor(ContextCompat.getColor(this, R.color.white))
@@ -147,6 +149,34 @@ class ScheduleTransferActivity :
         mYear = c[Calendar.YEAR] // current year
         mMonth = c[Calendar.MONTH] // current month
         mDay = c[Calendar.DAY_OF_MONTH] // current day
+
+        val currencyCode = savedSessionManagerCurrency.getCurrency()
+
+        when (currencyCode) {
+            "1" -> {
+                binding!!.tvIconAmount.text = "$"
+            }
+
+            "2" -> {
+                binding!!.tvIconAmount.text = "SAR"
+            }
+
+            "3" -> {
+                binding!!.tvIconAmount.text = "AED"
+            }
+
+            "4" -> {
+                binding!!.tvIconAmount.text = "QAR"
+            }
+
+            "5" -> {
+                binding!!.tvIconAmount.text = "€"
+            }
+
+            "6" -> {
+                binding!!.tvIconAmount.text = "£"
+            }
+        }
     }
 
     override fun setMethod() {

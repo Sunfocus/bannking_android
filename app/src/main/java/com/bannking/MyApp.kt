@@ -19,7 +19,6 @@ class MyApp : LocaleAwareApplication(), ExceptionListener {
         Log.d("ExampleApp", throwable.message!!)
         Log.d("ExampleApp", thread.name)
     }
-
     private fun setupExceptionHandler() {
         Handler(Looper.getMainLooper()).post {
             while (true) {

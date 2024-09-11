@@ -137,7 +137,7 @@ class TabsAdapter(
 
     }
     private fun formatMoney(value: Double): String {
-        val decimalFormat = DecimalFormat("#,###.0#")
+        val decimalFormat = DecimalFormat("#,###.00#")
         return decimalFormat.format(value)
     }
 

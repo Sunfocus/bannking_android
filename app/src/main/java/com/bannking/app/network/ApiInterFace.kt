@@ -126,7 +126,16 @@ interface ApiInterFace {
         @Part("token") token: RequestBody?,
         @Part("name") name: RequestBody?,
         @Part("face_id_status") faceIdStatus: RequestBody?,
+        @Part("deleteOldImageUrl") oldImageUrl: RequestBody?,
         @Part image: MultipartBody.Part,@Header(Constants.AUTHORIZATION) tokens: String
+    ): Call<JsonObject>
+
+
+    @Multipart
+    @PATCH("user/update_profile")
+    fun updateNotification(
+        @Part("notification_status") notificationStatus: RequestBody?,
+       @Header(Constants.AUTHORIZATION) tokens: String
     ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
@@ -136,6 +145,9 @@ interface ApiInterFace {
     @Headers("Content-Type: application/json")
     @POST("user/schedule_transfer")
     fun scheduleTransfer(@Body body: String,@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
+  @Headers("Content-Type: application/json")
+    @POST("user/resentVerificationToken")
+    fun postEmailResend(@Body body: String): Call<JsonObject>
 
 
     @Headers("Content-Type: application/json")
@@ -144,7 +156,7 @@ interface ApiInterFace {
 
     @Headers("Content-Type: application/json")
     @DELETE("user/delete_account")
-    fun deleteBankAccount( @Query("accountId") accountID: String,@Query("type") type: String,@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
+    fun deleteBankAccount( @Query("accountId") accountID: String,@Query("type") type: String,@Query("budgetId") budget_id: String,@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
     //Na
     @Headers("Content-Type: application/json")
@@ -175,6 +187,9 @@ interface ApiInterFace {
     @Headers("Content-Type: application/json")
     @POST("subs/androidInitialPurchase")
     fun purchaseSubscriptionNew(@Body body: String,@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
+    @Headers("Content-Type: application/json")
+    @POST("subs/purchaseLifeTimePlan")
+    fun purchaseSubscriptionLifeTime(@Body body: String,@Header(Constants.AUTHORIZATION)token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
     @POST("user/createBudgetPlanner")

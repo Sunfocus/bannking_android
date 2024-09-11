@@ -224,7 +224,7 @@
                             android:enabled="true"
                             android:fontFamily="@font/source_sans_regular"
                             android:hint="@string/str_enter_amount"
-                            android:inputType="number|text"
+                            android:inputType="number"
                             android:digits="-0123456789."
                             android:padding="3dp"
                             android:textAlignment="viewStart"

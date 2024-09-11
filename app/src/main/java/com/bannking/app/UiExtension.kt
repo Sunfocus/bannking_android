@@ -89,7 +89,7 @@ object UiExtension {
     }
 
     fun String.replaceNonstandardDigits(): String {
-        var input: String = this
+        val input: String = this
         if (input == null || input.isEmpty()) {
             return input
         }

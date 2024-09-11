@@ -628,7 +628,7 @@ class BudgetPlannerNewActivity :
                         val errorBodyString = response.errorBody()?.string()
                         val errorModel = gson.fromJson(errorBodyString, ErrorResponse::class.java)
                         if (errorModel.message.contains("Please upgrade to unlock premium features..")){
-                            dialogClass.showAccountNotSubscriptionDialog(errorModel.message.toString())
+                            dialogClass.showAccountNotSubscriptionDialog("Upgrade now to  unlock unlimited access to hidden features and enjoy premium benefits")
                         }else dialogClass.showErrorMessageDialog(errorModel.message)
                     }
                 }

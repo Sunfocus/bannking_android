@@ -275,5 +275,18 @@
     <string name="link_bank">Linkbank</string>
     <string name="help_privacy"><![CDATA[Hulp & Privacy]]></string>
 
+
+    <string name="security">Beveiliging</string>
+    <string name="refrain_from_tapping">Raak hieronder niet aan tenzij je je account permanent wilt verwijderen. Het verwijderen van je account is onomkeerbaar.</string>
+    <string name="enable_faceid">FaceID Inschakelen</string>
+    <string name="day_night_mode"><![CDATA[Dag- & Nachtmodus]]></string>
+    <string name="refer_a_friend">Vriend Refereren</string>
+    <string name="help_video">Help Video</string>
+    <string name="add_bank">Bank Toevoegen</string>
+    <string name="setting">Instelling</string>
+    <string name="go_premium">Ga Premium</string>
+    <string name="str_your_sub_budget_title_created_unsuccessfully">Je Subbudgettitel is Niet Succesvol Aangemaakt</string>
+
+
 </resources>
 

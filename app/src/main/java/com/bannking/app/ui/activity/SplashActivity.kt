@@ -1,9 +1,13 @@
 package com.bannking.app.ui.activity
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.util.Log
+import android.widget.TextView
+import com.bannking.app.R
 import com.bannking.app.UiExtension.FCM_TOKEN
 import com.bannking.app.UiExtension.generateFCM
 import com.bannking.app.UiExtension.getCurrentLanguage
@@ -16,6 +20,10 @@ import com.bannking.app.model.viewModel.SplashViewModel
 import com.bannking.app.utils.Constants
 import com.bannking.app.utils.GetTokenFromOverride
 import com.bannking.app.utils.SessionManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.model.UpdateAvailability
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity :
@@ -23,7 +31,7 @@ class SplashActivity :
 
     lateinit var viewModel: SplashViewModel
     private lateinit var checkPurchases: ArrayList<PurchaseInfo>
-
+    private var appUpdateManager: AppUpdateManager? = null
     companion object {
         private const val SPLASH_SCREEN_TIME_OUT = 1000
     }
@@ -36,6 +44,55 @@ class SplashActivity :
     override fun initViewModel(viewModel: SplashViewModel) {
 
         this.viewModel = viewModel
+    }
+
+
+    private fun checkForUpdate() {
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+        val appUpdateInfoTask = appUpdateManager!!.appUpdateInfo
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+                showUpdateBox()
+            } else {
+                passActivity()
+            }
+        }
+        appUpdateInfoTask.addOnFailureListener {
+            passActivity()
+        }
+    }
+    private fun showUpdateBox() {
+        val dialog = BottomSheetDialog(this, R.style.SheetDialog)
+        dialog.setContentView(R.layout.bottom_sheet_update_app)
+        dialog.show()
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.setCancelable(false)
+        dialog.setCanceledOnTouchOutside(false)
+        val okUpdateApp = dialog.findViewById<TextView>(R.id.okUpdateApp)
+        val cancelUpdateApp = dialog.findViewById<TextView>(R.id.cancelUpdateApp)
+        okUpdateApp!!.setOnClickListener {
+            dialog.cancel()
+            try {
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("market://details?id=${packageName}")
+                    )
+                )
+            } catch (e: ActivityNotFoundException) {
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://play.google.com/store/apps/details?id=${packageName}")
+                    )
+                )
+            }
+
+        }
+        cancelUpdateApp!!.setOnClickListener {
+            finishAffinity()
+            dialog.dismiss()
+        }
     }
 
     override fun initialize() {
@@ -56,34 +113,11 @@ class SplashActivity :
         with(viewModel) {
             if (sessionManager.getUserDetails(SessionManager.userData) != null) {
 //                viewModel.setPremiumStatusDataList()
-                passActivity()
+                checkForUpdate()
             } else {
-                passActivity()
+                checkForUpdate()
             }
-           /* appVersionDataList.observe(this@SplashActivity) { modelResponse ->
-                if (modelResponse != null) {
-                    if (modelResponse.code in 199..299) {
-                        val model =
-                            gson.fromJson(modelResponse.apiResponse, AppVersionModel::class.java)
-                        if (model.data != null) {
-                            if (model.data?.androidMaintenance == false) {
-                                sessionManager.setString(SessionManager.APP_PRIVACY_POLICY, model.data!!.privacyUrl)
-                                sessionManager.setString(
-                                    SessionManager.AppVersion,
-                                    model.data!!.androidVersion.toString()
-                                )
-                            } else {
-                                dialogClass.showMaintenanceDialog()
-                            }
-                        }
-                    }
-                    if (sessionManager.getUserDetails(SessionManager.userData) != null) {
-                        viewModel.setPremiumStatusDataList()
-                    } else {
-                        passActivity()
-                    }
-                }
-            }*/
+
             getPremiumStatusDataList.observe(this@SplashActivity) { isPremium ->
                 if (isPremium != null) {
                     if (isPremium.code in 199..299) {
@@ -119,8 +153,10 @@ class SplashActivity :
                     FCM_TOKEN.let {
                         if (it?.isNotEmpty() == true) {
                             if (isLogin) {
-                                if (currentTime - lastActiveTime > 3600000) { // 1 hour in milliseconds
+                                if (currentTime - lastActiveTime > 86400000) { // 24 hour in milliseconds
                                     Handler().postDelayed({
+                                        sessionManager.setBoolean(SessionManager.isLogin, false)
+                                        sessionManager.setBoolean("FaceLogin", true)
                                         startActivity(Intent(this@SplashActivity, SignInActivity::class.java))
                                         finish()
                                     }, SPLASH_SCREEN_TIME_OUT.toLong())

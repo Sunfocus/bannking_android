@@ -33,7 +33,8 @@ class ProfileUpdateViewModel(val App: Application) : BaseViewModel(App) {
         strProfileImage: String,
         firstName: String,
         userToken: String?,
-        checked: Boolean
+        checked: Boolean,
+        oldImage: String
     ) {
         App.FCM_TOKEN.let {
 
@@ -59,6 +60,8 @@ class ProfileUpdateViewModel(val App: Application) : BaseViewModel(App) {
                 Constants.SECURITY_0.toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val switchFaceVerification: RequestBody =
                 checked.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            val oldImageUrl: RequestBody =
+                oldImage.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
 
             progressObservable.value = true
             val call = RetrofitClient.instance!!.myApi.updateProfile(
@@ -66,7 +69,7 @@ class ProfileUpdateViewModel(val App: Application) : BaseViewModel(App) {
                 mdUserName,
                 mdEmail,
                 mdID,
-                mdToken,mdName,switchFaceVerification,
+                mdToken,mdName,switchFaceVerification,oldImageUrl,
                 imgFile,userToken!!
             )
             call.enqueue(object : Callback<JsonObject> {

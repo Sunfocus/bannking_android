@@ -106,10 +106,11 @@ class AccountMenuNewActivity :
         adapterNew = AccountMenuWithSavedAdapterNew(
             this@AccountMenuNewActivity, savedHeaderlist
         ) { postion ->
+          val finalList =  accountList.data.filter { it.userAccountTitle!!.name!!.toLowerCase() == savedHeaderlist[postion].name!!.toLowerCase()}
             deleteConfirmationDialog(
-                accountList.data[postion],
+                finalList[0],
                 getString(R.string.str_remove_header),
-                Constants._DELETE_ACCOUNT_TITLE
+                "3"
             ) {
                 adapter?.removeMenuTitle(savedHeaderlist[postion].name.toString())
                 savedHeaderlist.removeAt(postion)
@@ -385,8 +386,9 @@ class AccountMenuNewActivity :
         list: com.bannking.app.model.retrofitResponseModel.accountListModel.Data, alertMsg: String, deleteType: String, callbacks: (() -> Unit)? = null
     ) {
 
+        val finalMessage = "Are you sure you want to delete all created accounts related to ${list.userAccountTitle!!.name}?"
         val builder: AlertDialog.Builder = AlertDialog.Builder(this@AccountMenuNewActivity)
-        builder.setMessage(alertMsg)
+        builder.setMessage(finalMessage)
         builder.setTitle(resources.getString(R.string.str_alert))
         builder.setIcon(R.drawable.ic_warning)
         builder.setCancelable(false)
@@ -425,7 +427,7 @@ class AccountMenuNewActivity :
                 e.printStackTrace()
             }
             val userToken = sessionManager.getString(SessionManager.USERTOKEN)
-            val call = RetrofitClient.instance?.myApi?.deleteBankAccount(headerTitleID,type,userToken!!)
+            val call = RetrofitClient.instance?.myApi?.deleteBankAccount(headerTitleID,type,"",userToken!!)
 
             call?.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {

@@ -140,6 +140,7 @@ class SessionManager(context: Context, sharedName: String?) {
 
 
         var UserId = "User_id"
+
         var Password = "Password"
 
 

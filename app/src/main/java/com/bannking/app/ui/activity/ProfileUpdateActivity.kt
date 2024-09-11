@@ -136,6 +136,12 @@ class ProfileUpdateActivity :
                                 .addOnCompleteListener { task ->
                                     Log.d("token====", userModel!!.id.toString())
                                 }
+
+                            FirebaseMessaging.getInstance()
+                                .unsubscribeFromTopic("topic_bnk_usrs_broadcast")
+                                .addOnCompleteListener { task ->
+
+                                }
                             sessionManager.setString(
                                 SessionManager.UserId, ""
                             )
@@ -230,7 +236,6 @@ class ProfileUpdateActivity :
         builder.setPositiveButton(
             resources.getString(R.string.str_confirm)
         ) { dialog: DialogInterface?, _: Int ->
-            AdController.showInterAd(this@ProfileUpdateActivity, null, 0)
             val userToken = sessionManager.getString(SessionManager.USERTOKEN)
             viewModel.setDataDeleteAccountDataList(userToken)
             dialog?.dismiss()
@@ -242,6 +247,7 @@ class ProfileUpdateActivity :
         }
         val alertDialog: AlertDialog = builder.create()
         alertDialog.show()
+        AdController.showInterAd(this@ProfileUpdateActivity, null, 0)
     }
 
     private fun openBottomSuitorUpdateProfile() {
@@ -286,10 +292,16 @@ class ProfileUpdateActivity :
                     val userToken = sessionManager.getString(SessionManager.USERTOKEN)
                     if (utils.isValidEmailId(edtUserEmail.text.toString().trim())) {
                         switchFaceVerification.isChecked
+                        var oldImage = ""
+                        if (imgPath.isEmpty()){
+                            oldImage = ""
+                        }else{
+                            oldImage = data!!.image?:""
+                        }
                         viewModel.setDataUpdateDataList(
                             edtUserName.text.toString(),
                             edtUserEmail.text.toString(),
-                            imgPath,etFirstNameUpdate.text.toString(),userToken,switchFaceVerification.isChecked
+                            imgPath,etFirstNameUpdate.text.toString(),userToken,switchFaceVerification.isChecked,oldImage
                         )
                     } else
                         edtUserEmail.error =
@@ -319,6 +331,13 @@ class ProfileUpdateActivity :
                 }
 
             })
+        if (data?.is_email_verified == 1) {
+            binding!!.tvVerifiedUpdate.text = "Verified"
+            binding!!.tvVerifiedUpdate.setTextColor(ContextCompat.getColor(this, R.color.clr_green))
+        } else {
+            binding!!.tvVerifiedUpdate.text = "Unverified email"
+            binding!!.tvVerifiedUpdate.setTextColor(ContextCompat.getColor(this, R.color.clr_red))
+        }
 
         binding!!.switchFaceVerification.isChecked = setdata.face_id_status!!
 

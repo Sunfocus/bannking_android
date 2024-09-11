@@ -176,6 +176,12 @@
                         android:textSize="10sp"
                         android:textStyle="bold" />
 
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </LinearLayout>
                     <EditText
                         android:id="@+id/edt_user_email"
                         android:layout_width="match_parent"
@@ -190,6 +196,12 @@
                         android:textDirection="anyRtl"
                         android:textSize="16sp" />
 
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvVerifiedUpdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/clr_red"
+                        tools:text="Unverified email" />
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btn_submit"

@@ -273,5 +273,16 @@
     <string name="link_bank">Ссылка Банк</string>
     <string name="help_privacy">Помощь и конфиденциальность</string>
 
+    <string name="security">Безопасность</string>
+    <string name="refrain_from_tapping">Не нажимайте ниже, если вы не хотите навсегда удалить свою учетную запись. Удаление учетной записи необратимо.</string>
+    <string name="enable_faceid">Включить FaceID</string>
+    <string name="day_night_mode"><![CDATA[Дневной и Ночной Режим]]></string>
+    <string name="refer_a_friend">Пригласить Друга</string>
+    <string name="help_video">Видео Справки</string>
+    <string name="add_bank">Добавить Банк</string>
+    <string name="setting">Настройки</string>
+    <string name="go_premium">Перейти на Премиум</string>
+    <string name="str_your_sub_budget_title_created_unsuccessfully">Ваш Заголовок Подбюджета Не Был Успешно Создан</string>
+
 </resources>
 

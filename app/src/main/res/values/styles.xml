@@ -15,6 +15,19 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="SheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <!--<item name="android:windowCloseOnTouchOutside">false</item>-->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.7</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:scrollIndicators" tools:targetApi="m">none</item>
+        <item name="android:fillViewport">true</item>
+    </style>
+
     <style name="checkBoxBanking" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="colorAccent">@color/white</item> <!-- for checked state -->
         <item name="colorControlNormal">@color/white</item> <!-- for unchecked state -->

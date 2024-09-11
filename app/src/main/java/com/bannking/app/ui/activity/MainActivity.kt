@@ -7,14 +7,18 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
+import android.view.MenuItem
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import com.bannking.app.R
@@ -31,12 +35,16 @@ import com.bannking.app.ui.fragment.AccountsFragment
 import com.bannking.app.utils.Constants
 import com.bannking.app.utils.SessionManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
+import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*
+
 
 /**
  * Crated By AM on 23/09/2022
@@ -305,8 +313,13 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
                 }
 
                 R.id.nav_spending_plan -> {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "This feature is currently under development and will be available in a future update. Thank you for your patience!",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
-                    val model =
+                /*    val model =
                         gson.fromJson(
                             viewModel.headerTitleList.value?.apiResponse,
                             HeaderModel::class.java
@@ -321,7 +334,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
                             this@MainActivity, SpendingPlanActivity::class.java
                         ).putExtra("ComeFrom", "Navigation")
                             .putExtra("Headermodel", model).putExtra("accountList", accountList), Constants.MAIN_TO_SPENDING
-                    )
+                    )*/
                 }
 
 
@@ -417,6 +430,32 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
                     binding!!.imgProfile.setImageBitmap(resource)
                 }
             })
+
+
+
+        val menu = binding!!.bottomNavigationBar.menu
+        binding!!.bottomNavigationBar.itemIconTintList = null
+        val menuItem = menu.findItem(R.id.nav_menu)
+        Glide.with(this)
+            .asBitmap()
+            .load(Constants.IMG_BASE_URL + userModel!!.image)
+            .apply(
+                RequestOptions
+                    .circleCropTransform()
+                    .override(100, 100)
+                    .placeholder(R.drawable.sample_user)
+            )
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    menuItem?.icon = BitmapDrawable(resources, resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+
+                }
+            })
+
+
     }
 
     private fun getGreetingMessage(): String {

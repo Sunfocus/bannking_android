@@ -126,7 +126,25 @@ class DialogClass(private val context: Context) {
         }
         dialog.show()
     }
+    fun showVerificationDialog(strMessage: String, callbacks: (() -> Unit)? = null) {
+        val dialog = Dialog(context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.verify_mail)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val btnResend: TextView = dialog.findViewById(R.id.btnResend)
+        val tvMessage: TextView = dialog.findViewById(R.id.tvMessage)
+        val btnCancel: TextView = dialog.findViewById(R.id.btnCancel)
+        tvMessage.text = strMessage
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
 
+        btnResend.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
     fun showSuccessfullyDialog(strMessage: String, callbacks: (() -> Unit)? = null) {
         val dialog = Dialog(context)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -180,6 +198,7 @@ class DialogClass(private val context: Context) {
         }
         dialog.show()
     }
+
 
     fun showServerErrorDialog() {
 //        dialogServer.requestWindowFeature(Window.FEATURE_NO_TITLE)

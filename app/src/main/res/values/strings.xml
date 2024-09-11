@@ -131,7 +131,7 @@
     <string name="str_filter_header_title">Filter your header title</string>
     <string name="admob_interstitial" translatable="false">ca-app-pub-3293843557873754/7206543114</string>
     <string name="str_alert">Alert !</string>
-    <string name="str_non_premium_message">Please upgrade to unlock premium features..</string>
+    <string name="str_non_premium_message">Upgrade now to  unlock unlimited access to hidden features and enjoy premium benefits</string>
     <string name="str_skip">Skip</string>
     <string name="str_server_error">Oops, Something went wrong, please try again later</string>
     <string name="str_test">testing</string>
@@ -158,7 +158,6 @@
     <string name="str_confirm">Confirm</string>
     <string name="str_your_budget_title_created_successfully">Your Budget Title Created Successfully</string>
     <string name="str_your_budget_title_created_unsuccessfully">Your Budget Title Created Unsuccessfully</string>
-    <string name="str_your_sub_budget_title_created_unsuccessfully">Your Sub-Budget Title Created Unsuccessfully</string>
     <string name="str_please_choose_any_color">Please Choose Any Color</string>
     <string name="str_please_enter_budget_name">Please Enter Budget Name</string>
     <string name="str_please_enter_sub_budget_name">Please Enter Sub-Budget Name</string>
@@ -248,7 +247,6 @@
     <string name="str_bill_organizer">Bill Organizer</string>
     <string name="str_upgrade_include">UPGRADE INCLUDE</string>
     <string name="str_purchase_description">By tapping continue, your payment will be charged to your iTunes account,and your subscription will automatically renew for the same package length at the same price until youcancel in settings in the iTunes store at least 24 hours prior to the end of the current period.By tapping “Continue” you agree to our \n<u><font color='#FD1C1C'>Privacy Policy</font></u>   and <u><font color='#FD1C1C'>Terms.</font></u> </string>
-    <string name="str_purchase_description_night"><font color='#FFFFFF'>By tapping continue, your payment will be charged to your iTunes account,and your subscription will automatically renew for the same package length at the same price until youcancel in settings in the iTunes store at least 24 hours prior to the end of the current period.By tapping “Continue” you agree to our \n</font><u><font color='#FD1C1C'>Privacy Policy</font></u><font color='#FFFFFF'>   and </font><u><font color='#FD1C1C'>Terms.</font></u> </string>
     <string name="str_not_same_password">Password and confirm password do not match</string>
     <string name="language_pack_missing">This language speech pack needs to be installed</string>
     <string name="language_not_supported">This language speech is currently not supported</string>
@@ -256,7 +254,7 @@
     <string name="female_sound">Female Sound</string>
     <string name="take_control_of_your_finances">Take Control of Your Finances</string>
     <string name="join_a_community_of_over_6_million_users_who_have_collectively_saved_more_than_500_million">Join a community of over 6 million users who have collectively saved more than $500 million</string>
-    <string name="have_an_account">Have An Account? <b><u>Log in</u></b></string>
+    <string name="have_an_account">Have an account? <b><u>Log in</u></b></string>
     <string name="it_s_free">It\'s free and only takes a minute</string>
     <string name="terms_conditions"><u><![CDATA[Terms & Conditions,]]></u></string>
     <string name="and"> and </string>
@@ -286,5 +284,14 @@
     <string name="enable_faceid">Enable FaceID</string>
     <string name="day_night_mode"><![CDATA[Day & Night Mode]]></string>
     <string name="refer_a_friend">Refer a Friend</string>
+    <string name="help_video">Help Video</string>
+    <string name="add_bank">Add Bank</string>
+    <string name="setting">Settings</string>
+    <string name="go_premium">Go Premium</string>
+    <string name="str_your_sub_budget_title_created_unsuccessfully">Your Sub-Budget Title Created Unsuccessfully</string>
+    <string name="app_update">There is a newer version of this application available, click Update to upgrade now</string>
+    <string name="update">Update</string>
+
+    <string name="str_purchase_description_night"><font color='#FFFFFF'>By tapping continue, your payment will be charged to your iTunes account,and your subscription will automatically renew for the same package length at the same price until youcancel in settings in the iTunes store at least 24 hours prior to the end of the current period.By tapping “Continue” you agree to our \n</font><u><font color='#FD1C1C'>Privacy Policy</font></u><font color='#FFFFFF'>   and </font><u><font color='#FD1C1C'>Terms.</font></u> </string>
 
 </resources>

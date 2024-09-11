@@ -26,6 +26,7 @@
             android:id="@+id/img_profile"
             android:layout_width="45dp"
             android:layout_height="45dp"
+            android:visibility="gone"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="10dp"

@@ -30,7 +30,7 @@ data class Data(
 //    @SerializedName("currency_name") var currencyName: String? = null,
     @SerializedName("currency") var currency: Currency? =Currency(),
     @SerializedName("profile_image") var image: String? = null,
-    @SerializedName("notification") var notification: String? = null,
+    @SerializedName("notification") var notification: Int? = null,
     @SerializedName("premium") var premium: Boolean? = null
 
 )

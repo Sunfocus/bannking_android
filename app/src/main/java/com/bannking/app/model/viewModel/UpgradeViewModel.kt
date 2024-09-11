@@ -19,6 +19,7 @@ class UpgradeViewModel(val App: Application) : BaseViewModel(App) {
 
     var subscription: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
     var subscriptionNew: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
+    var subscriptionLifeTime: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
     var progressObservable: MutableLiveData<Boolean> = MutableLiveData(null)
 
 
@@ -120,6 +121,50 @@ class UpgradeViewModel(val App: Application) : BaseViewModel(App) {
                 }
             })
         }
+    }
+
+    fun setDataForLifeTimeNew(
+        purchaseToken: String,
+        productId: String,
+        purchaseDate: Long,
+        orderId: String,
+        userToken: String?
+    ) {
+            progressObservable.value = true
+            val apiBody = JsonObject()
+            try {
+                apiBody.addProperty("purchase_token", purchaseToken)
+                apiBody.addProperty("purchase_type", productId)
+                apiBody.addProperty("purchase_date", purchaseDate)
+                apiBody.addProperty("order_id", orderId)
+            } catch (e: Exception) {
+                Log.e("TAG_EXCEPTION", "setDataInAccountTitleList: " + e.message.toString())
+            }
+
+            val call = RetrofitClient.instance!!.myApi.purchaseSubscriptionLifeTime(apiBody.toString(),userToken!!)
+            call.enqueue(object : Callback<JsonObject> {
+                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                    progressObservable.value = false
+                    if (response.isSuccessful) {
+                        if (response.code() in 199..299) {
+                            subscriptionLifeTime.value =
+                                CommonResponseModel(response.body(), response.code())
+                        } else if (response.code() in 400..500) {
+                            assert(response.errorBody() != null)
+                            val errorBody = response.errorBody().toString()
+                            val jsonObject: JsonObject =
+                                JsonParser.parseString(errorBody).asJsonObject
+                            subscriptionLifeTime.value = CommonResponseModel(jsonObject, response.code())
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                    progressObservable.value = false
+                    subscriptionLifeTime.value = CommonResponseModel(null, 500)
+                }
+            })
+
     }
 
 

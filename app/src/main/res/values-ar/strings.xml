@@ -272,5 +272,18 @@
     <string name="link_bank">رابط البنك</string>
     <string name="help_privacy">المساعدة والخصوصية</string>
 
+        <string name="security">الأمان</string>
+        <string name="refrain_from_tapping">امتنع عن النقر أدناه إلا إذا كنت ترغب في حذف حسابك نهائيًا. حذف الحساب لا رجعة فيه.</string>
+        <string name="enable_faceid">تفعيل FaceID</string>
+        <string name="day_night_mode"><![CDATA[الوضع الليلي والنهاري]]></string>
+        <string name="refer_a_friend">إحالة صديق</string>
+        <string name="help_video">فيديو المساعدة</string>
+        <string name="add_bank">إضافة بنك</string>
+        <string name="setting">الإعدادات</string>
+        <string name="go_premium">الترقية إلى بريميوم</string>
+        <string name="str_your_sub_budget_title_created_unsuccessfully">لم يتم إنشاء عنوان الميزانية الفرعية بنجاح</string>
+
+
+
 </resources>
 

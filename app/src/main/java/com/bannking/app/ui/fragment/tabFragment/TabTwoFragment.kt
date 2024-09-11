@@ -56,14 +56,14 @@ class TabTwoFragment :
     var adapter: TabsAdapter? = null
     lateinit var list: ArrayList<Data>
     var tabTwoID: String = ""
-    var  mTextToSpeech: TextToSpeech? = null
+    var mTextToSpeech: TextToSpeech? = null
     var util: Utils = Utils()
     private lateinit var savedSessionManagerVoice: SessionManager
     private lateinit var savedSessionManager: SessionManager
     private lateinit var savedSessionManagerTab2: SessionManager
     private lateinit var savedSessionManagerCurrency: SessionManager
     var accountName: String = ""
-    var returnz : String = ""
+    var returnz: String = ""
     override fun getBinding(inflater: LayoutInflater, container: ViewGroup): FragmentTabTwoBinding {
         return FragmentTabTwoBinding.inflate(inflater, container, false)
     }
@@ -82,13 +82,14 @@ class TabTwoFragment :
 
         accountName = savedSessionManagerTab2.getTab2().toString()
         // create an object textToSpeech and adding features into it
-        mTextToSpeech = TextToSpeech(requireContext().applicationContext
+        mTextToSpeech = TextToSpeech(
+            requireContext().applicationContext
         ) { status ->
             var locale = Locale.US
             if (status == TextToSpeech.SUCCESS) {
                 if (status == TextToSpeech.SUCCESS) {
 
-                    if(savedSessionManager.getLanguage() == "English") {
+                    if (savedSessionManager.getLanguage() == "English") {
                         locale = Locale.US
                     } else if (savedSessionManager.getLanguage() == "Spanish") {
                         locale = Locale.forLanguageTag("es")
@@ -103,13 +104,12 @@ class TabTwoFragment :
                     } else if (savedSessionManager.getLanguage() == "Dutch") {
                         locale = Locale.forLanguageTag("nl")
                     }
-                    mTextToSpeech!!.setLanguage(locale)
+                    mTextToSpeech!!.language = locale
                 }
                 val defaultEngine: String = mTextToSpeech!!.defaultEngine
 
                 if (defaultEngine.equals("com.samsung.SMT")) {
-                    val engineInfo: List<TextToSpeech.EngineInfo> =
-                        mTextToSpeech!!.getEngines()
+                    val engineInfo: List<TextToSpeech.EngineInfo> = mTextToSpeech!!.engines
                     for (info in engineInfo) {
                         Log.e("speach", "info: $info")
                         //  if (info.equals("EngineInfo{name=com.samsung.SMT}")) {
@@ -118,50 +118,54 @@ class TabTwoFragment :
                         }
                     }
                 }
-                val result: Int =
-                    mTextToSpeech!!.setLanguage(locale)
+                val result: Int = mTextToSpeech!!.setLanguage(locale)
                 if (result == TextToSpeech.LANG_MISSING_DATA) {
-                    Toast.makeText(context,
+                    Toast.makeText(
+                        context,
                         requireContext().getString(R.string.language_pack_missing),
-                        Toast.LENGTH_SHORT).show()
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else if (result == TextToSpeech.LANG_NOT_SUPPORTED) {
 //                    getDeviceName()
-                    Toast.makeText(context,
+                    Toast.makeText(
+                        context,
                         requireContext().getString(R.string.language_not_supported),
-                        Toast.LENGTH_SHORT).show()
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 // mImageSpeak.setEnabled(true);
-                mTextToSpeech!!.setOnUtteranceProgressListener(
-                    object : UtteranceProgressListener() {
-                        override fun onStart(utteranceId: String) {
-                            Log.e("Inside", "OnStart")
-                        }
+                mTextToSpeech!!.setOnUtteranceProgressListener(object :
+                    UtteranceProgressListener() {
+                    override fun onStart(utteranceId: String) {
+                        Log.e("Inside", "OnStart")
+                    }
 
-                        override fun onDone(utteranceId: String) {}
-                        override fun onError(utteranceId: String) {}
-                    })
+                    override fun onDone(utteranceId: String) {}
+                    override fun onError(utteranceId: String) {}
+                })
             } else {
                 Log.e("LOG_TAG", "TTS Initilization Failed")
             }
         }
 
         list = arrayListOf()
-        adapter = TabsAdapter(requireActivity(), list, savedSessionManagerVoice,object : MoreDotClick {
-            override fun openDialogBox(list: Data) {
-                showDotClickDialog(list)
-            }
+        adapter =
+            TabsAdapter(requireActivity(), list, savedSessionManagerVoice, object : MoreDotClick {
+                override fun openDialogBox(list: Data) {
+                    showDotClickDialog(list)
+                }
 
-        }, object : OnClickAnnouncementDialog {
-            override fun clickOnAnnouncementDialog(list: Data) {
-                showAnnouncementDialog(list)
-            }
+            }, object : OnClickAnnouncementDialog {
+                override fun clickOnAnnouncementDialog(list: Data) {
+                    showAnnouncementDialog(list)
+                }
 
-        }, object : OnClickAnnouncement {
-            override fun clickOnAnnouncement(list: Data) {
-                speechToText(accountName,list)
-            }
+            }, object : OnClickAnnouncement {
+                override fun clickOnAnnouncement(list: Data) {
+                    speechToText(accountName, list)
+                }
 
-        })
+            })
         mBinding.rvIncome.adapter = adapter
     }
 
@@ -175,7 +179,8 @@ class TabTwoFragment :
             capitalize(manufacturer) + " " + model
         }
     }
-    private fun capitalize(s: String?): String? {
+
+    private fun capitalize(s: String?): String {
         if (s == null || s.length == 0) {
             return ""
         }
@@ -191,7 +196,8 @@ class TabTwoFragment :
                     val alertDialog = android.app.AlertDialog.Builder(context).create()
                     alertDialog.setTitle("Change the Preferred engine")
                     alertDialog.setMessage("Go to Settings -> Text-to-speech output -> Preferred engine -> Please select Speech Recognition and synthesis from Google option")
-                    alertDialog.setButton(android.app.AlertDialog.BUTTON_NEUTRAL, "OK"
+                    alertDialog.setButton(
+                        android.app.AlertDialog.BUTTON_NEUTRAL, "OK"
                     ) { dialog, which ->
                         alertDialog.dismiss()
                         val intent = Intent()
@@ -201,7 +207,7 @@ class TabTwoFragment :
                     }
                     alertDialog.setCancelable(false)
                     alertDialog.show()
-                }catch (e : Exception){
+                } catch (e: Exception) {
 
                 }
             }
@@ -217,8 +223,7 @@ class TabTwoFragment :
                         if (accountlist.code in 199..299) {
                             if (accountlist.apiResponse != null) {
                                 val mainModel = gson.fromJson(
-                                    accountlist.apiResponse,
-                                    AccountListModel::class.java
+                                    accountlist.apiResponse, AccountListModel::class.java
                                 )
                                 if (mainModel.data.size != 0) {
                                     var filterdata: ArrayList<Data> = ArrayList()
@@ -233,8 +238,7 @@ class TabTwoFragment :
                                         }
 
                                         filterdata = utils.filterAccountListData(
-                                            mainModel.data,
-                                            model.data[1].name.toString()
+                                            mainModel.data, model.data[1].name.toString()
                                         )
                                     } else {
                                         try {
@@ -281,21 +285,30 @@ class TabTwoFragment :
             startActivity(intent)
             dialog.dismiss()
         }
-
+        val parentBudgetName = list.budgetPlanner!!.name
         btnTitleDelete.setOnClickListener {
             dialog.dismiss()
-            deleteConfirmationDialog(list, getString(R.string.str_remove_header), _DELETE_ACCOUNT_TITLE)
+            deleteConfirmationDialog(
+                list,
+                "Are you sure.\nyou want to delete all budget planners under $parentBudgetName?",
+                _DELETE_ACCOUNT_TITLE
+            )
         }
         btnDeleteBoth.setOnClickListener {
             dialog.dismiss()
             deleteConfirmationDialog(
-                list, getString(R.string.str_delete_account_title),
+                list,
+                getString(R.string.str_delete_account_title),
                 Constants._DELETE_ACCOUNT_AND_TITLE
             )
         }
         btnAccountDelete.setOnClickListener {
             dialog.dismiss()
-            deleteConfirmationDialog(list, getString(R.string.str_are_you_sure_you_want_to_delete_this_account), _DELETE_ACCOUNT)
+            deleteConfirmationDialog(
+                list,
+                getString(R.string.str_are_you_sure_you_want_to_delete_this_account),
+                _DELETE_ACCOUNT
+            )
         }
 
         dialog.show()
@@ -338,8 +351,7 @@ class TabTwoFragment :
 
             call?.enqueue(object : Callback<CommonResponseApi> {
                 override fun onResponse(
-                    call: Call<CommonResponseApi>,
-                    response: Response<CommonResponseApi>
+                    call: Call<CommonResponseApi>, response: Response<CommonResponseApi>
                 ) {
                     viewModel.progressObservable.value = false
                     if (response.isSuccessful) {
@@ -382,11 +394,14 @@ class TabTwoFragment :
             resources.getString(R.string.str_confirm)
         ) { _: DialogInterface?, _: Int ->
             val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+            var budgetId = ""
+            budgetId = if (deleteType == "1"){
+                ""
+            }else{
+                list.budget_id!!
+            }
             viewModel.setDataInDeleteBankAccount(
-                list.id.toString(),
-                tabTwoID,
-                deleteType,
-                userToken
+                list.id.toString(), tabTwoID, deleteType, userToken, budgetId
             )
         }
         builder.setNegativeButton(
@@ -418,7 +433,7 @@ class TabTwoFragment :
             btn_femaleVoice.isChecked = true
         }
 
-        if(savedSessionManagerVoice.getAnnouncementVoice()!!.isNotEmpty()) {
+        if (savedSessionManagerVoice.getAnnouncementVoice()!!.isNotEmpty()) {
             dialog.dismiss()
         }
 
@@ -436,15 +451,25 @@ class TabTwoFragment :
 //                    savedSessionManagerVoice.setAnnouncementVoice(util.getGenderDescription(Gender.MALE))
                     speechToTextForDialog(accountName, list, util.getGenderDescription(Gender.MALE))
                 }
+
                 R.id.btn_femaleVoice -> {
                     selection(btn_maleVoice, btn_femaleVoice, btn_otherVoice, btn_femaleVoice)
 //                    savedSessionManagerVoice.setAnnouncementVoice(util.getGenderDescription(Gender.FEMALE))
-                    speechToTextForDialog(accountName, list, util.getGenderDescription(Gender.FEMALE))
+                    speechToTextForDialog(
+                        accountName,
+                        list,
+                        util.getGenderDescription(Gender.FEMALE)
+                    )
                 }
+
                 R.id.btn_otherVoice -> {
                     selection(btn_maleVoice, btn_femaleVoice, btn_otherVoice, btn_otherVoice)
 //                    savedSessionManagerVoice.setAnnouncementVoice(util.getGenderDescription(Gender.OTHER))
-                    speechToTextForDialog(accountName, list,  util.getGenderDescription(Gender.OTHER))
+                    speechToTextForDialog(
+                        accountName,
+                        list,
+                        util.getGenderDescription(Gender.OTHER)
+                    )
                 }
             }
         })
@@ -467,7 +492,12 @@ class TabTwoFragment :
         dialog.show()
     }
 
-    private fun selection(btn_maleVoice: RadioButton, btn_femaleVoice: RadioButton, btn_otherVoice: RadioButton, select: RadioButton) {
+    private fun selection(
+        btn_maleVoice: RadioButton,
+        btn_femaleVoice: RadioButton,
+        btn_otherVoice: RadioButton,
+        select: RadioButton
+    ) {
         btn_maleVoice.isChecked = false
         btn_femaleVoice.isChecked = false
         btn_otherVoice.isChecked = false
@@ -497,34 +527,34 @@ class TabTwoFragment :
             val availableVoices: Set<Voice> = mTextToSpeech!!.voices
             var selectedVoice: Voice? = null
             for (voice in availableVoices) {
-                if (savedSessionManager.getLanguage() == "Arabic"){
+                if (savedSessionManager.getLanguage() == "Arabic") {
                     if (voice.name == "ar-xa-x-ard-local") {
                         selectedVoice = voice
-                        mTextToSpeech!!.setVoice(selectedVoice)
+                        mTextToSpeech!!.voice = selectedVoice
                         break
                     }
-                }else {
+                } else {
                     if (voice.name == "en-us-x-iom-local") {
                         selectedVoice = voice
-                        mTextToSpeech!!.setVoice(selectedVoice)
+                        mTextToSpeech!!.voice = selectedVoice
                         break
                     }
                 }
             }
         } else if (type == "Female") {
-            val availableVoices: Set<Voice> = mTextToSpeech!!.getVoices()
+            val availableVoices: Set<Voice> = mTextToSpeech!!.voices
             var selectedVoice: Voice? = null
             for (voice in availableVoices) {
-                if (savedSessionManager.getLanguage() == "Arabic"){
+                if (savedSessionManager.getLanguage() == "Arabic") {
                     if (voice.name == "ar-xa-x-arc-network") {
                         selectedVoice = voice
-                        mTextToSpeech!!.setVoice(selectedVoice)
+                        mTextToSpeech!!.voice = selectedVoice
                         break
                     }
-                }else {
+                } else {
                     if (voice.name == "en-us-x-iog-network") {
                         selectedVoice = voice
-                        mTextToSpeech!!.setVoice(selectedVoice)
+                        mTextToSpeech!!.voice = selectedVoice
                         break
                     }
                 }
@@ -552,34 +582,34 @@ class TabTwoFragment :
             val availableVoices: Set<Voice> = mTextToSpeech!!.voices
             var selectedVoice: Voice? = null
             for (voice in availableVoices) {
-                if (savedSessionManager.getLanguage() == "Arabic"){
+                if (savedSessionManager.getLanguage() == "Arabic") {
                     if (voice.name == "ar-xa-x-ard-local") {
                         selectedVoice = voice
-                        mTextToSpeech!!.setVoice(selectedVoice)
+                        mTextToSpeech!!.voice = selectedVoice
                         break
                     }
-                }else {
+                } else {
                     if (voice.name == "en-us-x-iom-local") {
                         selectedVoice = voice
-                        mTextToSpeech!!.setVoice(selectedVoice)
+                        mTextToSpeech!!.voice = selectedVoice
                         break
                     }
                 }
             }
         } else if (savedSessionManagerVoice.getAnnouncementVoice() == "Female") {
-            val availableVoices: Set<Voice> = mTextToSpeech!!.getVoices()
+            val availableVoices: Set<Voice> = mTextToSpeech!!.voices
             var selectedVoice: Voice? = null
             for (voice in availableVoices) {
-                if (savedSessionManager.getLanguage() == "Arabic"){
+                if (savedSessionManager.getLanguage() == "Arabic") {
                     if (voice.name == "ar-xa-x-arc-network") {
                         selectedVoice = voice
-                        mTextToSpeech!!.setVoice(selectedVoice)
+                        mTextToSpeech!!.voice = selectedVoice
                         break
                     }
-                }else {
+                } else {
                     if (voice.name == "en-us-x-iog-network") {
                         selectedVoice = voice
-                        mTextToSpeech!!.setVoice(selectedVoice)
+                        mTextToSpeech!!.voice = selectedVoice
                         break
                     }
                 }
@@ -597,75 +627,165 @@ class TabTwoFragment :
 //        mTextToSpeech!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
-    private fun speechToText(accountName: String,list: Data) {
+    private fun speechToText(accountName: String, list: Data) {
 
         try {
 
             val amount = utils.removeCurrencySymbol(list.amount!!)
 
-            returnz = Constant.convertNumericToSpokenWords(amount, savedSessionManagerCurrency.getCurrency())
+            returnz = Constant.convertNumericToSpokenWords(
+                amount,
+                savedSessionManagerCurrency.getCurrency()
+            )
         } catch (e: NumberFormatException) {
             //Toast.makeToast("illegal number or empty number" , toast.long)
         }
 
         if (savedSessionManagerVoice.getAnnouncementVoice() == "Male") {
-            if(savedSessionManager.getLanguage() == "English") {
-                speakText("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.account_code.toString()) + "*is*" + returnz)
+            if (savedSessionManager.getLanguage() == "English") {
+                speakText(
+                    "Your " + list.account + " Account Balance ending in*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*is*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Spanish") {
-                speakText("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.account_code.toString()) + "*cuesta*" + returnz)
+                speakText(
+                    "Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*cuesta*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "French") {
-                speakText("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.account_code.toString()) + "*est de*" + returnz)
+                speakText(
+                    "Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*est de*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Arabic") {
-                speakText("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.account_code.toString()) + "*يكون*" + returnz)
+                speakText(
+                    "حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*يكون*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Russia") {
-                speakText("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.account_code.toString()) + "*является*" + returnz)
+                speakText(
+                    "Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*является*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Portuguese") {
-                speakText("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.account_code.toString()) + "*é*" + returnz)
+                speakText(
+                    "Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*é*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Dutch") {
-                speakText("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.account_code.toString()) + "*bedraagt*" + returnz)
+                speakText(
+                    "Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*bedraagt*" + returnz
+                )
             }
         } else if (savedSessionManagerVoice.getAnnouncementVoice() == "Female") {
-            if(savedSessionManager.getLanguage() == "English") {
-                speakText("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.account_code.toString()) + "*is*" + returnz)
+            if (savedSessionManager.getLanguage() == "English") {
+                speakText(
+                    "Your " + list.account + " Account Balance ending in*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*is*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Spanish") {
-                speakText("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.account_code.toString()) + "*cuesta*" + returnz)
+                speakText(
+                    "Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*cuesta*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "French") {
-                speakText("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.account_code.toString()) + "*est de*" + returnz)
+                speakText(
+                    "Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*est de*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Arabic") {
-                speakText("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.account_code.toString()) + "*يكون*" + returnz)
+                speakText(
+                    "حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*يكون*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Russia") {
-                speakText("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.account_code.toString()) + "*является*" + returnz)
+                speakText(
+                    "Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*является*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Portuguese") {
-                speakText("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.account_code.toString()) + "*é*" + returnz)
+                speakText(
+                    "Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*é*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Dutch") {
-                speakText("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.account_code.toString()) + "*bedraagt*" + returnz)
+                speakText(
+                    "Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*bedraagt*" + returnz
+                )
             }
         } else if (savedSessionManagerVoice.getAnnouncementVoice() == "") {
-            if(savedSessionManager.getLanguage() == "English") {
-                speakText("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.account_code.toString()) + "*is*" + returnz)
+            if (savedSessionManager.getLanguage() == "English") {
+                speakText(
+                    "Your " + list.account + " Account Balance ending in*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*is*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Spanish") {
-                speakText("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.account_code.toString()) + "*cuesta*" + returnz)
+                speakText(
+                    "Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*cuesta*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "French") {
-                speakText("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.account_code.toString()) + "*est de*" + returnz)
+                speakText(
+                    "Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*est de*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Arabic") {
-                speakText("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.account_code.toString()) + "*يكون*" + returnz)
+                speakText(
+                    "حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*يكون*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Russia") {
-                speakText("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.account_code.toString()) + "*является*" + returnz)
+                speakText(
+                    "Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*является*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Portuguese") {
-                speakText("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.account_code.toString()) + "*é*" + returnz)
+                speakText(
+                    "Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*é*" + returnz
+                )
             } else if (savedSessionManager.getLanguage() == "Dutch") {
-                speakText("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.account_code.toString()) + "*bedraagt*" + returnz)
+                speakText(
+                    "Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*bedraagt*" + returnz
+                )
             }
         }
     }
 
-    private fun speechToTextForDialog(accountName: String, list: Data, type:String) {
+    private fun speechToTextForDialog(accountName: String, list: Data, type: String) {
 
         try {
 
             val amount = utils.removeCurrencySymbol(list.amount!!)
 
-            returnz = Constant.convertNumericToSpokenWords(amount, savedSessionManagerCurrency.getCurrency())
+            returnz = Constant.convertNumericToSpokenWords(
+                amount,
+                savedSessionManagerCurrency.getCurrency()
+            )
 //            val numericValue = BigDecimal(amount)
 //            returnz = utils.convertNumericToWords(list.amount!!).toString();
 //            returnz = Words.convert(numericValue.toLong())
@@ -676,37 +796,92 @@ class TabTwoFragment :
         }
 
         if (type == "Male") {
-            if(savedSessionManager.getLanguage() == "English") {
-                speakTextDialog("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.account_code.toString()) + "*is*" + returnz,type)
+            if (savedSessionManager.getLanguage() == "English") {
+                speakTextDialog(
+                    "Your " + list.account + " Account Balance ending in*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*is*" + returnz, type
+                )
             } else if (savedSessionManager.getLanguage() == "Spanish") {
-                speakTextDialog("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.account_code.toString()) + "*cuesta*" + returnz,type)
+                speakTextDialog(
+                    "Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*cuesta*" + returnz, type
+                )
             } else if (savedSessionManager.getLanguage() == "French") {
-                speakTextDialog("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.account_code.toString()) + "*est de*" + returnz,type)
+                speakTextDialog(
+                    "Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*est de*" + returnz, type
+                )
             } else if (savedSessionManager.getLanguage() == "Arabic") {
-                speakTextDialog("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.account_code.toString()) + "*يكون*" + returnz,type)
+                speakTextDialog(
+                    "حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*يكون*" + returnz, type
+                )
             } else if (savedSessionManager.getLanguage() == "Russia") {
-                speakTextDialog("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.account_code.toString()) + "*является*" + returnz,type)
+                speakTextDialog(
+                    "Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*является*" + returnz, type
+                )
             } else if (savedSessionManager.getLanguage() == "Portuguese") {
-                speakTextDialog("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.account_code.toString()) + "*é*" + returnz,type)
+                speakTextDialog(
+                    "Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*é*" + returnz, type
+                )
             } else if (savedSessionManager.getLanguage() == "Dutch") {
-                speakTextDialog("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.account_code.toString()) + "*bedraagt*" + returnz,type)
+                speakTextDialog(
+                    "Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*bedraagt*" + returnz, type
+                )
             }
-        }
-        else if (type == "Female") {
-            if(savedSessionManager.getLanguage() == "English") {
-                speakTextDialog("Your " + list.account + " Account Balance ending in*" + utils.numberToText(list.account_code.toString()) + "*is*" + returnz,type)
+        } else if (type == "Female") {
+            if (savedSessionManager.getLanguage() == "English") {
+                speakTextDialog(
+                    "Your " + list.account + " Account Balance ending in*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*is*" + returnz, type
+                )
             } else if (savedSessionManager.getLanguage() == "Spanish") {
-                speakTextDialog("Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(list.account_code.toString()) + "*cuesta*" + returnz,type)
+                speakTextDialog(
+                    "Su cuenta " + list.account + " Saldo de cuenta que termina en*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*cuesta*" + returnz, type
+                )
             } else if (savedSessionManager.getLanguage() == "French") {
-                speakTextDialog("Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(list.account_code.toString()) + "*est de*" + returnz,type)
+                speakTextDialog(
+                    "Votre compte " + list.account + " Solde du compte se terminant par*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*est de*" + returnz, type
+                )
             } else if (savedSessionManager.getLanguage() == "Arabic") {
-                speakTextDialog("حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(list.account_code.toString()) + "*يكون*" + returnz,type)
+                speakTextDialog(
+                    "حسابك  " + list.account + "رصيد الحساب ينتهي بـ* " + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*يكون*" + returnz, type
+                )
             } else if (savedSessionManager.getLanguage() == "Russia") {
-                speakTextDialog("Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(list.account_code.toString()) + "*является*" + returnz,type)
+                speakTextDialog(
+                    "Твой" + list.account + "Баланс счета заканчивается на*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*является*" + returnz, type
+                )
             } else if (savedSessionManager.getLanguage() == "Portuguese") {
-                speakTextDialog("Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(list.account_code.toString()) + "*é*" + returnz,type)
+                speakTextDialog(
+                    "Sua conta" + list.account + "Saldo da conta terminando em*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*é*" + returnz, type
+                )
             } else if (savedSessionManager.getLanguage() == "Dutch") {
-                speakTextDialog("Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(list.account_code.toString()) + "*bedraagt*" + returnz,type)
+                speakTextDialog(
+                    "Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*bedraagt*" + returnz, type
+                )
             }
         }
     }

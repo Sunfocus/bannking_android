@@ -37,7 +37,6 @@ import com.bannking.app.ui.activity.ScheduleTransferActivity
 import com.bannking.app.utils.Constant
 import com.bannking.app.utils.Constants
 import com.bannking.app.utils.Constants._DELETE_ACCOUNT
-import com.bannking.app.utils.Constants._DELETE_ACCOUNT_AND_TITLE
 import com.bannking.app.utils.Constants._DELETE_ACCOUNT_TITLE
 import com.bannking.app.utils.Gender
 import com.bannking.app.utils.MoreDotClick
@@ -387,20 +386,22 @@ class TabOneFragment :
             dialog.dismiss()
         }
 
+        val parentBudgetName = list.budgetPlanner!!.name
         btnTitleDelete.setOnClickListener {
             dialog.dismiss()
             deleteConfirmationDialog(
                 list,
-                getString(R.string.str_remove_header),
+                "Are you sure.\nyou want to delete all budget planners under $parentBudgetName?",
                 _DELETE_ACCOUNT_TITLE
             )
         }
-        btnDeleteBoth.setOnClickListener {
+
+        /*btnDeleteBoth.setOnClickListener {
             dialog.dismiss()
             deleteConfirmationDialog(
                 list, getString(R.string.str_delete_account_title), _DELETE_ACCOUNT_AND_TITLE
             )
-        }
+        }*/
         btnAccountDelete.setOnClickListener {
             dialog.dismiss()
             deleteConfirmationDialog(
@@ -423,7 +424,13 @@ class TabOneFragment :
             resources.getString(R.string.str_confirm)
         ) { _: DialogInterface?, _: Int ->
             val userToken = sessionManager.getString(SessionManager.USERTOKEN)
-            viewModel.setDataInDeleteBankAccount(list.id.toString(), tabOneID, deleteType,userToken)
+            var budgetId = ""
+            budgetId = if (deleteType == "1"){
+                ""
+            }else{
+                list.budget_id!!
+            }
+            viewModel.setDataInDeleteBankAccount(list.id.toString(), tabOneID, deleteType,userToken,budgetId)
         }
         builder.setNegativeButton(
             resources.getString(R.string.str_cancel)

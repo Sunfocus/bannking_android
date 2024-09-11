@@ -32,18 +32,34 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
+
                 <TextView
-                    android:id="@+id/txt_message"
+                    android:id="@+id/tvMessage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:textAlignment="center"
                     android:textColor="@color/str_orange"
                     android:textSize="16sp"
-                    tools:text="@string/upgrade_now_to_unlock_unlimited_access_to_hidden" />
+                    tools:text="Please verify your email before logging in." />
+
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/emailResend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/edittext_border_shape"
+                    android:hint="@string/str_email"
+                    android:minHeight="45dp"
+                    android:paddingHorizontal="10dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/clr_dark_gray"
+                    android:textSize="14sp"/>
+
 
                 <TextView
-                    android:id="@+id/txt_skip"
+                    android:id="@+id/btnCancel"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_gravity="center"
@@ -51,14 +67,14 @@
                     android:layout_marginTop="20dp"
                     android:background="@drawable/edittext_stroke_blue"
                     android:gravity="center"
-                    android:text="@string/later"
+                    android:text="@string/str_cancel"
                     android:textAllCaps="false"
                     android:textColor="@color/clr_text_blu"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txt_upgrade"
+                    android:id="@+id/btnResend"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginHorizontal="30dp"
@@ -68,7 +84,7 @@
                     android:backgroundTint="@color/clr_pink_upgrade"
                     android:fontFamily="@font/source_sans_regular"
                     android:gravity="center"
-                    android:text="@string/str_upgrade"
+                    android:text="Resend"
                     android:textAlignment="center"
                     android:textAllCaps="false"
                     android:textColor="@color/white"

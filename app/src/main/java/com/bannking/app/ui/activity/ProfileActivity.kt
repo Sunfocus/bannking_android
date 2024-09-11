@@ -6,7 +6,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
@@ -30,6 +29,7 @@ import com.bannking.app.adapter.LanguageAdapter
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.databinding.ActivityProfileBinding
 import com.bannking.app.model.CommonResponseApi
+import com.bannking.app.model.LanguagesResponse
 import com.bannking.app.model.retrofitResponseModel.languageModel.Data
 import com.bannking.app.model.retrofitResponseModel.languageModel.LanguageModel
 import com.bannking.app.model.retrofitResponseModel.userModel.UserModel
@@ -185,12 +185,9 @@ class ProfileActivity :
 
     private fun uiColor() {
         if (UiExtension.isDarkModeEnabled()) {
-            binding!!.pfScroll.backgroundTintList =
-                ContextCompat.getColorStateList(
-                    this,
-                    R.color.dark_mode
-                )
-            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.pfScroll.backgroundTintList = ContextCompat.getColorStateList(
+                this, R.color.dark_mode
+            )
             binding!!.ivHelp.setColorFilter(this.resources.getColor(R.color.white))
             binding!!.ivBank.setColorFilter(this.resources.getColor(R.color.white))
             binding!!.ivCurrency.setColorFilter(this.resources.getColor(R.color.white))
@@ -208,13 +205,10 @@ class ProfileActivity :
             binding!!.tvRateApp.setTextColor(ContextCompat.getColor(this, R.color.white))
             binding!!.tvHelpPrivacy.setTextColor(ContextCompat.getColor(this, R.color.white))
         } else {
-            binding!!.pfScroll.backgroundTintList =
-                ContextCompat.getColorStateList(
-                    this,
-                    R.color.clr_card_background
-                )
+            binding!!.pfScroll.backgroundTintList = ContextCompat.getColorStateList(
+                this, R.color.clr_card_background
+            )
             binding!!.txtAppVersion.setTextColor(ContextCompat.getColor(this, R.color.black))
-            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.black))
             binding!!.ivLanguage.setColorFilter(this.resources.getColor(R.color.black))
             binding!!.ivRateApp.setColorFilter(this.resources.getColor(R.color.black))
             binding!!.ivHelp.setColorFilter(this.resources.getColor(R.color.black))
@@ -228,7 +222,7 @@ class ProfileActivity :
             binding!!.tvChangeLang.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
             binding!!.tvDayNight.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
             binding!!.tvReferFriend.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
-            binding!!.tvRemoveAd.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.tvRemoveAd.setTextColor(ContextCompat.getColor(this, R.color.white))
             binding!!.tvRateApp.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
             binding!!.tvHelpPrivacy.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
         }
@@ -292,6 +286,51 @@ class ProfileActivity :
     override fun observe() {
         with(viewModel) {
 //            Use For Language BottomShit List
+
+            notificationUpdate.observe(this@ProfileActivity) { notificationData ->
+                if (notificationData != null) {
+                    if (notificationData.code in 199..299) {
+                        val mainModel =
+                            gson.fromJson(notificationData.apiResponse, UserModel::class.java)
+                        if (mainModel != null) {
+                            if (mainModel.status == 200) {
+                                if (mainModel.data?.notification_status != true) {
+                                    FirebaseMessaging.getInstance()
+                                        .unsubscribeFromTopic("user_" + userModel!!.id)
+                                        .addOnCompleteListener { task ->
+                                            Log.d("token====", userModel!!.id.toString())
+                                        }
+
+                                    FirebaseMessaging.getInstance()
+                                        .unsubscribeFromTopic("topic_bnk_usrs_broadcast")
+                                        .addOnCompleteListener { task ->
+
+                                        }
+                                } else {
+                                    FirebaseMessaging.getInstance()
+                                        .subscribeToTopic("user_" + mainModel.data!!.id)
+                                        .addOnCompleteListener { task ->
+                                            Log.d("token====", mainModel.data!!.id.toString())
+                                        }
+                                    FirebaseMessaging.getInstance()
+                                        .subscribeToTopic("topic_bnk_usrs_broadcast")
+                                        .addOnCompleteListener { task ->
+
+                                        }
+                                }
+                                userModel!!.notification_status =
+                                    mainModel.data!!.notification_status
+                                userModel!!.notification = mainModel.data!!.notification
+                                dialogClass.showSuccessfullyDialog(mainModel.message.toString())
+                                sessionManager.setUserDetails(
+                                    SessionManager.userData, userModel!!
+                                )
+                            } else dialogClass.showError(mainModel.message.toString())
+                        }
+                    } else dialogClass.showServerErrorDialog()
+                }
+
+            }
             languageList.observe(this@ProfileActivity) { apiResponseData ->
                 if (apiResponseData != null) {
                     updateLanguageAdapter(
@@ -343,7 +382,7 @@ class ProfileActivity :
                 if (apiResponseData != null) {
                     if (apiResponseData.apiResponse != null) {
                         val model = gson.fromJson(
-                            apiResponseData.apiResponse.toString(), CommonResponseApi::class.java
+                            apiResponseData.apiResponse.toString(), LanguagesResponse::class.java
                         )
                         if (model.status == 200) {
                             userModel!!.languageId = newLanguagId?.toInt()
@@ -363,7 +402,7 @@ class ProfileActivity :
                             btnOk.setOnClickListener {
 //                                AdController.showInterAd(this@ProfileActivity, null, 0) {
                                 dialog.dismiss()
-                                when (model.name) {
+                                when (model.data.language.name) {
                                     "English" -> {
                                         updateLocale(Locales.English)
                                         savedSessionManager.setLanguage("English")
@@ -415,8 +454,7 @@ class ProfileActivity :
                         }
                     } else dialogClass.showError(resources.getString(R.string.str_failed_language_change_request))
                 }
-            }
-
+            }/*
             //Change Language Response
             changeNotificationData.observe(this@ProfileActivity) { apiResponseData ->
                 if (apiResponseData != null) {
@@ -425,7 +463,7 @@ class ProfileActivity :
                             apiResponseData.apiResponse.toString(), CommonResponseApi::class.java
                         )
                         if (model.status == 200) {
-                            userModel!!.notification = newnotificationOnOFF.toString()
+                            userModel!!.notification = newnotificationOnOFF
                             dialogClass.showSuccessfullyDialog(model.message.toString())
                             sessionManager.setUserDetails(
                                 SessionManager.userData, userModel!!
@@ -436,7 +474,7 @@ class ProfileActivity :
 
                     } else dialogClass.showError(resources.getString(R.string.str_failed_notification_change_request))
                 }
-            }
+            }*/
 
             //Delete Account Response
             deleteAccountData.observe(this@ProfileActivity) { apiResponseData ->
@@ -449,6 +487,12 @@ class ProfileActivity :
                                 .unsubscribeFromTopic("user_" + userModel!!.id)
                                 .addOnCompleteListener { task ->
                                     Log.d("token====", userModel!!.id.toString())
+                                }
+
+                            FirebaseMessaging.getInstance()
+                                .unsubscribeFromTopic("topic_bnk_usrs_broadcast")
+                                .addOnCompleteListener { task ->
+
                                 }
                             savedSessionManager.setString(
                                 SessionManager.UserId, ""
@@ -497,14 +541,14 @@ class ProfileActivity :
 
             })*/
 
-        if (setdata.is_email_verified == 1){
+        if (setdata.is_email_verified == 1) {
             binding!!.tvVerified.text = "Verified"
-            binding!!.tvVerified.setTextColor(ContextCompat.getColor(this,R.color.clr_green))
-        }else{
+            binding!!.tvVerified.setTextColor(ContextCompat.getColor(this, R.color.clr_green))
+        } else {
             binding!!.tvVerified.text = "Unverified email"
-            binding!!.tvVerified.setTextColor(ContextCompat.getColor(this,R.color.clr_red))
+            binding!!.tvVerified.setTextColor(ContextCompat.getColor(this, R.color.clr_red))
         }
-        binding!!.txtUsername.text = setdata.name.toString()
+        binding!!.tvUserName.text = "Hi, " + setdata.name.toString()
         binding!!.txtEmailId.text = setdata.email
         binding!!.txtAppVersion.text =
             " ${getString(R.string.str_version)} ${BuildConfig.VERSION_NAME}"
@@ -513,10 +557,8 @@ class ProfileActivity :
     }
 
     private fun setThemeMode(isNightMode: Boolean) {
-        val nightMode = if (isNightMode)
-            AppCompatDelegate.MODE_NIGHT_YES
-        else
-            AppCompatDelegate.MODE_NIGHT_NO
+        val nightMode = if (isNightMode) AppCompatDelegate.MODE_NIGHT_YES
+        else AppCompatDelegate.MODE_NIGHT_NO
         // Check if the current mode is different before setting it
         if (AppCompatDelegate.getDefaultNightMode() != nightMode) {
             AppCompatDelegate.setDefaultNightMode(nightMode)
@@ -528,10 +570,27 @@ class ProfileActivity :
 
     private fun setOnClickListener() {
         with(binding!!) {
+            llNotification.setOnClickListener {
+                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+                viewModel.setDataUpdateDataList(switchNotification.isChecked, userToken)
+            }
+
+            llBank.setOnClickListener {
+                Toast.makeText(
+                    this@ProfileActivity,
+                    "This feature is currently under development and will be available in a future update. Thank you for your patience!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
 
             tvVerified.setOnClickListener {
-                if (userModel!!.is_email_verified!=1){
-                    Toast.makeText(this@ProfileActivity, "Verification email has been sent! Please check your inbox and click the link to verify your email.", Toast.LENGTH_SHORT).show()
+                if (userModel!!.is_email_verified != 1) {
+                    Toast.makeText(
+                        this@ProfileActivity,
+                        "Verification email has been sent! Please check your inbox and click the link to verify your email.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
             imgNotification.setOnClickListener {
@@ -540,14 +599,13 @@ class ProfileActivity :
 
 
 //            switchNotification.isChecked = sessionManager.getBoolean(SessionManager.isNotification)
-            switchNotification.isChecked = userModel?.notification!!.toInt() == 1
+
+            Log.e("fgfdjhgkjdfhgjdf", userModel?.notification!!.toInt().toString())
+
+            switchNotification.isChecked = userModel?.notification_status!! == true
 
             val dayNight = sessionManager.getBoolean(SessionManager.DAYNIGHT)
-            if (dayNight){
-                switchDayNight.isChecked = true
-            }else{
-                switchDayNight.isChecked = false
-            }
+            switchDayNight.isChecked = dayNight
 
             switchDayNight.setOnCheckedChangeListener { _, isChecked ->
                 sessionManager.setBoolean(SessionManager.DAYNIGHT, isChecked)
@@ -563,7 +621,7 @@ class ProfileActivity :
 //                sessionManager.setBoolean(SessionManager.isNotification, isChecked)
                 newnotificationOnOFF = if (isChecked) 1 else 0
                 val userToken = sessionManager.getString(SessionManager.USERTOKEN)
-                viewModel.setDataNotificationDataList(isChecked, userToken)
+                viewModel.setDataUpdateDataList(isChecked, userToken)
             }
 
             imgBack.setOnClickListener { finish() }
@@ -617,10 +675,7 @@ class ProfileActivity :
             }
 
             llPrivacyPolicy.setOnClickListener {
-                val browserIntent =
-                    Intent(Intent.ACTION_VIEW, Uri.parse("https://bannking.com/privacy"))
-                startActivity(browserIntent)
-//                startActivity(Intent(this@ProfileActivity, PrivacyPolicyActivity::class.java))
+                startActivity(Intent(this@ProfileActivity, HelpAndPrivacyActivity::class.java))
             }
 
             cvAccountDelete.setOnClickListener {
@@ -773,6 +828,11 @@ class ProfileActivity :
                 Log.d("sdfsdfdsfsdf", task.toString())
                 // There was some problem, log or handle the error code.
                 // task.exception
+                Toast.makeText(
+                    this,
+                    "Failed to open the Rate App page. Please try again later.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -784,6 +844,13 @@ class ProfileActivity :
                 // The flow has finished, update the last prompt time
 //                saveReviewManager.setBoolean(SessionManager.REVIEWMANAGER,true)
                 Log.d("sdfsdfdsfsdf", "yes")
+            }
+            flow.addOnFailureListener { _ ->
+                Toast.makeText(
+                    this,
+                    "Failed to open the Rate App page. Please try again later.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -818,10 +885,6 @@ class ProfileActivity :
             resources.getString(R.string.str_confirm)
         ) { dialog: DialogInterface?, _: Int ->
 
-            FirebaseMessaging.getInstance().unsubscribeFromTopic("user_" + userModel!!.id)
-                .addOnCompleteListener { task ->
-                    Log.d("token====", userModel!!.id.toString())
-                }
             sessionManager.setString(SessionManager.USERTOKEN, "")
             inAppPurchaseSM.logOut()
             sessionManager.logOut()

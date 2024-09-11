@@ -275,5 +275,18 @@
     <string name="link_bank">Banque de liens</string>
     <string name="help_privacy">Aide et confidentialité</string>
 
+
+    <string name="security">Sécurité</string>
+    <string name="refrain_from_tapping">Veuillez ne pas cliquer ci-dessous à moins que vous ne souhaitiez supprimer définitivement votre compte. La suppression de votre compte est irréversible.</string>
+    <string name="enable_faceid">Activer FaceID</string>
+    <string name="day_night_mode"><![CDATA[Mode Jour & Nuit]]></string>
+    <string name="refer_a_friend">Parrainer un Ami</string>
+    <string name="help_video">Vidéo d\'Aide</string>
+    <string name="add_bank">Ajouter une Banque</string>
+    <string name="setting">Paramètres</string>
+    <string name="go_premium">Passer à Premium</string>
+    <string name="str_your_sub_budget_title_created_unsuccessfully">Votre Titre de Sous-Budget n\'a Pas Été Créé avec Succès</string>
+
+
 </resources>
 

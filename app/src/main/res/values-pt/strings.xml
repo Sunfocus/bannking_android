@@ -273,5 +273,18 @@
     <string name="account_info">Informações da Conta</string>
     <string name="help_privacy">Ajuda e Privacidade</string>
 
+    <string name="link_bank">Vincular Banco</string>
+    <string name="security">Segurança</string>
+    <string name="refrain_from_tapping">Abstenha-se de tocar abaixo a menos que deseje excluir permanentemente sua conta. A exclusão de sua conta é irreversível.</string>
+    <string name="enable_faceid">Ativar FaceID</string>
+    <string name="day_night_mode"><![CDATA[Modo Dia e Noite]]></string>
+    <string name="refer_a_friend">Indicar um Amigo</string>
+    <string name="help_video">Vídeo de Ajuda</string>
+    <string name="add_bank">Adicionar Banco</string>
+    <string name="setting">Configuração</string>
+    <string name="go_premium">Tornar-se Premium</string>
+    <string name="str_your_sub_budget_title_created_unsuccessfully">Seu Título de Sub-Orçamento Não Foi Criado com Sucesso</string>
+
+
 </resources>
 

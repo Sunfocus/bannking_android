@@ -31,6 +31,10 @@ class UpgradeActivity :
     BaseActivity<UpgradeViewModel, ActivityUpgradeNewBinding>(UpgradeViewModel::class.java),
     OnClickListenerViewPager {
 
+    private var lifeTimePrice = ""
+    private var  oneMonthPrice = ""
+    private var  threeMonthPrice = ""
+    private var  sixMonthPrice = ""
     private var mediator: TabLayoutMediator? = null
     lateinit var viewModel: UpgradeViewModel
     private var clickedItemSUb = Constants.three_month_subscription_id
@@ -49,13 +53,13 @@ class UpgradeActivity :
         if (UiExtension.isDarkModeEnabled()) {
             binding!!.txtPurchaseDesc.setText(R.string.str_purchase_description_night)
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
-            binding!!.tvFreeTrial.setTextColor(ContextCompat.getColor(this, R.color.white))
+
             binding!!.rlUpgrade.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
         } else {
             binding!!.rlUpgrade.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.black))
             binding!!.txtPurchaseDesc.setText(R.string.str_purchase_description)
-            binding!!.tvFreeTrial.setTextColor(ContextCompat.getColor(this, R.color.black))
+
 
         }
     }
@@ -106,8 +110,10 @@ class UpgradeActivity :
 //                                userModel?.username + "Purchase Successfully",
 //                                Toast.LENGTH_SHORT
 //                            ).show()
-                            inAppPurchaseSM.setBoolean(SessionManager.isPremium, true)
-                            finish()
+                            dialogClass.showSuccessfullyDialog(model.message.toString()){
+                                inAppPurchaseSM.setBoolean(SessionManager.isPremium, true)
+                                finish()
+                            }
                         } else {
                             dialogClass.showError(resources.getString(R.string.str_server_error))
 //                            Toast.makeText(this@UpgradeActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
@@ -115,6 +121,26 @@ class UpgradeActivity :
                     } else {
                         dialogClass.showError(resources.getString(R.string.str_server_error))
 //                        Toast.makeText(this@UpgradeActivity, "Something went wrong Please Contact app admin ", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            subscriptionLifeTime.observe(this@UpgradeActivity) { checkSubscription ->
+                if (checkSubscription != null) {
+                    if (checkSubscription.code in 199..299) {
+                        val model = gson.fromJson(
+                            checkSubscription.apiResponse, CommonResponseApi::class.java
+                        )
+                        if (model.status == 200) {
+                            dialogClass.showSuccessfullyDialog(model.message.toString()){
+                                inAppPurchaseSM.setBoolean(SessionManager.isPremium, true)
+                                finish()
+                            }
+                        } else {
+                            dialogClass.showError(resources.getString(R.string.str_server_error))
+                        }
+                    } else {
+                        dialogClass.showError(resources.getString(R.string.str_server_error))
                     }
                 }
             }
@@ -141,7 +167,7 @@ class UpgradeActivity :
 
 
             llOneMonth.setOnClickListener {
-                btnThreeDayTrial.text = resources.getString(R.string._3_days_free_trial)
+                btnThreeDayTrial.text = "Get 1 month for $oneMonthPrice"
 
                 clickedItemSUb = Constants.one_month_subscription_id
                 llOneMonth.background = ContextCompat.getDrawable(
@@ -162,7 +188,7 @@ class UpgradeActivity :
             }
 
             llThreeMonth.setOnClickListener {
-                btnThreeDayTrial.text = resources.getString(R.string._3_days_free_trial)
+                btnThreeDayTrial.text = "Get 3 months for $threeMonthPrice"
 
                 clickedItemSUb = Constants.three_month_subscription_id
                 llThreeMonth.background = ContextCompat.getDrawable(
@@ -188,7 +214,7 @@ class UpgradeActivity :
             }*/
 
             llSixMonth.setOnClickListener {
-                btnThreeDayTrial.text = resources.getString(R.string._3_days_free_trial)
+                btnThreeDayTrial.text = "Get 6 months for $sixMonthPrice"
                 clickedItemSUb = Constants.six_month_subscription_id
                 llSixMonth.background = ContextCompat.getDrawable(
                     this@UpgradeActivity, R.drawable.background_gradiant_subs
@@ -239,7 +265,7 @@ class UpgradeActivity :
             }
 
             llLifeTime.setOnClickListener {
-                btnThreeDayTrial.text = "Continue"
+                btnThreeDayTrial.text = "Get Lifetime for $lifeTimePrice"
                 clickedItemSUb = Constants.life_time_subscription_id
                 llLifeTime.background = ContextCompat.getDrawable(
                     this@UpgradeActivity, R.drawable.background_gradiant_subs
@@ -374,7 +400,8 @@ class UpgradeActivity :
             .autoAcknowledge() //legacy option - better call this. Alternatively purchases can be acknowledge via public method "acknowledgePurchase(PurchaseInfo purchaseInfo)"
             .autoConsume() //legacy option - better call this. Alternatively purchases can be consumed via public method consumePurchase(PurchaseInfo purchaseInfo)"
             .enableLogging() //to enable logging for debugging throughout the library - this can be skipped
-            .connect() //to connect billing client with Play Console
+            .connect()
+            //to connect billing client with Play Console
 
         billingConnector.setBillingEventListener(object : BillingEventListener {
 
@@ -384,6 +411,7 @@ class UpgradeActivity :
                         productDetails[0]?.oneTimePurchaseOfferPrice.toString().let {
                             if (it.isNotEmpty() && it != "null") {
                                 binding!!.txtLifetimeAmount.text = it
+                                 lifeTimePrice = it
                                 Log.e("MyAp_life", "Life $it")
                             }
                         }
@@ -405,14 +433,18 @@ class UpgradeActivity :
                                         when (productDetails[i]?.productDetails?.productId) {
                                             Constants.one_month_subscription_id -> {
                                                 binding!!.txtOneMonthAmount.text = it
+                                                oneMonthPrice = it
                                             }
 
                                             Constants.three_month_subscription_id -> {
                                                 binding!!.txtThreeMonthAmount.text = it
+                                                threeMonthPrice = it
+                                                binding!!.btnThreeDayTrial.text = "Get 3 months for $it"
                                             }
 
                                             Constants.six_month_subscription_id -> {
                                                 binding!!.txtSixMonthAmount.text = it
+                                                sixMonthPrice = it
                                             }
                                         }
                                         Log.e("MyAp_sub", "indx $i plan $it ")
@@ -427,14 +459,18 @@ class UpgradeActivity :
                                         when (productDetails[i]?.productDetails?.productId) {
                                             Constants.one_month_subscription_id -> {
                                                 binding!!.txtOneMonthAmount.text = it
+                                                oneMonthPrice = it
                                             }
 
                                             Constants.three_month_subscription_id -> {
                                                 binding!!.txtThreeMonthAmount.text = it
+                                                threeMonthPrice = it
+                                                binding!!.btnThreeDayTrial.text = "Get 3 months for $it"
                                             }
 
                                             Constants.six_month_subscription_id -> {
                                                 binding!!.txtSixMonthAmount.text = it
+                                                sixMonthPrice = it
                                             }
                                         }
                                         Log.e("MyAp_sub", "indx $i plan $it ")
@@ -497,22 +533,20 @@ class UpgradeActivity :
                             //amit
                             val userToken = sessionManager.getString(SessionManager.USERTOKEN)
                             Log.d("dsfdsfdsfdsf",it)
-                            purchaseResponse.purchaseTime?.let { it2 ->
-                                viewModel.setDataInAccountTitleListNew(
-                                    it1, it, it2, purchaseResponse!!.orderId!!,userToken
-                                )
-                            }
 
-                           /* if (it == Constants.life_time_subscription_id){
+                            if (it == Constants.life_time_subscription_id){
                                 purchaseResponse.purchaseTime?.let { it2 ->
-                                    viewModel.setDataInAccountTitleList(
-                                        it1, it, it2, "1"
+                                    viewModel.setDataForLifeTimeNew(
+                                        it1, it, it2,purchaseResponse!!.orderId!!,userToken
                                     )
                                 }
                             }else{
-
-
-                            }*/
+                                purchaseResponse.purchaseTime?.let { it2 ->
+                                    viewModel.setDataInAccountTitleListNew(
+                                        it1, it, it2, purchaseResponse!!.orderId!!,userToken
+                                    )
+                                }
+                            }
                         }
                     }
                     product = purchaseInfo?.product.toString()

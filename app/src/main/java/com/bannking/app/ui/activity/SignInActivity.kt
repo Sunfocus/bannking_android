@@ -1,8 +1,14 @@
 package com.bannking.app.ui.activity
 
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
+import android.view.Window
+import android.widget.TextView
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricPrompt
@@ -15,6 +21,7 @@ import com.bannking.app.UiExtension.getCurrentLanguage
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.core.CommonResponseModel
 import com.bannking.app.databinding.ActivitySigninBinding
+import com.bannking.app.model.CommonResponseApi
 import com.bannking.app.model.ErrorResponse
 import com.bannking.app.model.retrofitResponseModel.userModel.UserModel
 import com.bannking.app.model.viewModel.SignInViewModel
@@ -23,9 +30,11 @@ import com.bannking.app.utils.Constants
 import com.bannking.app.utils.SessionManager
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import com.zeugmasolutions.localehelper.Locales
 import org.json.JSONException
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 
 class SignInActivity :
@@ -49,8 +58,7 @@ class SignInActivity :
     }
 
     private fun faceDetection() {
-        setupBiometricPrompt()
-        /*val packageManager = packageManager
+        setupBiometricPrompt()/*val packageManager = packageManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { // API level 30
             val hasFaceFeature = packageManager.hasSystemFeature(PackageManager.FEATURE_FACE)
             if (hasFaceFeature) {
@@ -70,19 +78,10 @@ class SignInActivity :
                 // The device supports biometric authentication (strong or weak, e.g., fingerprint, face, or iris)
                 // Proceed with biometric authentication setup
                 val executor = ContextCompat.getMainExecutor(this)
-                val biometricPrompt = BiometricPrompt(this, executor,
+                val biometricPrompt = BiometricPrompt(
+                    this,
+                    executor,
                     object : BiometricPrompt.AuthenticationCallback() {
-                        override fun onAuthenticationError(
-                            errorCode: Int,
-                            errString: CharSequence
-                        ) {
-                            super.onAuthenticationError(errorCode, errString)
-//                            Toast.makeText(
-//                                applicationContext,
-//                                "Authentication error: $errString",
-//                                Toast.LENGTH_SHORT
-//                            ).show()
-                        }
 
                         override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                             super.onAuthenticationSucceeded(result)
@@ -91,8 +90,7 @@ class SignInActivity :
                             val userPassword =
                                 savedSessionManager.getString(SessionManager.Password).toString()
                             loginUser(
-                                userId,
-                                userPassword
+                                userId, userPassword
                             )
 //                            Toast.makeText(
 //                                applicationContext,
@@ -101,21 +99,12 @@ class SignInActivity :
 //                            ).show()
                         }
 
-                        override fun onAuthenticationFailed() {
-                            super.onAuthenticationFailed()
-//                            Toast.makeText(
-//                                applicationContext,
-//                                "Authentication failed",
-//                                Toast.LENGTH_SHORT
-//                            ).show()
-                        }
                     })
 
-                val promptInfo = BiometricPrompt.PromptInfo.Builder()
-                    .setTitle("Biometric login for my app")
-                    .setSubtitle("Log in using your biometric credential")
-                    .setNegativeButtonText("Use account password")
-                    .build()
+                val promptInfo =
+                    BiometricPrompt.PromptInfo.Builder().setTitle("Biometric login for my app")
+                        .setSubtitle("Log in using your biometric credential")
+                        .setNegativeButtonText("Use account password").build()
                 biometricPrompt.authenticate(promptInfo)
             }
 
@@ -148,12 +137,21 @@ class SignInActivity :
 
         val userId = savedSessionManager.getString(SessionManager.UserId).toString()
         val userPassword = savedSessionManager.getString(SessionManager.Password).toString()
-        if (userId.isNotEmpty() && userPassword.isNotEmpty()) {
+        val logout = sessionManager.getBoolean(SessionManager.isLogin)
+        val faceLogin =sessionManager.getBoolean("FaceLogin")
+        if (userId.isNotEmpty() && userPassword.isNotEmpty() && !logout && faceLogin) {
+            sessionManager.setBoolean("FaceLogin", true)
             faceDetection()
         }
 
-
         if (savedSessionManager.getBoolean(SessionManager.isRemember)) {
+            binding!!.edtUsername.setText(
+                savedSessionManager.getString(SessionManager.UserId).toString()
+            )
+            binding!!.edtPassword.setText(
+                savedSessionManager.getString(SessionManager.Password).toString()
+            )
+        }else if (faceLogin){
             binding!!.edtUsername.setText(
                 savedSessionManager.getString(SessionManager.UserId).toString()
             )
@@ -220,17 +218,14 @@ class SignInActivity :
             if (!binding!!.edtUsername.text.isNullOrEmpty()) {
                 if (!binding!!.edtPassword.text.isNullOrEmpty()) {
                     loginUser(
-                        binding!!.edtUsername.text.toString(),
-                        binding!!.edtPassword.text.toString()
+                        binding!!.edtUsername.text.toString(), binding!!.edtPassword.text.toString()
                     )
                     if (binding!!.remember.isChecked) {
                         savedSessionManager.setString(
-                            SessionManager.UserId,
-                            binding!!.edtUsername.text.toString()
+                            SessionManager.UserId, binding!!.edtUsername.text.toString()
                         )
                         savedSessionManager.setString(
-                            SessionManager.Password,
-                            binding!!.edtPassword.text.toString()
+                            SessionManager.Password, binding!!.edtPassword.text.toString()
                         )
                         savedSessionManager.setBoolean(SessionManager.isRemember, true)
                     } else {
@@ -238,11 +233,9 @@ class SignInActivity :
                         savedSessionManager.setString(SessionManager.Password, "")
                         savedSessionManager.setBoolean(SessionManager.isRemember, false)
                     }
-                } else
-                    binding!!.edtPassword.error =
-                        resources.getString(R.string.str_please_enter_password)
-            } else
-                binding!!.edtUsername.error = resources.getString(R.string.enter_your_username)
+                } else binding!!.edtPassword.error =
+                    resources.getString(R.string.str_please_enter_password)
+            } else binding!!.edtUsername.error = resources.getString(R.string.enter_your_username)
 
         }
         val versionName: String = BuildConfig.VERSION_NAME
@@ -267,8 +260,7 @@ class SignInActivity :
         binding!!.txtForgetUsernamePassword.setOnClickListener {
             startActivity(
                 Intent(
-                    this@SignInActivity,
-                    FindAccountActivity::class.java
+                    this@SignInActivity, FindAccountActivity::class.java
                 )
             )
         }
@@ -277,6 +269,7 @@ class SignInActivity :
     }
 
     fun loginUser(strUserName: String, strPassword: String) {
+        sessionManager.setString(SessionManager.USERTOKEN,"")
         FCM_TOKEN.let {
             dialogClass.showLoadingDialog()
             val apiBody = JsonObject()
@@ -290,7 +283,7 @@ class SignInActivity :
 
             }
             val call = RetrofitClient.instance!!.myApi.userLogin(apiBody.toString())
-            call.enqueue(object : retrofit2.Callback<JsonObject> {
+            call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     dialogClass.hideLoadingDialog()
                     if (response.isSuccessful) {
@@ -299,18 +292,15 @@ class SignInActivity :
                                 CommonResponseModel(response.body(), response.code())
                             if (commonResponseModel != null) {
                                 val mainModel = gson.fromJson(
-                                    commonResponseModel.apiResponse,
-                                    UserModel::class.java
+                                    commonResponseModel.apiResponse, UserModel::class.java
                                 )
                                 if (commonResponseModel.code in 199..299) {
                                     if (mainModel.status == 200) {
                                         sessionManager.setUserDetails(
-                                            SessionManager.userData,
-                                            mainModel.data!!
+                                            SessionManager.userData, mainModel.data!!
                                         )
                                         savedSessionManager.setString(
-                                            SessionManager.UserId,
-                                            mainModel.data!!.email
+                                            SessionManager.UserId, mainModel.data!!.email
                                         )
                                         savedSessionManager.setString(
                                             SessionManager.Password,
@@ -324,33 +314,50 @@ class SignInActivity :
 
                                         if (mainModel.data!!.subscriptionStatus == 1) {
                                             inAppPurchaseSM.setBoolean(
-                                                SessionManager.isPremium,
-                                                true
+                                                SessionManager.isPremium, true
                                             )
                                         } else {
                                             inAppPurchaseSM.setBoolean(
-                                                SessionManager.isPremium,
-                                                false
+                                                SessionManager.isPremium, false
                                             )
                                         }
 
-                                        FirebaseMessaging.getInstance()
-                                            .subscribeToTopic("user_" + mainModel.data!!.id)
-                                            .addOnCompleteListener { task ->
-                                                Log.d(
-                                                    "token====",
-                                                    "user_${mainModel.data!!.id.toString()}"
-                                                )
-                                            }
+                                        if (mainModel.data?.notification_status != true){
+                                            FirebaseMessaging.getInstance()
+                                                .unsubscribeFromTopic("user_" + mainModel.data!!.id)
+                                                .addOnCompleteListener { task ->
+                                                }
+
+                                            FirebaseMessaging.getInstance()
+                                                .unsubscribeFromTopic("topic_bnk_usrs_broadcast")
+                                                .addOnCompleteListener { task ->
+
+                                                }
+                                        }else{
+                                            FirebaseMessaging.getInstance()
+                                                .subscribeToTopic("user_" + mainModel.data!!.id)
+                                                .addOnCompleteListener { task ->
+                                                    Log.d(
+                                                        "token====",
+                                                        "user_${mainModel.data!!.id.toString()}"
+                                                    )
+                                                }
+
+                                            FirebaseMessaging.getInstance()
+                                                .subscribeToTopic("topic_bnk_usrs_broadcast")
+                                                .addOnCompleteListener { task ->
+
+                                                }
+                                        }
 
                                         when (mainModel.data!!.language!!.name) {
                                             "English" -> {
-                                                if (this@SignInActivity.getCurrentLanguage() != Locales.English)
-                                                    updateLocale(Locales.English)
+                                                if (this@SignInActivity.getCurrentLanguage() != Locales.English) updateLocale(
+                                                    Locales.English
+                                                )
                                                 else {
                                                     sessionManager.setBoolean(
-                                                        SessionManager.isDeleteORLogOut,
-                                                        false
+                                                        SessionManager.isDeleteORLogOut, false
                                                     )
                                                     val intent = Intent(
                                                         this@SignInActivity,
@@ -363,12 +370,12 @@ class SignInActivity :
                                             }
 
                                             "Spanish" -> {
-                                                if (this@SignInActivity.getCurrentLanguage() != Locales.Spanish)
-                                                    updateLocale(Locales.Spanish)
+                                                if (this@SignInActivity.getCurrentLanguage() != Locales.Spanish) updateLocale(
+                                                    Locales.Spanish
+                                                )
                                                 else {
                                                     sessionManager.setBoolean(
-                                                        SessionManager.isDeleteORLogOut,
-                                                        false
+                                                        SessionManager.isDeleteORLogOut, false
                                                     )
                                                     val intent = Intent(
                                                         this@SignInActivity,
@@ -381,12 +388,12 @@ class SignInActivity :
                                             }
 
                                             "French" -> {
-                                                if (this@SignInActivity.getCurrentLanguage() != Locales.French)
-                                                    updateLocale(Locales.French)
+                                                if (this@SignInActivity.getCurrentLanguage() != Locales.French) updateLocale(
+                                                    Locales.French
+                                                )
                                                 else {
                                                     sessionManager.setBoolean(
-                                                        SessionManager.isDeleteORLogOut,
-                                                        false
+                                                        SessionManager.isDeleteORLogOut, false
                                                     )
                                                     val intent = Intent(
                                                         this@SignInActivity,
@@ -398,12 +405,12 @@ class SignInActivity :
                                             }
 
                                             "Arabic" -> {
-                                                if (this@SignInActivity.getCurrentLanguage() != Locales.Arabic)
-                                                    updateLocale(Locales.Arabic)
+                                                if (this@SignInActivity.getCurrentLanguage() != Locales.Arabic) updateLocale(
+                                                    Locales.Arabic
+                                                )
                                                 else {
                                                     sessionManager.setBoolean(
-                                                        SessionManager.isDeleteORLogOut,
-                                                        false
+                                                        SessionManager.isDeleteORLogOut, false
                                                     )
                                                     val intent = Intent(
                                                         this@SignInActivity,
@@ -415,12 +422,12 @@ class SignInActivity :
                                             }
 
                                             "Russia" -> {
-                                                if (this@SignInActivity.getCurrentLanguage() != Locales.Russian)
-                                                    updateLocale(Locales.Russian)
+                                                if (this@SignInActivity.getCurrentLanguage() != Locales.Russian) updateLocale(
+                                                    Locales.Russian
+                                                )
                                                 else {
                                                     sessionManager.setBoolean(
-                                                        SessionManager.isDeleteORLogOut,
-                                                        false
+                                                        SessionManager.isDeleteORLogOut, false
                                                     )
                                                     val intent = Intent(
                                                         this@SignInActivity,
@@ -432,12 +439,12 @@ class SignInActivity :
                                             }
 
                                             "Portuguese" -> {
-                                                if (this@SignInActivity.getCurrentLanguage() != Locales.Portuguese)
-                                                    updateLocale(Locales.Portuguese)
+                                                if (this@SignInActivity.getCurrentLanguage() != Locales.Portuguese) updateLocale(
+                                                    Locales.Portuguese
+                                                )
                                                 else {
                                                     sessionManager.setBoolean(
-                                                        SessionManager.isDeleteORLogOut,
-                                                        false
+                                                        SessionManager.isDeleteORLogOut, false
                                                     )
                                                     val intent = Intent(
                                                         this@SignInActivity,
@@ -449,12 +456,12 @@ class SignInActivity :
                                             }
 
                                             "Dutch" -> {
-                                                if (this@SignInActivity.getCurrentLanguage() != Locales.Dutch)
-                                                    updateLocale(Locales.Dutch)
+                                                if (this@SignInActivity.getCurrentLanguage() != Locales.Dutch) updateLocale(
+                                                    Locales.Dutch
+                                                )
                                                 else {
                                                     sessionManager.setBoolean(
-                                                        SessionManager.isDeleteORLogOut,
-                                                        false
+                                                        SessionManager.isDeleteORLogOut, false
                                                     )
                                                     val intent = Intent(
                                                         this@SignInActivity,
@@ -466,12 +473,12 @@ class SignInActivity :
                                             }
 
                                             else -> {
-                                                if (this@SignInActivity.getCurrentLanguage() != Locales.English)
-                                                    updateLocale(Locales.English)
+                                                if (this@SignInActivity.getCurrentLanguage() != Locales.English) updateLocale(
+                                                    Locales.English
+                                                )
                                                 else {
                                                     sessionManager.setBoolean(
-                                                        SessionManager.isDeleteORLogOut,
-                                                        false
+                                                        SessionManager.isDeleteORLogOut, false
                                                     )
                                                     val intent = Intent(
                                                         this@SignInActivity,
@@ -498,11 +505,15 @@ class SignInActivity :
                         } else if (response.code() in 400..500) {
                             dialogClass.showServerErrorDialog()
                         }
-                    }else {
+                    } else {
                         val errorBodyString = response.errorBody()?.string()
                         val mainModel = gson.fromJson(errorBodyString, ErrorResponse::class.java)
-                            dialogClass.hideLoadingDialog()
+                        dialogClass.hideLoadingDialog()
+                        if (mainModel.message.contains("Your email address has not been verified yet. Please verify your email to continue.")) {
+                            showVerificationDialog(mainModel.message)
+                        } else {
                             dialogClass.showErrorMessageDialog(mainModel.message)
+                        }
 
                     }
                 }
@@ -513,6 +524,77 @@ class SignInActivity :
                 }
             })
         }
+    }
+
+    private fun showVerificationDialog(strMessage: String, callbacks: (() -> Unit)? = null) {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.verify_mail)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val btnResend: TextView = dialog.findViewById(R.id.btnResend)
+        val tvMessage: TextView = dialog.findViewById(R.id.tvMessage)
+        val btnCancel: TextView = dialog.findViewById(R.id.btnCancel)
+        val emailResend: AppCompatEditText = dialog.findViewById(R.id.emailResend)
+        tvMessage.text = strMessage
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnResend.setOnClickListener {
+            if (emailResend.text.toString().isNotEmpty()) {
+                resendMail(emailResend.text.toString())
+                dialog.dismiss()
+            } else {
+                emailResend.error = resources.getString(R.string.str_enter_email_address)
+            }
+
+        }
+        dialog.show()
+    }
+
+    private fun resendMail(strEmail: String) {
+        dialogClass.showLoadingDialog()
+        val apiBody = JsonObject()
+        try {
+            apiBody.addProperty("email", strEmail)
+
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+        val call = RetrofitClient.instance!!.myApi.postEmailResend(apiBody.toString())
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                dialogClass.hideLoadingDialog()
+                if (response.isSuccessful) {
+                    if (response.code() in 199..299) {
+                        val commonResponseModel =
+                            CommonResponseModel(response.body(), response.code())
+
+                        if (commonResponseModel != null) {
+                            val mainModel = gson.fromJson(
+                                commonResponseModel.apiResponse, CommonResponseApi::class.java
+                            )
+                            if (commonResponseModel.code in 199..299) {
+                                dialogClass.showSuccessfullyDialog(mainModel.message!!)
+                            }
+
+
+                        }
+                    } else if (response.code() in 400..500) {
+                        assert(response.errorBody() != null)
+                        val errorBody = response.errorBody().toString()
+                        val jsonObject: JsonObject = JsonParser.parseString(errorBody).asJsonObject
+                        dialogClass.showServerErrorDialog()
+                    }
+                } else dialogClass.showServerErrorDialog()
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                dialogClass.hideLoadingDialog()
+                dialogClass.showServerErrorDialog()
+            }
+        })
     }
 
     /*override fun onBackPressed() {

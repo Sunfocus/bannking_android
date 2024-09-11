@@ -2,13 +2,20 @@ package com.bannking.app.ui.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.telephony.TelephonyManager
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
+import android.view.Window
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bannking.app.BuildConfig
@@ -80,7 +87,7 @@ class SignUpActivity : BaseActivity<OtpViewModel, ActivitySignUpBinding>(OtpView
                         val mainModel = gson.fromJson(register.apiResponse, UserModel::class.java)
                         if (mainModel.status == 200) {
                             Log.d("sdfbvsdfshdfsd",mainModel.data!!.toString())
-
+/*
                             FirebaseMessaging.getInstance()
                                 .subscribeToTopic("user_" + mainModel.data!!.id)
                                 .addOnCompleteListener { task ->
@@ -89,14 +96,9 @@ class SignUpActivity : BaseActivity<OtpViewModel, ActivitySignUpBinding>(OtpView
 
                             sessionManager.setUserDetails(SessionManager.userData, mainModel.data!!)
                             sessionManager.setBoolean(SessionManager.isLogin, true)
-                            sessionManager.setString(SessionManager.USERTOKEN,"bearer ${mainModel.extraData}")
-                            startActivity(
-                                Intent(
-                                    this@SignUpActivity,
-                                    CompletionActivity::class.java
-                                )
-                            )
-                            finishAffinity()
+                            sessionManager.setString(SessionManager.USERTOKEN,"bearer ${mainModel.extraData}")*/
+
+                            showVerificationDialog(mainModel.message!!)
                         } else {
                             mainModel.message?.let { dialogClass.showError(it) }
 
@@ -117,7 +119,7 @@ class SignUpActivity : BaseActivity<OtpViewModel, ActivitySignUpBinding>(OtpView
 //                            Toast.makeText(this@SignUpActivity, model.message + " " + model.note, Toast.LENGTH_SHORT)
 //                                .show()
                             val intent =
-                                Intent(this@SignUpActivity, RegisterOtpVerifyActivity::class.java)
+                                Intent(this@SignUpActivity, VerifyMailActivity::class.java)
                             intent.putExtra("Email", binding!!.edtEmail.text.toString())
                             intent.putExtra("UserName", binding!!.edtUsername.text.toString())
                             intent.putExtra("Password", binding!!.edtPassword.text.toString())
@@ -142,6 +144,48 @@ class SignUpActivity : BaseActivity<OtpViewModel, ActivitySignUpBinding>(OtpView
                 }
             }
         }
+    }
+
+    private fun showVerificationDialog(strMessage: String, callbacks: (() -> Unit)? = null) {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.verify_mail)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val btnResend: TextView = dialog.findViewById(R.id.btnResend)
+        val tvMessage: TextView = dialog.findViewById(R.id.tvMessage)
+        val btnCancel: TextView = dialog.findViewById(R.id.btnCancel)
+        val emailResend: AppCompatEditText = dialog.findViewById(R.id.emailResend)
+        tvMessage.text = strMessage
+        btnCancel.setOnClickListener {
+            startActivity(
+                Intent(
+                    this@SignUpActivity,
+                    SignInActivity::class.java
+                )
+            )
+            finishAffinity()
+            dialog.dismiss()
+        }
+
+
+        btnResend.setOnClickListener {
+            if (emailResend.text.toString().isNotEmpty()) {
+                viewModel.resendMail(emailResend.text.toString())
+                startActivity(
+                    Intent(
+                        this@SignUpActivity,
+                        SignInActivity::class.java
+                    )
+                )
+                finishAffinity()
+                dialog.dismiss()
+            }else{
+                emailResend.error = resources.getString(R.string.str_enter_email_address)
+            }
+
+        }
+        dialog.show()
     }
 
     override fun setMethod() {
@@ -234,7 +278,7 @@ class SignUpActivity : BaseActivity<OtpViewModel, ActivitySignUpBinding>(OtpView
             apiBody.addProperty("email", email)
             apiBody.addProperty("name", personName?:"")
             apiBody.addProperty("login_type", "google")
-            apiBody.addProperty("country_id", country)
+            apiBody.addProperty("country", country)
 
         } catch (e: JSONException) {
             e.printStackTrace()
@@ -248,18 +292,38 @@ class SignUpActivity : BaseActivity<OtpViewModel, ActivitySignUpBinding>(OtpView
                         val commonResponseModel =
                             CommonResponseModel(response.body(), response.code())
                         if (commonResponseModel != null) {
-                            var gsons: Gson = Gson()
+                            val gsons: Gson = Gson()
                             val mainModel = gsons.fromJson(
                                 commonResponseModel.apiResponse,
                                 UserModel::class.java
                             )
                             Log.d("sdfsdfsdfs",mainModel.toString())
                             if (mainModel.status == 200) {
-                                FirebaseMessaging.getInstance()
-                                    .subscribeToTopic("user_" + mainModel.data!!.id)
-                                    .addOnCompleteListener { task ->
-                                        Log.d("token====", mainModel.data!!.id.toString())
-                                    }
+                                if (mainModel.data?.notification_status != true){
+                                    FirebaseMessaging.getInstance()
+                                        .unsubscribeFromTopic("user_" + mainModel.data!!.id)
+                                        .addOnCompleteListener { task ->
+
+                                        }
+
+                                    FirebaseMessaging.getInstance()
+                                        .unsubscribeFromTopic("topic_bnk_usrs_broadcast")
+                                        .addOnCompleteListener { task ->
+
+                                        }
+                                }else{
+                                    FirebaseMessaging.getInstance()
+                                        .subscribeToTopic("user_" + mainModel.data!!.id)
+                                        .addOnCompleteListener { task ->
+                                            Log.d("token====", mainModel.data!!.id.toString())
+                                        }
+                                    FirebaseMessaging.getInstance()
+                                        .subscribeToTopic("topic_bnk_usrs_broadcast")
+                                        .addOnCompleteListener { task ->
+
+                                        }
+                                }
+
 
                                 sessionManager.setUserDetails(SessionManager.userData, mainModel.data!!)
                                 sessionManager.setBoolean(SessionManager.isLogin, true)
@@ -371,14 +435,14 @@ class SignUpActivity : BaseActivity<OtpViewModel, ActivitySignUpBinding>(OtpView
                                 if (utils.isValidPassword(edtPassword.text.toString())) {
                                     if (edtPassword.text.toString() == edtCnfPassword.text.toString()) {
                                         val country = getCountryNameFromNetwork(this@SignUpActivity)
-                                        viewModel.setDataInRegisterDataList(edtEmail.text.toString(),
+                                        /*viewModel.setDataInRegisterDataList(edtEmail.text.toString(),
                                             edtUsername.text.toString(),
                                             edtPassword.text.toString(),
-                                            country,etFirstName.text.toString())
-                                        /*viewModel.setDataInOtpList(
+                                            country,etFirstName.text.toString())*/
+                                        viewModel.setDataInOtpList(
                                             edtEmail.text.toString(),
-                                            Constants.SECURITY_1,etFirstName.text.toString()
-                                        )*/
+                                            Constants.SECURITY_1,etFirstName.text.toString(),edtUsername.text.toString()
+                                        )
                                     } else
                                         dialogClass.showError(resources.getString(R.string.str_confirm_password_not_match_with_password))
 

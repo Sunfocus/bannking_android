@@ -16,6 +16,9 @@ class Data : Serializable {
     @SerializedName("userAccountTitle")
     var userAccountTitle: UserAccountTitle?= null
 
+    @SerializedName("budgetPlanner")
+    var budgetPlanner: BudgetPlanner?= null
+
     @SerializedName("user_id")
     var user_id: String? = null
 
@@ -49,6 +52,10 @@ class Data : Serializable {
 
 }
 
+data class BudgetPlanner(
+    @SerializedName("id") var id: String? = null,
+    @SerializedName("name") var name: String? = null
+):Serializable
 
 data class UserAccountTitle(
     @SerializedName("id") var id: String? = null,

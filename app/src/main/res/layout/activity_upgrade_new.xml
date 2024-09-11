@@ -709,24 +709,12 @@
                 android:background="@drawable/background_gradiant_subs"
                 android:gravity="center"
                 android:padding="20dp"
-                android:text="@string/_3_days_free_trial"
+                android:text=""
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvFreeTrial"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginHorizontal="40dp"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/source_sans_pro"
-                android:text="Start 3-day Free Trial, cancel Anytime"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="14dp"
-                android:textStyle="bold" />
+
 
             <TextView
                 android:id="@+id/txt_purchase_desc"

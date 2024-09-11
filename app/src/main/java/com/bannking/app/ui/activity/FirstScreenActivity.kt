@@ -28,9 +28,11 @@ class FirstScreenActivity : AppCompatActivity() {
         binding.btnSignUpFirst.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
+            finish()
         }
         binding.tvHaveAnAccount.setOnClickListener {
             startActivity(Intent(this, SignInActivity::class.java))
+            finish()
         }
 
         //Amit

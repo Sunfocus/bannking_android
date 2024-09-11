@@ -110,11 +110,30 @@ class RegisterOtpVerifyActivity :
                         if (mainModel.status == 200) {
                             Log.d("sdfbvsdfshdfsd",mainModel.data!!.toString())
 
-                            FirebaseMessaging.getInstance()
-                                .subscribeToTopic("user_" + mainModel.data!!.id)
-                                .addOnCompleteListener { task ->
-                                    Log.d("token====", mainModel.data!!.id.toString())
-                                }
+                            if (mainModel.data?.notification_status != true){
+                                FirebaseMessaging.getInstance()
+                                    .unsubscribeFromTopic("user_" + mainModel.data!!.id)
+                                    .addOnCompleteListener { task ->
+                                    }
+
+                                FirebaseMessaging.getInstance()
+                                    .unsubscribeFromTopic("topic_bnk_usrs_broadcast")
+                                    .addOnCompleteListener { task ->
+
+                                    }
+                            }else{
+                                FirebaseMessaging.getInstance()
+                                    .subscribeToTopic("user_" + mainModel.data!!.id)
+                                    .addOnCompleteListener { task ->
+                                        Log.d("token====", mainModel.data!!.id.toString())
+                                    }
+                                FirebaseMessaging.getInstance()
+                                    .subscribeToTopic("topic_bnk_usrs_broadcast")
+                                    .addOnCompleteListener { task ->
+
+                                    }
+                            }
+
 
                             sessionManager.setUserDetails(SessionManager.userData, mainModel.data!!)
                             sessionManager.setBoolean(SessionManager.isLogin, true)
@@ -223,7 +242,7 @@ class RegisterOtpVerifyActivity :
             txtResendOtp.setOnClickListener {
                 if (txtResendOtp.text.toString() == resources.getString(R.string.str_re_send_code)) {
                     reSendOtpTimer()
-                    viewModel.setDataInOtpList(email, Constants.SECURITY_1,name)
+                    viewModel.setDataInOtpList(email, Constants.SECURITY_1,name,"")
                 } else {
 //                    Toast.makeText(
 //                        this@RegisterOtpVerifyActivity,

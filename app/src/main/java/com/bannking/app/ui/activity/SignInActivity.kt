@@ -218,11 +218,11 @@ class SignInActivity :
             if (!binding!!.edtUsername.text.isNullOrEmpty()) {
                 if (!binding!!.edtPassword.text.isNullOrEmpty()) {
                     loginUser(
-                        binding!!.edtUsername.text.toString(), binding!!.edtPassword.text.toString()
+                        binding!!.edtUsername.text.toString().trim(), binding!!.edtPassword.text.toString()
                     )
                     if (binding!!.remember.isChecked) {
                         savedSessionManager.setString(
-                            SessionManager.UserId, binding!!.edtUsername.text.toString()
+                            SessionManager.UserId, binding!!.edtUsername.text.toString().trim()
                         )
                         savedSessionManager.setString(
                             SessionManager.Password, binding!!.edtPassword.text.toString()

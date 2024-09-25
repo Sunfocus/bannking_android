@@ -11,6 +11,7 @@ import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
@@ -151,8 +152,9 @@ class TabTwoFragment :
         list = arrayListOf()
         adapter =
             TabsAdapter(requireActivity(), list, savedSessionManagerVoice, object : MoreDotClick {
-                override fun openDialogBox(list: Data) {
-                    showDotClickDialog(list)
+                override fun openDialogBox(list: Data, list1: ArrayList<Data>) {
+                    val greaterValue = hasAnotherAccountWithSameBudgetTitle(list1, list)
+                    showDotClickDialog(list, greaterValue)
                 }
 
             }, object : OnClickAnnouncementDialog {
@@ -169,8 +171,12 @@ class TabTwoFragment :
         mBinding.rvIncome.adapter = adapter
     }
 
+    private fun hasAnotherAccountWithSameBudgetTitle(list: ArrayList<Data>, list2: Data): Boolean {
+        val count = list.count { it.budgetPlanner?.name == list2.budgetPlanner?.name }
+        return count > 1
+    }
 
-    private fun getDeviceName(): String? {
+    private fun getDeviceName(): String {
         val manufacturer = Build.MANUFACTURER
         val model = Build.MODEL
         return if (model.startsWith(manufacturer)) {
@@ -262,7 +268,7 @@ class TabTwoFragment :
         }
     }
 
-    fun showDotClickDialog(list: Data) {
+    fun showDotClickDialog(list: Data, greaterValue: Boolean) {
         val dialog = Dialog(requireActivity())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
@@ -276,6 +282,13 @@ class TabTwoFragment :
         imgClose.setOnClickListener {
             dialog.dismiss()
         }
+
+        if (greaterValue) {
+            btnTitleDelete.visibility = View.VISIBLE
+        } else {
+            btnTitleDelete.visibility = View.GONE
+        }
+
         btnScheduleTransfer.setOnClickListener {
             val intent = Intent(activity, ScheduleTransferActivity::class.java)
             intent.putExtra("Id", list.id.toString())
@@ -395,9 +408,9 @@ class TabTwoFragment :
         ) { _: DialogInterface?, _: Int ->
             val userToken = sessionManager.getString(SessionManager.USERTOKEN)
             var budgetId = ""
-            budgetId = if (deleteType == "1"){
+            budgetId = if (deleteType == "1") {
                 ""
-            }else{
+            } else {
                 list.budget_id!!
             }
             viewModel.setDataInDeleteBankAccount(
@@ -456,9 +469,7 @@ class TabTwoFragment :
                     selection(btn_maleVoice, btn_femaleVoice, btn_otherVoice, btn_femaleVoice)
 //                    savedSessionManagerVoice.setAnnouncementVoice(util.getGenderDescription(Gender.FEMALE))
                     speechToTextForDialog(
-                        accountName,
-                        list,
-                        util.getGenderDescription(Gender.FEMALE)
+                        accountName, list, util.getGenderDescription(Gender.FEMALE)
                     )
                 }
 
@@ -466,9 +477,7 @@ class TabTwoFragment :
                     selection(btn_maleVoice, btn_femaleVoice, btn_otherVoice, btn_otherVoice)
 //                    savedSessionManagerVoice.setAnnouncementVoice(util.getGenderDescription(Gender.OTHER))
                     speechToTextForDialog(
-                        accountName,
-                        list,
-                        util.getGenderDescription(Gender.OTHER)
+                        accountName, list, util.getGenderDescription(Gender.OTHER)
                     )
                 }
             }
@@ -634,8 +643,7 @@ class TabTwoFragment :
             val amount = utils.removeCurrencySymbol(list.amount!!)
 
             returnz = Constant.convertNumericToSpokenWords(
-                amount,
-                savedSessionManagerCurrency.getCurrency()
+                amount, savedSessionManagerCurrency.getCurrency()
             )
         } catch (e: NumberFormatException) {
             //Toast.makeToast("illegal number or empty number" , toast.long)
@@ -783,8 +791,7 @@ class TabTwoFragment :
             val amount = utils.removeCurrencySymbol(list.amount!!)
 
             returnz = Constant.convertNumericToSpokenWords(
-                amount,
-                savedSessionManagerCurrency.getCurrency()
+                amount, savedSessionManagerCurrency.getCurrency()
             )
 //            val numericValue = BigDecimal(amount)
 //            returnz = utils.convertNumericToWords(list.amount!!).toString();

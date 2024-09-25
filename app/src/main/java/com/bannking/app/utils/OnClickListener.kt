@@ -36,7 +36,10 @@ interface GetTokenFromOverride {
 }
 
 interface MoreDotClick {
-    fun openDialogBox(list: com.bannking.app.model.retrofitResponseModel.accountListModel.Data)
+    fun openDialogBox(
+        list: com.bannking.app.model.retrofitResponseModel.accountListModel.Data,
+        list1: ArrayList<com.bannking.app.model.retrofitResponseModel.accountListModel.Data>
+    )
 }
 
 interface ItemClickListener {

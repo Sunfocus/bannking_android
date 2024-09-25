@@ -18,8 +18,6 @@ import com.bannking.app.utils.OnClickAnnouncement
 import com.bannking.app.utils.OnClickAnnouncementDialog
 import com.bannking.app.utils.SessionManager
 import java.text.DecimalFormat
-import java.text.NumberFormat
-import java.util.Locale
 
 class TabsAdapter(
     private val context: Context,
@@ -109,7 +107,7 @@ class TabsAdapter(
         mBinding!!.txtAccountCode.text = list!![position].account_code
 
         mBinding!!.imgMore.setOnClickListener {
-            listner.openDialogBox(list!![position])
+            listner.openDialogBox(list!![position],list!!)
         }
 
         mBinding!!.imgAnnounce.setOnClickListener {

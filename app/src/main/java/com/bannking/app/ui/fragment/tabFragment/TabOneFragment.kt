@@ -12,6 +12,7 @@ import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
@@ -158,8 +159,9 @@ class TabOneFragment :
         list = arrayListOf()
         adapter =
             TabsAdapter(requireActivity(), list, savedSessionManagerVoice, object : MoreDotClick {
-                override fun openDialogBox(list: Data) {
-                    showDotClickDialog(list)
+                override fun openDialogBox(list: Data, list1: ArrayList<Data>) {
+                    val greaterValue = hasAnotherAccountWithSameBudgetTitle(list1,list)
+                    showDotClickDialog(list,greaterValue)
                 }
 
             }, object : OnClickAnnouncementDialog {
@@ -176,6 +178,11 @@ class TabOneFragment :
 
             })
         mBinding.rvExpenses.adapter = adapter
+    }
+
+    private fun hasAnotherAccountWithSameBudgetTitle(list: ArrayList<Data>, list2: Data): Boolean {
+        val count = list.count { it.budgetPlanner?.name == list2.budgetPlanner?.name }
+        return count > 1
     }
 
     private fun getDeviceName(): String? {
@@ -360,7 +367,7 @@ class TabOneFragment :
         return ViewModelProvider(requireActivity())[MainViewModel::class.java]
     }
 
-    fun showDotClickDialog(list: Data) {
+    fun showDotClickDialog(list: Data, greaterValue: Boolean) {
         val dialog = Dialog(requireActivity())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
@@ -373,6 +380,11 @@ class TabOneFragment :
         val btnScheduleTransfer: Button = dialog.findViewById(R.id.btn_schedule_transfer)
         imgClose.setOnClickListener {
             dialog.dismiss()
+        }
+        if (greaterValue){
+            btnTitleDelete.visibility = View.VISIBLE
+        }else{
+            btnTitleDelete.visibility = View.GONE
         }
 
         btnScheduleTransfer.setOnClickListener {

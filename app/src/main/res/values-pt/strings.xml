@@ -40,10 +40,10 @@
     <string name="str_profile">Perfil</string>
     <string name="str_gmail">ibeorstore@gmail.com</string>
     <string name="str_name">Mike</string>
-    <string name="str_languages">Mudar idioma</string>
+    <string name="str_languages">Escolha o seu idioma</string>
     <string name="str_sound">Leitor de voz</string>
     <string name="str_remove_all_ads">Remover todos os anúncios</string>
-    <string name="str_select_your_currency">Selecione sua moeda</string>
+    <string name="str_select_your_currency">Mudar moeda</string>
     <string name="str_change_password">Mudar senha</string>
     <string name="str_privacy_policy">Política de Privacidade</string>
     <string name="str_notifications">Notificações</string>

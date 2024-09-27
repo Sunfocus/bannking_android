@@ -113,7 +113,16 @@ class ProfileActivity :
                         locale = Locale.forLanguageTag("pt")
                     } else if (savedSessionManager.getLanguage() == "Dutch") {
                         locale = Locale.forLanguageTag("nl")
+                    }else if (savedSessionManager.getLanguage() == "Hindi") {
+                        locale = Locale.forLanguageTag("hi")
+                    }else if (savedSessionManager.getLanguage() == "Japanese") {
+                        locale = Locale.forLanguageTag("ja")
+                    }else if (savedSessionManager.getLanguage() == "German") {
+                        locale = Locale.forLanguageTag("de")
+                    }else if (savedSessionManager.getLanguage() == "Italian") {
+                        locale = Locale.forLanguageTag("it")
                     }
+
                     val result = mTextToSpeech!!.setLanguage(locale)
 
                     /* if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -437,6 +446,22 @@ class ProfileActivity :
                                         updateLocale(Locales.Dutch)
                                         savedSessionManager.setLanguage("Dutch")
                                     }
+                                    "Hindi" -> {
+                                        updateLocale(Locales.Hindi)
+                                        savedSessionManager.setLanguage("Hindi")
+                                    }
+                                    "Japanese" -> {
+                                        updateLocale(Locales.Japanese)
+                                        savedSessionManager.setLanguage("Japanese")
+                                    }
+                                    "German" -> {
+                                        updateLocale(Locales.German)
+                                        savedSessionManager.setLanguage("German")
+                                    }
+                                    "Italian" -> {
+                                        updateLocale(Locales.Italian)
+                                        savedSessionManager.setLanguage("Italian")
+                                    }
 
                                     else -> {
                                         updateLocale(Locales.English)
@@ -649,14 +674,16 @@ class ProfileActivity :
             }
 
             llVoice.setOnClickListener {
-                val bottomSheetDialog =
+                val intent = Intent(this@ProfileActivity,SoundActivity::class.java)
+                startActivity(intent)
+              /*  val bottomSheetDialog =
                     BottomSheetDialog(this@ProfileActivity, R.style.NoBackgroundDialogTheme)
                 this@ProfileActivity.bottomSheetDialog = bottomSheetDialog
                 val view = LayoutInflater.from(this@ProfileActivity)
                     .inflate(R.layout.bottomshit_sounds, findViewById(R.id.linearLayoutSound))
                 bottomSheetDialog.setContentView(view)
                 bottomSheetDialog.show()
-                openSoundsBottomedDialog(bottomSheetDialog, view)
+                openSoundsBottomedDialog(bottomSheetDialog, view)*/
             }
 
             llCurrency.setOnClickListener {

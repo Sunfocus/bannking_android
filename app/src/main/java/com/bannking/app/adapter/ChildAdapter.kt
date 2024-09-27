@@ -1,7 +1,9 @@
 package com.bannking.app.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -60,7 +62,16 @@ class ChildAdapter(
             )
         }
         mBinding!!.tvBudgetChildItem.text = list!![position].name
-        holder.itemView.setOnClickListener { onClickListener!!.clickLister(list!![position]) }
+        mBinding!!.LLBudgetChild.setOnClickListener { onClickListener!!.clickLister(list!![position]) }
+        if (position == list!!.size - 1) {
+            mBinding!!.imgFloatingChildClick.visibility = View.VISIBLE
+        } else {
+            mBinding!!.imgFloatingChildClick.visibility = View.GONE
+        }
+        mBinding!!.imgFloatingChildClick.setOnClickListener {
+            Log.d("floatingIconCLick","Yesss")
+            onClickListener!!.createNewItem(position)
+        }
     }
 
     override fun getItemCount(): Int {

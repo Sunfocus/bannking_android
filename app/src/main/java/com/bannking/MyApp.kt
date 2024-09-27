@@ -11,7 +11,7 @@ import com.zeugmasolutions.localehelper.LocaleAwareApplication
 class MyApp : LocaleAwareApplication(), ExceptionListener {
     override fun onCreate() {
         super.onCreate()
-        setupExceptionHandler()
+//        setupExceptionHandler()
         AdController.initAd(this)
 
     }

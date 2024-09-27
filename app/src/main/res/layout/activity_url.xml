@@ -2,10 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clMainUrl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:id="@+id/clMainUrl"
     tools:context=".ui.activity.UrlActivity">
 
     <LinearLayout
@@ -13,17 +13,17 @@
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:orientation="horizontal"
-        android:weightSum="1">
+        android:weightSum="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/img_back"
-            android:layout_width="0dp"
+            android:layout_width="15dp"
+            android:layout_height="30dp"
             android:layout_marginStart="10dp"
-            android:layout_height="match_parent"
             android:layout_weight="0.1"
             android:padding="5dp"
             android:src="@drawable/ic_back" />
@@ -43,6 +43,7 @@
             tools:ignore="RtlSymmetry" />
 
     </LinearLayout>
+
     <WebView
         android:id="@+id/webView1"
         android:layout_width="match_parent"

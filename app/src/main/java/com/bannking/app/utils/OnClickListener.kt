@@ -5,6 +5,7 @@ import com.bannking.app.model.retrofitResponseModel.budgetPlannerModel.SubBudget
 
 interface OnClickListener {
     fun clickLister(data: SubBudgetPlanner)
+    fun createNewItem(position:Int)
 }
 interface OnClickListenerBudget {
     fun clickListerBudget(data: Data,subData: SubBudgetPlanner,clickedCreate:String)

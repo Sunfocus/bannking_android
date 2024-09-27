@@ -40,10 +40,10 @@
     <string name="str_profile">الملف الشخصي</string>
     <string name="str_gmail">ibeorstore@gmail.com</string>
     <string name="str_name">مايك</string>
-    <string name="str_languages">تغيير اللغات</string>
+    <string name="str_languages">اختر لغتك</string>
     <string name="str_sound">قارئ الصوت</string>
     <string name="str_remove_all_ads">إزالة جميع الإعلانات</string>
-    <string name="str_select_your_currency">حدد عملتك</string>
+    <string name="str_select_your_currency">تغيير العملة</string>
     <string name="str_change_password">تغيير كلمة المرور</string>
     <string name="str_privacy_policy">سياسة الخصوصية</string>
     <string name="str_notifications">إشعارات</string>

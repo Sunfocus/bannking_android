@@ -125,6 +125,7 @@
             android:id="@+id/selected_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:layout_below="@+id/txt_selected_description"
             android:layout_marginHorizontal="5dp"
             android:orientation="vertical">
@@ -137,6 +138,7 @@
                 android:overScrollMode="never"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="2"
+                android:layout_gravity="center"
                 tools:itemCount="2"
                 tools:listitem="@layout/item_account_menu_new" />
 
@@ -171,6 +173,7 @@
             android:layout_marginHorizontal="25dp"
             android:nestedScrollingEnabled="false"
             android:overScrollMode="never"
+            android:layout_centerHorizontal="true"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="2"
             tools:listitem="@layout/item_account_menu" />

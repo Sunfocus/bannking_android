@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Bannking</string>
+    <string name="admob_interstitial" translatable="false">ca-app-pub-3293843557873754/7206543114</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="enter_your_username">Enter your username or email address</string>
     <string name="enter_your_password">Enter your Password</string>
     <string name="str_remember_me">Remember me</string>
@@ -41,9 +43,9 @@
     <string name="str_profile">Profile</string>
     <string name="str_gmail">ibeorstore@gmail.com</string>
     <string name="str_name">Mike</string>
-    <string name="str_languages">Change Language</string>
+    <string name="str_languages">Choose Your Language</string>
     <string name="str_remove_all_ads">Remove all Ads</string>
-    <string name="str_select_your_currency">Select your Currency</string>
+    <string name="str_select_your_currency">Change Currency</string>
     <string name="str_change_password">Change password</string>
     <string name="str_privacy_policy">Privacy Policy</string>
     <string name="str_notifications">Notifications</string>
@@ -113,7 +115,6 @@
     <string name="str_transaction_type">Transaction Type</string>
     <string name="str_date_format">DD MM, YYYY</string>
     <string name="str_select_type">Select type</string>
-    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="str_edit">Edit</string>
     <string name="str_edit_profile">Edit profile</string>
     <string name="str_profile_picture">Profile picture</string>
@@ -129,7 +130,7 @@
     <string name="str_account_create_successfully">Your account successfully created.</string>
     <string name="str_success">Success</string>
     <string name="str_filter_header_title">Filter your header title</string>
-    <string name="admob_interstitial" translatable="false">ca-app-pub-3293843557873754/7206543114</string>
+
     <string name="str_alert">Alert !</string>
     <string name="str_non_premium_message">Upgrade now to  unlock unlimited access to hidden features and enjoy premium benefits</string>
     <string name="str_skip">Skip</string>
@@ -293,5 +294,13 @@
     <string name="update">Update</string>
 
     <string name="str_purchase_description_night"><font color='#FFFFFF'>By tapping continue, your payment will be charged to your iTunes account,and your subscription will automatically renew for the same package length at the same price until youcancel in settings in the iTunes store at least 24 hours prior to the end of the current period.By tapping “Continue” you agree to our \n</font><u><font color='#FD1C1C'>Privacy Policy</font></u><font color='#FFFFFF'>   and </font><u><font color='#FD1C1C'>Terms.</font></u> </string>
+    <string name="filter_sort_by_date"><![CDATA[Filter & Sort by Date]]></string>
+    <string name="language_regions"><![CDATA[Language & Regions]]></string>
+    <string name="gender">Gender</string>
+    <string name="all">All</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="child">Child</string>
+    <string name="save">Save</string>
 
 </resources>

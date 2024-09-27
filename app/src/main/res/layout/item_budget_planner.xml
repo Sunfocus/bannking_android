@@ -14,6 +14,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:paddingBottom="10dp"
         android:layout_height="match_parent">
 
         <LinearLayout
@@ -63,18 +64,7 @@
 
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvChildBudget"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/LLBudget"
-            tools:listitem="@layout/item_budget_child" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
+       <!-- <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgFloatingChild"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -86,8 +76,19 @@
             android:backgroundTint="@color/white"
             android:src="@drawable/ic_floating"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rvChildBudget" />
+            app:layout_constraintTop_toBottomOf="@+id/rvChildBudget" />-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvChildBudget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/LLBudget"
+            tools:listitem="@layout/item_budget_child" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

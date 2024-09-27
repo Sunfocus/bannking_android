@@ -16,9 +16,11 @@
 
         <ImageView
             android:id="@+id/img_back"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.19"
+            android:layout_width="15dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_weight="0.1"
+            android:padding="2dp"
             android:src="@drawable/ic_back" />
 
         <TextView

@@ -3,6 +3,7 @@ package com.bannking.app.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,7 +63,7 @@ class BudgetPlannerNewAdapter(
 
         val isExpanded = position == expandedIndex
         mBinding!!.rvChildBudget.visibility = if (isExpanded) View.VISIBLE else View.GONE
-        mBinding!!.imgFloatingChild.visibility = if (isExpanded) View.VISIBLE else View.GONE
+//        mBinding!!.imgFloatingChild.visibility = if (isExpanded) View.VISIBLE else View.GONE
 
         mBinding!!.LLBudget.setOnClickListener {
             // Update the expanded index
@@ -73,14 +74,20 @@ class BudgetPlannerNewAdapter(
             }
             notifyDataSetChanged()
         }
-        mBinding!!.imgFloatingChild.setOnClickListener {
+      /*  mBinding!!.imgFloatingChild.setOnClickListener {
+            Log.d("floatingIconCLick","${list!![position]}, ${list!![position].subBudgetPlanners[position]}")
             onClickListener!!.clickListerBudget(list!![position], list!![position].subBudgetPlanners[position],"Clicked")
-        }
+        }*/
 //        // Set up child RecyclerView
         val childAdapter =
             ChildAdapter(context, list!![position].subBudgetPlanners, object : OnClickListener {
                 override fun clickLister(data: SubBudgetPlanner) {
                     onClickListener!!.clickListerBudget(list!![position], data,"")
+                }
+
+                override fun createNewItem(position: Int) {
+                    val emptyObject = SubBudgetPlanner()
+                    onClickListener!!.clickListerBudget(list!![expandedIndex], emptyObject ,"Clicked")
                 }
 
             })

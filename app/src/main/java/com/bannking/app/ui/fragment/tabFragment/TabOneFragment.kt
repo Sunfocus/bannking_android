@@ -112,6 +112,14 @@ class TabOneFragment :
                         locale = Locale.forLanguageTag("pt")
                     } else if (savedSessionManager.getLanguage() == "Dutch") {
                         locale = Locale.forLanguageTag("nl")
+                    }else if (savedSessionManager.getLanguage() == "Hindi") {
+                        locale = Locale.forLanguageTag("hi")
+                    }else if (savedSessionManager.getLanguage() == "Japanese") {
+                        locale = Locale.forLanguageTag("ja")
+                    }else if (savedSessionManager.getLanguage() == "German") {
+                        locale = Locale.forLanguageTag("de")
+                    }else if (savedSessionManager.getLanguage() == "Italian") {
+                        locale = Locale.forLanguageTag("it")
                     }
                     mTextToSpeech!!.language = locale
                 }

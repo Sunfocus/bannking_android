@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -159,6 +158,13 @@ class TranSectionDetailActivity :
             val userToken = sessionManager.getString(SessionManager.USERTOKEN)
             viewModel.setDataInRecentTransactionListData(Id!!, userToken)
         }
+
+
+        // Access the hint TextView and change its color of search view
+        val hintTextId: Int = binding!!.svTransactionManual.context.resources
+            .getIdentifier("android:id/search_src_text", null, null)
+        val hintText: TextView = binding!!.svTransactionManual.findViewById(hintTextId)
+        hintText.setHintTextColor(ContextCompat.getColor(this,R.color.view_color))
 
     }
 
@@ -341,7 +347,6 @@ class TranSectionDetailActivity :
                 intent.putExtra("TranSectionName", account.toString())
                 intent.putExtra("TranSectionNumber", strAccountCode.toString())
                 intent.putExtra("ComeFrom", "TranSectionDetailActivity")
-//                startActivity(intent)
                 resultLauncher.launch(intent)
 
             }
@@ -645,7 +650,6 @@ class TranSectionDetailActivity :
         tvAccountCodeSUbBudeget: TextView,
         edtAccount: EditText,
         tvAccountSubBudeget: TextView,
-
         ) {
         if (UiExtension.isDarkModeEnabled()) {
             view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.dark_mode)
@@ -756,7 +760,7 @@ class TranSectionDetailActivity :
             })
     }
 
-    fun getAmount(amount: String): String {
+    private fun getAmount(amount: String): String {
         return amount.replace("[^0-9.-]".toRegex(), "")
     }
 }

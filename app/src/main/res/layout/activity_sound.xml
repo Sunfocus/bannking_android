@@ -40,29 +40,48 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/llSpinnerAudio"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/spinnerCL"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="@dimen/_16ssp"
         android:layout_marginTop="@dimen/_10sdp"
-        android:background="@drawable/edittext_stroke_blue"
-        android:orientation="vertical"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:background="@drawable/bg_gender_audio"
+        android:paddingHorizontal="@dimen/_5sdp"
+        android:spinnerMode="dropdown"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/llTopSound">
+        app:layout_constraintTop_toBottomOf="@id/llTopSound">
 
-        <Spinner
-            android:id="@+id/spinnerLang"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="@drawable/spinner_background"
-            android:paddingHorizontal="10dp"
-            android:spinnerMode="dropdown"
-            android:textDirection="locale"
-            android:theme="@style/ThemeOverlay.AppCompat.DayNight"
-            tools:listitem="@layout/support_simple_spinner_dropdown_item" />
-    </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvCountryRegion"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:gravity="left|center_vertical"
+            android:text="English,US"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ivSelectCountryDropDown"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivSelectCountryDropDown"
+            android:layout_width="@dimen/_15sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:layout_marginStart="@dimen/_16ssp"
+            android:src="@drawable/ic_dropdownimage"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvSelectionType"
@@ -75,13 +94,13 @@
         android:textSize="@dimen/_12ssp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/llSpinnerAudio" />
+        app:layout_constraintTop_toBottomOf="@+id/spinnerCL" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clAudioType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:layout_marginHorizontal="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:background="@drawable/bg_gender_audio"
         app:layout_constraintEnd_toEndOf="parent"
@@ -170,6 +189,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/clAudioType"
         tools:listitem="@layout/list_audio_avail" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvItemsNotFound"
+        android:layout_width="wrap_content"
+        android:textSize="@dimen/_14ssp"
+        android:layout_height="wrap_content"
+        android:text="No items available!"
+        android:visibility="gone"
+        android:textColor="@color/grey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/clAudioType" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSaveAudio"

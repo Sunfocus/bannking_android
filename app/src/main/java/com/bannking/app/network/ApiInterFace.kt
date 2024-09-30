@@ -1,11 +1,13 @@
 package com.bannking.app.network
 
 import com.bannking.app.model.CommonResponseApi
+import com.bannking.app.model.retrofitResponseModel.soundModel.SoundResponse
 import com.bannking.app.utils.Constants
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 
 
@@ -198,4 +200,12 @@ interface ApiInterFace {
     @Headers("Content-Type: application/json")
     @POST("user/forgot_password")
     fun forgotPassword(@Body body: String): Call<JsonObject>
+
+
+    @POST("/voice/list")
+    fun getVoiceMaker(@Body body: JsonObject): Call<JsonObject>
+    @POST("/voice/list")
+    fun getVoiceMakerWithLive(@Body body: JsonObject): Call<SoundResponse>
+    @POST("/voice/api")
+    fun postVoiceMaker(@Body body: JsonObject): Call<JsonObject>
 }

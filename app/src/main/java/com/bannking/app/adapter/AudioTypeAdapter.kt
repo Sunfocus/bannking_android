@@ -12,8 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bannking.app.R
 import com.bannking.app.UiExtension
 import com.bannking.app.model.AudioPlayListener
+import com.bannking.app.model.retrofitResponseModel.soundModel.Voices
 
-class AudioTypeAdapter(private var mContext: Context, private val onClickItem: AudioPlayListener) :
+class AudioTypeAdapter(private var mContext: Context, private var VoicesParameter:ArrayList<Voices>, private val onClickItem: AudioPlayListener) :
     RecyclerView.Adapter<AudioTypeViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioTypeViewHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.list_audio_avail, parent, false)
@@ -21,7 +22,7 @@ class AudioTypeAdapter(private var mContext: Context, private val onClickItem: A
     }
 
     override fun getItemCount(): Int {
-        return 10
+        return VoicesParameter.size
     }
 
     override fun onBindViewHolder(holder: AudioTypeViewHolder, position: Int) {
@@ -29,8 +30,11 @@ class AudioTypeAdapter(private var mContext: Context, private val onClickItem: A
         setDarkMode(holder)
 
         holder.ivPlayAudio.setOnClickListener {
-            onClickItem.clickedItem(position)
+            onClickItem.clickedItem(position,VoicesParameter[position])
         }
+        holder.tvAudioName.text = VoicesParameter[position].VoiceWebname
+        holder.tvSubAudioName.text = VoicesParameter[position].VoiceGender
+        holder.tvAudioTypeName.text = VoicesParameter[position].VoiceId
 
     }
 
@@ -54,4 +58,5 @@ class AudioTypeViewHolder(dataItem: View) : RecyclerView.ViewHolder(dataItem) {
     val clAudioItem: ConstraintLayout = dataItem.findViewById(R.id.clAudioItem)
     val tvAudioName: AppCompatTextView = dataItem.findViewById(R.id.tvAudioName)
     val tvSubAudioName: AppCompatTextView = dataItem.findViewById(R.id.tvSubAudioName)
+    val tvAudioTypeName: AppCompatTextView = dataItem.findViewById(R.id.tvAudioTypeName)
 }

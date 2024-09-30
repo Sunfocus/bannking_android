@@ -302,5 +302,6 @@
     <string name="female">Female</string>
     <string name="child">Child</string>
     <string name="save">Save</string>
+    <string name="unrecognized_transactions">Skip the hassle of manual tracking! Securely connect all your bank accounts to see live transactions in real-time, all in one place. Effortlessly manage your finances and monitor your spending, while easily flagging fraudulent or unrecognized transactions.</string>
 
 </resources>

@@ -669,11 +669,18 @@
                     android:orientation="horizontal"
                     android:weightSum="1">
 
-
+                    <ImageView
+                        android:id="@+id/ivNotification"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.2"
+                        android:padding="10dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/notification_bell" />
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="0.7"
+                        android:layout_weight="0.5"
                         android:fontFamily="@font/source_sans_regular"
                         android:gravity="center_vertical"
                         android:paddingHorizontal="20dp"
@@ -681,15 +688,6 @@
                         android:textColor="@color/clr_text_blu"
                         android:textSize="16sp"
                         android:textStyle="bold" />
-
-                    <!--                    <Switch-->
-                    <!--                        android:id="@+id/switch1"-->
-                    <!--                        android:layout_width="wrap_content"-->
-                    <!--                        android:layout_height="wrap_content"-->
-                    <!--                        android:layout_marginStart="4dp"-->
-                    <!--                        android:thumb="@drawable/switch_custom_thumb"-->
-                    <!--                        android:track="@drawable/switch_custom_track"-->
-                    <!--                        tools:ignore="UseSwitchCompatOrMaterialXml" />-->
 
 
                     <Switch

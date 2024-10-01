@@ -2,10 +2,8 @@ package com.bannking.app.utils
 
 object Constants {
     //    Use This Constants For Api Using
-//    const val BASE_URL = "https://kinsola.bannking.com/api/"
-//    const val BASE_URLS = "http://192.168.1.79:4001/"
+//    const val BASE_URLS = "http://192.168.1.121:4001/"
     const val BASE_URLS = " https://api.bannking.com/"
-//    const val BASE_URL = "https://work.zestratech.in/bannking/api/"
     const val SECURITY_0 = "0"
     const val SECURITY_1 = "1" // App Info Login Registration
     const val SECURITY_2 = "2"

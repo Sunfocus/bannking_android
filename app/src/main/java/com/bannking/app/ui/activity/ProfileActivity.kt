@@ -68,6 +68,7 @@ class ProfileActivity :
     //  private lateinit var textToSpeech: TextToSpeech
     var mTextToSpeech: TextToSpeech? = null
 
+    private lateinit var pref: SharedPref
     private lateinit var reviewManager: ReviewManager
     private var reviewInfo: ReviewInfo? = null
 
@@ -81,7 +82,7 @@ class ProfileActivity :
         savedAdTime = SessionManager(this@ProfileActivity, SessionManager.ADTIME)
 
 
-
+        pref = SharedPref(this)
         savedSessionManager = SessionManager(this@ProfileActivity, SessionManager.LANGUAGE)
         savedSessionManagerVoice = SessionManager(this@ProfileActivity, SessionManager.VOICE)
         savedSessionManagerCurrency = SessionManager(this@ProfileActivity, SessionManager.CURRENCY)
@@ -599,7 +600,6 @@ class ProfileActivity :
                 val userToken = sessionManager.getString(SessionManager.USERTOKEN)
                 viewModel.setDataUpdateDataList(switchNotification.isChecked, userToken)
             }
-
             llBank.setOnClickListener {
                 Toast.makeText(
                     this@ProfileActivity,
@@ -607,8 +607,6 @@ class ProfileActivity :
                     Toast.LENGTH_SHORT
                 ).show()
             }
-
-
             tvVerified.setOnClickListener {
                 if (userModel!!.is_email_verified != 1) {
                     Toast.makeText(
@@ -636,8 +634,6 @@ class ProfileActivity :
                 sessionManager.setBoolean(SessionManager.DAYNIGHT, isChecked)
                 setThemeMode(isChecked)
             }
-
-
             llChangePassword.setOnClickListener {
                 startActivity(Intent(this@ProfileActivity, ChangePasswordActivity::class.java))
             }
@@ -882,23 +878,8 @@ class ProfileActivity :
         }
     }
 
-    private fun launchMarket() {/*   if (utils.checkisFirstDayOfWeek()){
-               RateDialog(this, false).show()
-           }*/
-//        RateDialog(this, false).show()
+    private fun launchMarket() {
         requestReviewFlow()
-
-        /*        val uri: Uri = Uri.parse("market://details?id=$packageName")
-                val myAppLinkToMarket = Intent(Intent.ACTION_VIEW, uri)
-                try {
-                    startActivity(myAppLinkToMarket)
-                } catch (e: ActivityNotFoundException) {
-                    val uri = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
-                    val goMarket = Intent(Intent.ACTION_VIEW, uri)
-                    startActivity(goMarket)
-        //            dialogClass.showError(getString())
-        //            Toast.makeText(this@ProfileActivity,  "unable to find market app", Toast.LENGTH_LONG).show()
-                }*/
     }
 
     private fun logout() {
@@ -917,6 +898,7 @@ class ProfileActivity :
             sessionManager.logOut()
             sessionManager.setBoolean(SessionManager.isLogin, false)
             sessionManager.setBoolean(SessionManager.isDeleteORLogOut, true)
+            pref.clearPreference(this)
 //            startActivity(Intent(this@ProfileActivity, SplashActivity::class.java).setFlags(
 //                FLAG_ACTIVITY_CLEAR_TASK
 //            ))

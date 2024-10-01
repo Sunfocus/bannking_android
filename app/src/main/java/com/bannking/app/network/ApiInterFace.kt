@@ -1,6 +1,7 @@
 package com.bannking.app.network
 
 import com.bannking.app.model.CommonResponseApi
+import com.bannking.app.model.PostVoiceResponse
 import com.bannking.app.model.retrofitResponseModel.soundModel.SoundResponse
 import com.bannking.app.utils.Constants
 import com.google.gson.JsonObject
@@ -39,6 +40,10 @@ interface ApiInterFace {
     @Headers("Content-Type: application/json")
     @PATCH("user/update_currency")
     fun changeCurrency(@Body body: String,@Header(Constants.AUTHORIZATION) token: String): Call<JsonObject>
+
+    @Headers("Content-Type: application/json")
+    @PATCH("/user/updateUserVoiceData")
+    fun updateVoiceMakerData(@Body body: JsonObject,@Header(Constants.AUTHORIZATION) token: String): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
     @POST("user/register")
@@ -208,4 +213,6 @@ interface ApiInterFace {
     fun getVoiceMakerWithLive(@Body body: JsonObject): Call<SoundResponse>
     @POST("/voice/api")
     fun postVoiceMaker(@Body body: JsonObject): Call<JsonObject>
+    @POST("/voice/api")
+    fun postVoiceMakerLiveOb(@Body body: JsonObject): Call<PostVoiceResponse>
 }

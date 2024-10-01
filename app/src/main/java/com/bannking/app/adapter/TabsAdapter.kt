@@ -111,12 +111,13 @@ class TabsAdapter(
         }
 
         mBinding!!.imgAnnounce.setOnClickListener {
-            val type = sessionManager.getAnnouncementVoice()
+            listnerAnnouncement.clickOnAnnouncement(list!![position])
+          /*  val type = sessionManager.getAnnouncementVoice()
             if (type.equals("")) {
                 listnerAnnouncementDialog.clickOnAnnouncementDialog(list!![position])
             } else {
                 listnerAnnouncement.clickOnAnnouncement(list!![position])
-            }
+            }*/
         }
 
         holder.itemView.setOnClickListener {

@@ -1,5 +1,6 @@
 package com.bannking.app.ui.activity
 
+import android.annotation.SuppressLint
 import android.media.MediaPlayer
 import android.util.DisplayMetrics
 import android.util.Log
@@ -20,8 +21,11 @@ import com.bannking.app.model.AudioPlayListener
 import com.bannking.app.model.LanguageDataResponse
 import com.bannking.app.model.PostVoiceResponse
 import com.bannking.app.model.retrofitResponseModel.soundModel.SoundResponse
+import com.bannking.app.model.retrofitResponseModel.soundModel.UpdateSoundResponse
 import com.bannking.app.model.retrofitResponseModel.soundModel.Voices
 import com.bannking.app.model.viewModel.SoundViewModel
+import com.bannking.app.utils.SessionManager
+import com.bannking.app.utils.SharedPref
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
@@ -34,7 +38,13 @@ import java.io.UnsupportedEncodingException
 class SoundActivity :
     BaseActivity<SoundViewModel, ActivitySoundBinding?>(SoundViewModel::class.java),
     AudioPlayListener {
-
+    private var selectedPosition: Int = -1
+    private var voiceForApi = ""
+    private var engineForApi = ""
+    private var voiceGender = ""
+    private var languageCodeForAPI = "en-US"
+    private var languageNameForAPI = "English, US"
+    private lateinit var voiceMakerList: ArrayList<Voices>
     private lateinit var allVoices: ArrayList<Voices>
     private lateinit var childVoices: ArrayList<Voices>
     private lateinit var maleVoices: ArrayList<Voices>
@@ -42,22 +52,70 @@ class SoundActivity :
     private lateinit var audioTypeAdapter: AudioTypeAdapter
     private lateinit var viewModel: SoundViewModel
     private var mediaPlayer: MediaPlayer? = null
+    private lateinit var pref: SharedPref
+
     override fun getBinding(): ActivitySoundBinding {
         return ActivitySoundBinding.inflate(layoutInflater)
     }
 
     override fun initViewModel(viewModel: SoundViewModel) {
-        viewModel.setDataInLanguageList("en-US")
-        this.viewModel = viewModel
-    }
+        pref = SharedPref(this)
 
-    override fun initialize() {
+
+        voiceMakerList = pref.getListOfVoiceMaker(SessionManager.VOICEMAKERLIST)
+        if (voiceMakerList.isEmpty()) {
+            viewModel.setDataInLanguageList("en-US")
+        }
         allVoices = ArrayList()
         maleVoices = ArrayList()
         femaleVoices = ArrayList()
         childVoices = ArrayList()
 
+        if (voiceMakerList.isNotEmpty()) {
+            allVoices = voiceMakerList
+            maleVoices = voiceMakerList.filter { it.VoiceGender == "Male" } as ArrayList
+            femaleVoices = voiceMakerList.filter { it.VoiceGender == "Female" } as ArrayList
+            childVoices =
+                voiceMakerList.filter { it.VoiceGender == "Male (Child)" || it.VoiceGender == "Female (Child)" } as ArrayList
+
+        }
+        this.viewModel = viewModel
+    }
+
+    override fun initialize() {
         setUIColor()
+        val voiceGenderName = pref.getString(SessionManager.VOICEGENDER)
+
+        if (voiceGenderName.isNotEmpty()) {
+            when (voiceGenderName) {
+                "Child" -> {
+                    childSelect()
+                    setAdapter(childVoices)
+                }
+
+                "All" -> {
+                    allSelect()
+                    setAdapter(allVoices)
+                }
+
+                "Female" -> {
+                    femaleSelect()
+                    setAdapter(femaleVoices)
+                }
+
+                "Male" -> {
+                    maleSelect()
+                    setAdapter(maleVoices)
+                }
+
+                else -> {
+                    childSelect()
+                    setAdapter(childVoices)
+                }
+            }
+        }
+
+
 
     }
 
@@ -70,6 +128,30 @@ class SoundActivity :
 
     override fun setMethod() {
         setOnClickListener()
+        updateUi()
+    }
+
+    private fun updateUi() {
+        val languageRegionList = getLanguageRegion()
+        val languageCode = pref.getString(SessionManager.LANGUAGECODEFORAPI)
+        val voiceGenderPref = pref.getString(SessionManager.VOICEGENDER)
+        val engineForApiPref = pref.getString(SessionManager.ENGINEFORAPI)
+        val languageNameForApiPref = pref.getString(SessionManager.LANGUAGENAMEFORAPI)
+        val voiceForApiPref = pref.getString(SessionManager.VOICEFORAPI)
+
+        voiceGender = voiceGenderPref
+        engineForApi = engineForApiPref
+        voiceForApi = voiceForApiPref
+        languageCodeForAPI = languageCode
+        languageNameForAPI = languageNameForApiPref
+
+        if (languageCode.isNotEmpty()) {
+            val findSelectedObject = languageRegionList.find { it.languageCode == languageCode }
+            if (findSelectedObject != null) {
+                binding!!.tvCountryRegion.text = findSelectedObject.languageName
+            }
+        }
+
     }
 
     override fun observe() {
@@ -85,6 +167,9 @@ class SoundActivity :
                             maleVoices.clear()
                             allVoices.clear()
                             childVoices.clear()
+                            pref.saveListOfVoiceMaker(
+                                SessionManager.VOICEMAKERLIST, model.data.voices_list
+                            )
 
                             femaleVoices =
                                 model.data.voices_list.filter { it.VoiceGender == "Female" } as ArrayList
@@ -95,12 +180,37 @@ class SoundActivity :
 
                             childVoices =
                                 model.data.voices_list.filter { it.VoiceGender == "Male (Child)" || it.VoiceGender == "Female (Child)" } as ArrayList
+                            childSelect()
                             setAdapter(childVoices)
                         }
 
                     } else dialogClass.showError("Something went wrong")
                 }
             }
+
+            updateVoiceMakerData.observe(this@SoundActivity) { apiResponseData ->
+                if (apiResponseData != null) {
+                    if (apiResponseData.apiResponse != null) {
+                        val model = gson.fromJson(
+                            apiResponseData.apiResponse, UpdateSoundResponse::class.java
+                        )
+                        if (model.status == 200) {
+                            pref.saveString(SessionManager.VOICEFORAPI, model.data.voice_id)
+                            pref.saveString(SessionManager.ENGINEFORAPI, model.data.engine)
+                            pref.saveString(SessionManager.VOICEGENDER, model.data.voice_gender)
+                            pref.saveString(
+                                SessionManager.LANGUAGECODEFORAPI, model.data.language_code
+                            )
+                            pref.saveString(
+                                SessionManager.LANGUAGENAMEFORAPI, model.data.language_region
+                            )
+                            finish()
+                        }
+
+                    } else dialogClass.showError("Something went wrong")
+                }
+            }
+
             postSoundMakerList.observe(this@SoundActivity) { apiResponseData ->
                 if (apiResponseData != null) {
                     if (apiResponseData.apiResponse != null) {
@@ -114,6 +224,7 @@ class SoundActivity :
                     } else dialogClass.showError("Something went wrong")
                 }
             }
+
             errorResponse.observe(this@SoundActivity) { message ->
                 if (message != null) {
                     dialogClass.showErrorMessageDialog(message)
@@ -130,21 +241,19 @@ class SoundActivity :
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        mediaPlayer?.pause()
-    }
 
     override fun onStop() {
         super.onStop()
         mediaPlayer?.release()
         mediaPlayer = null
     }
+
     override fun onDestroy() {
         super.onDestroy()
         mediaPlayer?.release()
         mediaPlayer = null
     }
+
     private fun playAudio(url: String) {
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer()
@@ -168,6 +277,7 @@ class SoundActivity :
             Log.e("catchError", "Error initializing media player: ${e.message}")
         }
     }
+
     private fun getLanguageRegion(): ArrayList<LanguageDataResponse> {
         var countries: ArrayList<LanguageDataResponse>? = null
         val inputStream: InputStream = this.resources.openRawResource(R.raw.language_region)
@@ -181,6 +291,7 @@ class SoundActivity :
         }
         return countries!!
     }
+
     @Suppress("DEPRECATION")
     private fun openBottomSheet() {
         val languageRegionList = getLanguageRegion()
@@ -199,10 +310,14 @@ class SoundActivity :
         bottomSheet.behavior.peekHeight = metrics.heightPixels
         bottomSheet.show()
         val rcCountryName = bottomSheet.findViewById<RecyclerView>(R.id.rcCountryName)
-        val bottom_bar = bottomSheet.findViewById<ConstraintLayout>(R.id.bottom_bar)
+        val bottomBar = bottomSheet.findViewById<ConstraintLayout>(R.id.bottom_bar)
         val adapter = LanguageRegionAdapter(object : LanguageRegionAdapter.ClickLanguageRegion {
-            override fun onItemRegionClick(position: Int, languageCode: String) {
-                binding!!.tvCountryRegion.text = languageCode
+            override fun onItemRegionClick(
+                position: Int, languageCode: String, languageName: String
+            ) {
+                languageCodeForAPI = languageCode
+                languageNameForAPI = languageName
+                binding!!.tvCountryRegion.text = languageName
                 viewModel.setDataInLanguageListWithLiveData(languageCode)
                     .observe(this@SoundActivity) { it ->
                         val response = it as SoundResponse
@@ -211,6 +326,10 @@ class SoundActivity :
                             maleVoices.clear()
                             allVoices.clear()
                             childVoices.clear()
+
+                            pref.saveListOfVoiceMaker(
+                                SessionManager.VOICEMAKERLIST, response.data.voices_list
+                            )
 
                             femaleVoices =
                                 response.data.voices_list.filter { it.VoiceGender == "Female" } as ArrayList
@@ -231,13 +350,13 @@ class SoundActivity :
         }, this, languageRegionList)
         rcCountryName!!.adapter = adapter
         if (UiExtension.isDarkModeEnabled()) {
-            bottom_bar!!.setBackgroundColor(
+            bottomBar!!.setBackgroundColor(
                 ContextCompat.getColor(
                     this, R.color.dark_mode
                 )
             )
-        }else{
-            bottom_bar!!.setBackgroundResource(R.drawable.bg_corner)
+        } else {
+            bottomBar!!.setBackgroundResource(R.drawable.bg_corner)
         }
     }
 
@@ -249,7 +368,11 @@ class SoundActivity :
                 )
             )
             binding!!.imgBack.setColorFilter(ContextCompat.getColor(this, R.color.white))
-            binding!!.ivSelectCountryDropDown.setColorFilter(ContextCompat.getColor(this, R.color.white))
+            binding!!.ivSelectCountryDropDown.setColorFilter(
+                ContextCompat.getColor(
+                    this, R.color.white
+                )
+            )
             binding!!.tvAudioIfo.setTextColor(ContextCompat.getColor(this, R.color.white))
             binding!!.tvSelectionType.setTextColor(ContextCompat.getColor(this, R.color.white))
             binding!!.clAudioType.setBackgroundResource(R.drawable.edittext_stroke_blue)
@@ -258,7 +381,7 @@ class SoundActivity :
             binding!!.tvAll.setTextColor(ContextCompat.getColor(this, R.color.white))
             binding!!.tvMale.setTextColor(ContextCompat.getColor(this, R.color.white))
             binding!!.tvFemale.setTextColor(ContextCompat.getColor(this, R.color.white))
-            binding!!.tvChild.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.tvChild.setTextColor(ContextCompat.getColor(this, R.color.white))
 
             binding!!.tvAll.setBackgroundColor(
                 ContextCompat.getColor(
@@ -275,7 +398,11 @@ class SoundActivity :
                     this, R.color.dark_mode
                 )
             )
-            binding!!.tvChild.setBackgroundResource(R.drawable.drawable_unselected)
+            binding!!.tvChild.setBackgroundColor(
+                ContextCompat.getColor(
+                    this, R.color.dark_mode
+                )
+            )
             binding!!.tvCountryRegion.setTextColor(ContextCompat.getColor(this, R.color.white))
         } else {
             binding!!.clTopSound.setBackgroundColor(
@@ -286,7 +413,11 @@ class SoundActivity :
             binding!!.spinnerCL.setBackgroundResource(R.drawable.bg_gender_audio)
             binding!!.clAudioType.setBackgroundResource(R.drawable.bg_gender_audio)
             binding!!.imgBack.setColorFilter(ContextCompat.getColor(this, R.color.black))
-            binding!!.ivSelectCountryDropDown.setColorFilter(ContextCompat.getColor(this, R.color.black))
+            binding!!.ivSelectCountryDropDown.setColorFilter(
+                ContextCompat.getColor(
+                    this, R.color.black
+                )
+            )
             binding!!.tvAudioIfo.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
             binding!!.tvSelectionType.setTextColor(
                 ContextCompat.getColor(
@@ -298,7 +429,7 @@ class SoundActivity :
             binding!!.tvAll.setTextColor(ContextCompat.getColor(this, R.color.grey))
             binding!!.tvMale.setTextColor(ContextCompat.getColor(this, R.color.grey))
             binding!!.tvFemale.setTextColor(ContextCompat.getColor(this, R.color.grey))
-            binding!!.tvChild.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.tvChild.setTextColor(ContextCompat.getColor(this, R.color.grey))
 
 
             binding!!.tvAll.setBackgroundColor(
@@ -316,7 +447,11 @@ class SoundActivity :
                     this, R.color.clr_wild_sand
                 )
             )
-            binding!!.tvChild.setBackgroundResource(R.drawable.drawable_unselected)
+            binding!!.tvChild.setBackgroundColor(
+                ContextCompat.getColor(
+                    this, R.color.clr_wild_sand
+                )
+            )
         }
     }
 
@@ -325,18 +460,22 @@ class SoundActivity :
             finish()
         }
         binding!!.tvAll.setOnClickListener {
+            voiceGender = "All"
             allSelect()
             setAdapter(allVoices)
         }
         binding!!.tvMale.setOnClickListener {
+            voiceGender = "Male"
             maleSelect()
             setAdapter(maleVoices)
         }
         binding!!.tvFemale.setOnClickListener {
+            voiceGender = "Female"
             femaleSelect()
             setAdapter(femaleVoices)
         }
         binding!!.tvChild.setOnClickListener {
+            voiceGender = "Child"
             childSelect()
             setAdapter(childVoices)
         }
@@ -345,13 +484,25 @@ class SoundActivity :
         }
 
         binding!!.btnSaveAudio.setOnClickListener {
-            Toast.makeText(
-                this@SoundActivity,
-                "This feature is currently under development and will be available in a future update. Thank you for your patience!",
-                Toast.LENGTH_SHORT
-            ).show()
+            val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+            if (voiceForApi.isEmpty() && engineForApi.isEmpty() && languageCodeForAPI.isEmpty()) {
+                Toast.makeText(
+                    this@SoundActivity, "Please select any one voice maker!", Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                viewModel.updateVoiceMakerApi(
+                    userToken,
+                    languageCodeForAPI,
+                    languageNameForAPI,
+                    voiceForApi,
+                    engineForApi,
+                    voiceGender
+                )
+            }
+
         }
     }
+
 
     private fun allSelect() {
         if (UiExtension.isDarkModeEnabled()) {
@@ -553,7 +704,13 @@ class SoundActivity :
     }
 
     private fun setAdapter(VoicesParameter: ArrayList<Voices>) {
-        Log.d("VoicesParameter", VoicesParameter.toString())
+        val getWhichVoice = pref.getString(SessionManager.VOICEFORAPI)
+
+        if (getWhichVoice.isNotEmpty()) {
+            val checkedPosition = VoicesParameter.indexOfFirst { it.VoiceId == getWhichVoice }
+            selectedPosition = checkedPosition
+        }
+
         if (VoicesParameter.isEmpty()) {
             binding!!.tvItemsNotFound.visibility = View.VISIBLE
             binding!!.rvAudioTpe.visibility = View.GONE
@@ -561,12 +718,19 @@ class SoundActivity :
         } else {
             binding!!.rvAudioTpe.visibility = View.VISIBLE
             binding!!.tvItemsNotFound.visibility = View.GONE
-            audioTypeAdapter = AudioTypeAdapter(this, VoicesParameter, this)
+            audioTypeAdapter = AudioTypeAdapter(this, VoicesParameter, this,selectedPosition)
             binding!!.rvAudioTpe.adapter = audioTypeAdapter
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun clickedItem(position: Int, voices: Voices) {
+        engineForApi = voices.Engine
+        voiceForApi = voices.VoiceId
+        languageCodeForAPI = voices.Language
+        selectedPosition = position
+        audioTypeAdapter.updateSelectedPosition(position)
+        audioTypeAdapter.notifyDataSetChanged()
         viewModel.postVoiceInLanguageList(voices.Engine, voices.VoiceId, voices.Language)
     }
 

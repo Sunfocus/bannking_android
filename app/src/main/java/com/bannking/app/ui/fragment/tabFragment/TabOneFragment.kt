@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.speech.tts.TextToSpeech.EngineInfo
@@ -29,12 +30,14 @@ import com.bannking.app.core.BaseActivity
 import com.bannking.app.core.BaseFragment
 import com.bannking.app.databinding.FragmentTabOneBinding
 import com.bannking.app.model.CommonResponseApi
+import com.bannking.app.model.PostVoiceResponse
 import com.bannking.app.model.retrofitResponseModel.accountListModel.AccountListModel
 import com.bannking.app.model.retrofitResponseModel.accountListModel.Data
 import com.bannking.app.model.retrofitResponseModel.headerModel.HeaderModel
 import com.bannking.app.model.viewModel.MainViewModel
 import com.bannking.app.network.RetrofitClient
 import com.bannking.app.ui.activity.ScheduleTransferActivity
+import com.bannking.app.ui.activity.SoundActivity
 import com.bannking.app.utils.Constant
 import com.bannking.app.utils.Constants
 import com.bannking.app.utils.Constants._DELETE_ACCOUNT
@@ -44,6 +47,7 @@ import com.bannking.app.utils.MoreDotClick
 import com.bannking.app.utils.OnClickAnnouncement
 import com.bannking.app.utils.OnClickAnnouncementDialog
 import com.bannking.app.utils.SessionManager
+import com.bannking.app.utils.SharedPref
 import com.bannking.app.utils.Utils
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
@@ -72,6 +76,10 @@ class TabOneFragment :
     private lateinit var saveReviewManager: SessionManager
     var accountName: String = ""
     var returnz: String = ""
+    private var mediaPlayer: MediaPlayer? = null
+
+    private lateinit var pref: SharedPref
+
     override fun getBinding(inflater: LayoutInflater, container: ViewGroup): FragmentTabOneBinding {
         return FragmentTabOneBinding.inflate(inflater, container, false)
     }
@@ -80,12 +88,13 @@ class TabOneFragment :
         // textToSpeech = TextToSpeech(requireActivity(), this)
         // Initialize ReviewManager
         reviewManager = ReviewManagerFactory.create(requireActivity())
-
+        pref = SharedPref(requireActivity())
         saveReviewManager = SessionManager(requireActivity(), SessionManager.REVIEWMANAGER)
         savedSessionManager = SessionManager(requireActivity(), SessionManager.LANGUAGE)
         savedSessionManagerVoice = SessionManager(requireActivity(), SessionManager.VOICE)
         savedSessionManagerTab1 = SessionManager(requireActivity(), SessionManager.TAB1)
         savedSessionManagerCurrency = SessionManager(requireActivity(), SessionManager.CURRENCY)
+
 
 
         accountName = savedSessionManagerTab1.getTab1().toString()
@@ -112,13 +121,13 @@ class TabOneFragment :
                         locale = Locale.forLanguageTag("pt")
                     } else if (savedSessionManager.getLanguage() == "Dutch") {
                         locale = Locale.forLanguageTag("nl")
-                    }else if (savedSessionManager.getLanguage() == "Hindi") {
+                    } else if (savedSessionManager.getLanguage() == "Hindi") {
                         locale = Locale.forLanguageTag("hi")
-                    }else if (savedSessionManager.getLanguage() == "Japanese") {
+                    } else if (savedSessionManager.getLanguage() == "Japanese") {
                         locale = Locale.forLanguageTag("ja")
-                    }else if (savedSessionManager.getLanguage() == "German") {
+                    } else if (savedSessionManager.getLanguage() == "German") {
                         locale = Locale.forLanguageTag("de")
-                    }else if (savedSessionManager.getLanguage() == "Italian") {
+                    } else if (savedSessionManager.getLanguage() == "Italian") {
                         locale = Locale.forLanguageTag("it")
                     }
                     mTextToSpeech!!.language = locale
@@ -168,8 +177,8 @@ class TabOneFragment :
         adapter =
             TabsAdapter(requireActivity(), list, savedSessionManagerVoice, object : MoreDotClick {
                 override fun openDialogBox(list: Data, list1: ArrayList<Data>) {
-                    val greaterValue = hasAnotherAccountWithSameBudgetTitle(list1,list)
-                    showDotClickDialog(list,greaterValue)
+                    val greaterValue = hasAnotherAccountWithSameBudgetTitle(list1, list)
+                    showDotClickDialog(list, greaterValue)
                 }
 
             }, object : OnClickAnnouncementDialog {
@@ -181,11 +190,36 @@ class TabOneFragment :
 
             }, object : OnClickAnnouncement {
                 override fun clickOnAnnouncement(list: Data) {
-                    speechToText(accountName, list)
+//                    speechToText(accountName, list)
+                    voiceForAccountRead(accountName, list)
                 }
 
             })
         mBinding.rvExpenses.adapter = adapter
+    }
+
+    private fun voiceForAccountRead(accountName: String, list: Data) {
+        returnz = Constant.convertNumericToSpokenWords(
+            list.amount, savedSessionManagerCurrency.getCurrency()
+        )
+        val completeText = "Your $accountName account balance ending in ${list.account} is $returnz"
+
+        val engine = pref.getString(SessionManager.ENGINEFORAPI)
+        val voiceId = pref.getString(SessionManager.VOICEFORAPI)
+        val langCode = pref.getString(SessionManager.LANGUAGECODEFORAPI)
+
+        if (engine.isNotEmpty() && voiceId.isNotEmpty() && langCode.isNotEmpty()) {
+            viewModel.postVoiceInLanguageList(engine, voiceId, langCode, completeText)
+                .observe(this@TabOneFragment) { its ->
+                    val apiResponseData = its as PostVoiceResponse
+                    if (apiResponseData.success) {
+                        playAudio(apiResponseData.path)
+                    } else dialogClass.showError("Something went wrong")
+                }
+        } else {
+            val intent = Intent(activity, SoundActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun hasAnotherAccountWithSameBudgetTitle(list: ArrayList<Data>, list2: Data): Boolean {
@@ -193,7 +227,7 @@ class TabOneFragment :
         return count > 1
     }
 
-    private fun getDeviceName(): String? {
+    private fun getDeviceName(): String {
         val manufacturer = Build.MANUFACTURER
         val model = Build.MODEL
         return if (model.startsWith(manufacturer)) {
@@ -268,7 +302,7 @@ class TabOneFragment :
                                             filterTabDataList.value!![0].name.toString()
                                         )
                                     }
-                                    Log.e("dsfhghdsfsd",mainModel.data.size.toString())
+                                    Log.e("dsfhghdsfsd", mainModel.data.size.toString())
 
                                     if (filterdata.size != 0) {
                                         adapter?.updateList(filterdata)
@@ -293,6 +327,46 @@ class TabOneFragment :
                 }
             }
 
+            errorResponse.observe(this@TabOneFragment) { message ->
+                if (isVisible) {
+                    if (message != null) {
+                        dialogClass.showErrorMessageDialog(message)
+                    }
+                }
+            }
+
+
+        }
+    }
+
+
+    override fun onStop() {
+        super.onStop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
+    private fun playAudio(url: String) {
+        mediaPlayer?.release()
+        mediaPlayer = MediaPlayer()
+
+        try {
+            mediaPlayer?.apply {
+                setDataSource(url)
+                setOnPreparedListener {
+                    start()
+                }
+                setOnCompletionListener {
+                    release()
+                }
+                setOnErrorListener { _, _, _ ->
+                    false
+                }
+                prepareAsync()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("catchError", "Error initializing media player: ${e.message}")
         }
     }
 
@@ -320,7 +394,6 @@ class TabOneFragment :
             }
         }
     }
-
 
     fun setDataInDeleteBankAccount(strHeaderId: String) {
         viewModel.progressObservable.value = true
@@ -370,7 +443,6 @@ class TabOneFragment :
         }
     }
 
-
     override fun getViewModelClass(): MainViewModel {
         return ViewModelProvider(requireActivity())[MainViewModel::class.java]
     }
@@ -389,9 +461,9 @@ class TabOneFragment :
         imgClose.setOnClickListener {
             dialog.dismiss()
         }
-        if (greaterValue){
+        if (greaterValue) {
             btnTitleDelete.visibility = View.VISIBLE
-        }else{
+        } else {
             btnTitleDelete.visibility = View.GONE
         }
 
@@ -445,12 +517,18 @@ class TabOneFragment :
         ) { _: DialogInterface?, _: Int ->
             val userToken = sessionManager.getString(SessionManager.USERTOKEN)
             var budgetId = ""
-            budgetId = if (deleteType == "1"){
+            budgetId = if (deleteType == "1") {
                 ""
-            }else{
+            } else {
                 list.budget_id!!
             }
-            viewModel.setDataInDeleteBankAccount(list.id.toString(), tabOneID, deleteType,userToken,budgetId)
+            viewModel.setDataInDeleteBankAccount(
+                list.id.toString(),
+                tabOneID,
+                deleteType,
+                userToken,
+                budgetId
+            )
         }
         builder.setNegativeButton(
             resources.getString(R.string.str_cancel)
@@ -481,7 +559,6 @@ class TabOneFragment :
         val alertDialog: AlertDialog = builder.create()
         alertDialog.show()
     }
-
 
     fun showAnnouncementDialog(list: Data) {
         val dialog = Dialog(requireActivity())
@@ -519,18 +596,14 @@ class TabOneFragment :
                 R.id.btn_femaleVoice -> {
                     selection(btn_maleVoice, btn_femaleVoice, btn_otherVoice, btn_femaleVoice)
                     speechToTextForDialog(
-                        accountName,
-                        list,
-                        util.getGenderDescription(Gender.FEMALE)
+                        accountName, list, util.getGenderDescription(Gender.FEMALE)
                     )
                 }
 
                 R.id.btn_otherVoice -> {
                     selection(btn_maleVoice, btn_femaleVoice, btn_otherVoice, btn_otherVoice)
                     speechToTextForDialog(
-                        accountName,
-                        list,
-                        util.getGenderDescription(Gender.OTHER)
+                        accountName, list, util.getGenderDescription(Gender.OTHER)
                     )
                 }
             }
@@ -572,6 +645,8 @@ class TabOneFragment :
         if (mTextToSpeech!!.isSpeaking) {
             mTextToSpeech!!.stop()
         }
+        mediaPlayer?.release()
+        mediaPlayer = null
         mTextToSpeech!!.shutdown()
     }
 
@@ -681,12 +756,10 @@ class TabOneFragment :
         val words: List<String> = text.split("*")
 
         for (word in words) {
-            Log.e("AMittt",word)
+            Log.e("AMittt", word)
             mTextToSpeech!!.speak(word, TextToSpeech.QUEUE_ADD, null, null)
             mTextToSpeech!!.playSilentUtterance(
-                70,
-                TextToSpeech.QUEUE_ADD,
-                UUID.randomUUID().toString()
+                70, TextToSpeech.QUEUE_ADD, UUID.randomUUID().toString()
             )
         }
 
@@ -698,8 +771,7 @@ class TabOneFragment :
             val amount = utils.removeCurrencySymbol(list.amount!!)
 
             returnz = Constant.convertNumericToSpokenWords(
-                amount,
-                savedSessionManagerCurrency.getCurrency()
+                amount, savedSessionManagerCurrency.getCurrency()
             )
         } catch (e: NumberFormatException) {
             //Toast.makeToast("illegal number or empty number" , toast.long)
@@ -846,8 +918,7 @@ class TabOneFragment :
         try {
             val amount = utils.removeCurrencySymbol(list.amount!!)
             returnz = Constant.convertNumericToSpokenWords(
-                amount,
-                savedSessionManagerCurrency.getCurrency()
+                amount, savedSessionManagerCurrency.getCurrency()
             )
         } catch (e: NumberFormatException) {
             //Toast.makeToast("illegal number or empty number" , toast.long)

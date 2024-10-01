@@ -2,13 +2,20 @@ package com.bannking.app.model.viewModel
 
 import android.app.Application
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.bannking.app.UiExtension.FCM_TOKEN
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.core.BaseViewModel
 import com.bannking.app.core.CommonResponseModel
+import com.bannking.app.model.PostVoiceErrorResponse
+import com.bannking.app.model.PostVoiceResponse
 import com.bannking.app.model.retrofitResponseModel.headerModel.Data
+import com.bannking.app.model.retrofitResponseModel.soundModel.SoundResponse
+import com.bannking.app.network.ApiInterFace
 import com.bannking.app.network.RetrofitClient
+import com.bannking.app.network.RetrofitClients
+import com.bannking.app.network.okhttploginterceptor.LoggingInterceptor
 import com.bannking.app.utils.Constants
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -30,6 +37,58 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
 //    var fcmToken : MutableLiveData<String> = MutableLiveData("")
     var getProfileData: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
 
+    var errorResponse: MutableLiveData<String> = MutableLiveData(null)
+
+
+    fun postVoiceInLanguageList(
+        engine: String,
+        voiceId: String,
+        language: String,
+        completeText: String
+    ):LiveData<PostVoiceResponse> {
+        progressObservable.value = true
+        val mutableLiveData = MutableLiveData<PostVoiceResponse>()
+        val apiBody = JsonObject()
+        try {
+            apiBody.addProperty("Engine", engine)
+            apiBody.addProperty("VoiceId", voiceId)
+            apiBody.addProperty("LanguageCode", language)
+            apiBody.addProperty("Text", completeText)
+            apiBody.addProperty("OutputFormat", "mp3")
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+        val call = RetrofitClients.voiceMakerApiClient().create(ApiInterFace::class.java)
+        call.postVoiceMakerLiveOb(apiBody).enqueue(object : Callback<PostVoiceResponse> {
+            override fun onResponse(call: Call<PostVoiceResponse>, response: Response<PostVoiceResponse>) {
+                progressObservable.value = false
+                if (response.isSuccessful) {
+                    if (response.code() in 199..299) {
+                        mutableLiveData.postValue(response.body())
+                    } else {
+                        val errorBodyString = response.errorBody()?.string()
+                        val mainModel = LoggingInterceptor.gson.fromJson(
+                            errorBodyString,
+                            PostVoiceErrorResponse::class.java
+                        )
+                        errorResponse.value = mainModel.message
+                    }
+                } else {
+                    val errorBodyString = response.errorBody()?.string()
+                    val mainModel = LoggingInterceptor.gson.fromJson(
+                        errorBodyString,
+                        PostVoiceErrorResponse::class.java
+                    )
+                    errorResponse.value = mainModel.message
+                }
+            }
+
+            override fun onFailure(call: Call<PostVoiceResponse>, t: Throwable) {
+                progressObservable.value = false
+            }
+        })
+        return mutableLiveData
+    }
 
     fun getUserProfileData(userToken: String?) {
         App.FCM_TOKEN.let {

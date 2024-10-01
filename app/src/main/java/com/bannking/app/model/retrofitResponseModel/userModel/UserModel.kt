@@ -31,7 +31,12 @@ data class Data(
     @SerializedName("currency") var currency: Currency? =Currency(),
     @SerializedName("profile_image") var image: String? = null,
     @SerializedName("notification") var notification: Int? = null,
-    @SerializedName("premium") var premium: Boolean? = null
+    @SerializedName("premium") var premium: Boolean? = null,
+    @SerializedName("voice_id") var voice_id: String? = null,
+    @SerializedName("voice_gender") var voice_gender: String? = null,
+    @SerializedName("language_code") var language_code: String? = null,
+    @SerializedName("language_region") var language_region: String? = null,
+    @SerializedName("engine") var engine: String? = null
 
 )
 

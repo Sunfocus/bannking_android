@@ -2,8 +2,10 @@ package com.bannking.app.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.bannking.app.model.retrofitResponseModel.soundModel.Voices
 import com.bannking.app.model.retrofitResponseModel.userModel.Data
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.util.Date
 
 class SessionManager(context: Context, sharedName: String?) {
@@ -29,6 +31,8 @@ class SessionManager(context: Context, sharedName: String?) {
     fun saveLong(key: String, value: Long) {
         sharedPref.edit().putLong(key, value).apply()
     }
+
+
     fun getLong(key: String): Long {
         return sharedPref.getLong(key, 0)
     }
@@ -160,6 +164,12 @@ class SessionManager(context: Context, sharedName: String?) {
         var currentTab = "currentTab"
         var clickAccountType = "clickAccountType"
         var CURRENCY = "CURRENCY"
+        var VOICEMAKERLIST = "VOICEMAKERLIST"
+        var VOICEFORAPI = "VOICEFORAPI"
+        var ENGINEFORAPI = "ENGINEFORAPI"
+        var VOICEGENDER = "VOICEGENDER"
+        var LANGUAGECODEFORAPI = "LANGUAGECODEFORAPI"
+        var LANGUAGENAMEFORAPI = "LANGUAGENAMEFORAPI"
 
     }
 

@@ -32,7 +32,7 @@ class LanguageRegionAdapter(
         holder.tvCountryName.text = list[position].languageName
 
         holder.itemView.setOnClickListener {
-            click.onItemRegionClick(position, list[position].languageCode)
+            click.onItemRegionClick(position, list[position].languageCode,list[position].languageName)
         }
 
     }
@@ -48,7 +48,7 @@ class LanguageRegionAdapter(
     }
 
     interface ClickLanguageRegion {
-        fun onItemRegionClick(position: Int, languageCode: String)
+        fun onItemRegionClick(position: Int, languageCode: String, languageName: String)
     }
 }
 

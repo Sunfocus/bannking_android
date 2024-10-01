@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
@@ -28,12 +29,14 @@ import com.bannking.app.core.BaseActivity
 import com.bannking.app.core.BaseFragment
 import com.bannking.app.databinding.FragmentTabTwoBinding
 import com.bannking.app.model.CommonResponseApi
+import com.bannking.app.model.PostVoiceResponse
 import com.bannking.app.model.retrofitResponseModel.accountListModel.AccountListModel
 import com.bannking.app.model.retrofitResponseModel.accountListModel.Data
 import com.bannking.app.model.retrofitResponseModel.headerModel.HeaderModel
 import com.bannking.app.model.viewModel.MainViewModel
 import com.bannking.app.network.RetrofitClient
 import com.bannking.app.ui.activity.ScheduleTransferActivity
+import com.bannking.app.ui.activity.SoundActivity
 import com.bannking.app.utils.Constant
 import com.bannking.app.utils.Constants
 import com.bannking.app.utils.Constants._DELETE_ACCOUNT
@@ -43,6 +46,7 @@ import com.bannking.app.utils.MoreDotClick
 import com.bannking.app.utils.OnClickAnnouncement
 import com.bannking.app.utils.OnClickAnnouncementDialog
 import com.bannking.app.utils.SessionManager
+import com.bannking.app.utils.SharedPref
 import com.bannking.app.utils.Utils
 import com.google.gson.JsonObject
 import retrofit2.Call
@@ -65,6 +69,9 @@ class TabTwoFragment :
     private lateinit var savedSessionManagerCurrency: SessionManager
     var accountName: String = ""
     var returnz: String = ""
+    private var mediaPlayer: MediaPlayer? = null
+    private lateinit var pref:SharedPref
+
     override fun getBinding(inflater: LayoutInflater, container: ViewGroup): FragmentTabTwoBinding {
         return FragmentTabTwoBinding.inflate(inflater, container, false)
     }
@@ -75,7 +82,7 @@ class TabTwoFragment :
 
     override fun viewCreated() {
 //        setOnClickListener()
-
+        pref = SharedPref(requireActivity())
         savedSessionManager = SessionManager(requireActivity(), SessionManager.LANGUAGE)
         savedSessionManagerVoice = SessionManager(requireActivity(), SessionManager.VOICE)
         savedSessionManagerTab2 = SessionManager(requireActivity(), SessionManager.TAB2)
@@ -172,11 +179,35 @@ class TabTwoFragment :
 
             }, object : OnClickAnnouncement {
                 override fun clickOnAnnouncement(list: Data) {
-                    speechToText(accountName, list)
+//                    speechToText(accountName, list)
+                    voiceForAccountRead(accountName, list)
                 }
 
             })
         mBinding.rvIncome.adapter = adapter
+    }
+    private fun voiceForAccountRead(accountName: String, list: Data) {
+        returnz = Constant.convertNumericToSpokenWords(
+            list.amount, savedSessionManagerCurrency.getCurrency()
+        )
+        val completeText = "Your $accountName account balance ending in ${list.account} is $returnz"
+
+        val engine = pref.getString(SessionManager.ENGINEFORAPI)
+        val voiceId = pref.getString(SessionManager.VOICEFORAPI)
+        val langCode = pref.getString(SessionManager.LANGUAGECODEFORAPI)
+
+        if (engine.isNotEmpty() && voiceId.isNotEmpty() && langCode.isNotEmpty()) {
+            viewModel.postVoiceInLanguageList(engine, voiceId, langCode, completeText)
+                .observe(this@TabTwoFragment) { its ->
+                    val apiResponseData = its as PostVoiceResponse
+                    if (apiResponseData.success) {
+                        playAudio(apiResponseData.path)
+                    } else dialogClass.showError("Something went wrong")
+                }
+        } else {
+            val intent = Intent(activity, SoundActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun hasAnotherAccountWithSameBudgetTitle(list: ArrayList<Data>, list2: Data): Boolean {
@@ -273,6 +304,44 @@ class TabTwoFragment :
                     }
                 }
             }
+
+            errorResponse.observe(this@TabTwoFragment) { message ->
+                if (isVisible){
+                    if (message != null) {
+                        dialogClass.showErrorMessageDialog(message)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
+    private fun playAudio(url: String) {
+        mediaPlayer?.release()
+        mediaPlayer = MediaPlayer()
+
+        try {
+            mediaPlayer?.apply {
+                setDataSource(url)
+                setOnPreparedListener {
+                    start()
+                }
+                setOnCompletionListener {
+                    release()
+                }
+                setOnErrorListener { _, _, _ ->
+                    false
+                }
+                prepareAsync()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("catchError", "Error initializing media player: ${e.message}")
         }
     }
 
@@ -528,6 +597,9 @@ class TabTwoFragment :
         if (mTextToSpeech!!.isSpeaking) {
             mTextToSpeech!!.stop()
         }
+        mediaPlayer?.release()
+        mediaPlayer = null
+
         mTextToSpeech!!.shutdown()
     }
 

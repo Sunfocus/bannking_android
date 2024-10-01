@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClients {
-    fun rapidApiClient(): Retrofit {
+    fun voiceMakerApiClient(): Retrofit {
         val gson = GsonBuilder()
             .setLenient()
             .create()

@@ -27,6 +27,7 @@ import com.bannking.app.uiUtil.viewPagerAdapter.SectionsPagerAdapter
 import com.bannking.app.utils.AdController
 import com.bannking.app.utils.ItemClickListener
 import com.bannking.app.utils.SessionManager
+import com.bannking.app.utils.SharedPref
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 
@@ -39,6 +40,7 @@ class AccountCreatedFragment :
     private lateinit var savedSessionManagerTab2: SessionManager
     private lateinit var currentTab: SessionManager
     private lateinit var savedAdTime: SessionManager
+    private lateinit var pref: SharedPref
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
@@ -55,8 +57,7 @@ class AccountCreatedFragment :
     }
 
     override fun getBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup
+        inflater: LayoutInflater, container: ViewGroup
     ): FragmentAccountCreatedBinding {
         return FragmentAccountCreatedBinding.inflate(inflater, container, false)
     }
@@ -67,20 +68,27 @@ class AccountCreatedFragment :
 
     override fun viewCreated() {
         if (isDarkModeEnabled()) {
-            mBinding.LLVp.backgroundTintList =
-                ContextCompat.getColorStateList(
+            mBinding.LLVp.backgroundTintList = ContextCompat.getColorStateList(
+                requireActivity(), R.color.dark_mode
+            ) // Dark mode background color
+            mBinding.txtInformation.setTextColor(
+                ContextCompat.getColor(
                     requireActivity(),
-                    R.color.dark_mode
-                ) // Dark mode background color
-            mBinding.txtInformation.setTextColor(ContextCompat.getColor(requireActivity(), R.color.white))
+                    R.color.white
+                )
+            )
         } else {
-            mBinding.LLVp.backgroundTintList =
-                ContextCompat.getColorStateList(
+            mBinding.LLVp.backgroundTintList = ContextCompat.getColorStateList(
+                requireActivity(), R.color.clr_wild_sand
+            ) // Light mode background color
+            mBinding.txtInformation.setTextColor(
+                ContextCompat.getColor(
                     requireActivity(),
-                    R.color.clr_wild_sand
-                ) // Light mode background color
-            mBinding.txtInformation.setTextColor(ContextCompat.getColor(requireActivity(), R.color.clr_text))
+                    R.color.clr_text
+                )
+            )
         }
+        pref = SharedPref(requireActivity())
         savedSessionManagerTab1 = SessionManager(requireActivity(), SessionManager.TAB1)
         savedSessionManagerTab2 = SessionManager(requireActivity(), SessionManager.TAB2)
         currentTab = SessionManager(requireActivity(), SessionManager.currentTab)
@@ -100,32 +108,24 @@ class AccountCreatedFragment :
             if (timeDifference > fiveMinutesInMillis) {
                 AdController.showInterAd(requireActivity(), null, 0) {
                     val intent = Intent(requireActivity(), AccountMenuNewActivity::class.java)
-                    val model =
-                        gson.fromJson(
-                            viewModel.headerTitleList.value?.apiResponse,
-                            HeaderModel::class.java
-                        )
-                    val accountList =
-                        gson.fromJson(
-                            viewModel.accountListData.value?.apiResponse,
-                            AccountListModel::class.java
-                        )
+                    val model = gson.fromJson(
+                        viewModel.headerTitleList.value?.apiResponse, HeaderModel::class.java
+                    )
+                    val accountList = gson.fromJson(
+                        viewModel.accountListData.value?.apiResponse, AccountListModel::class.java
+                    )
                     intent.putExtra("Headermodel", model)
                     intent.putExtra("accountList", accountList)
                     (requireActivity() as MainActivity).resultLauncher.launch(intent)
                 }
             } else {
                 val intent = Intent(requireActivity(), AccountMenuNewActivity::class.java)
-                val model =
-                    gson.fromJson(
-                        viewModel.headerTitleList.value?.apiResponse,
-                        HeaderModel::class.java
-                    )
-                val accountList =
-                    gson.fromJson(
-                        viewModel.accountListData.value?.apiResponse,
-                        AccountListModel::class.java
-                    )
+                val model = gson.fromJson(
+                    viewModel.headerTitleList.value?.apiResponse, HeaderModel::class.java
+                )
+                val accountList = gson.fromJson(
+                    viewModel.accountListData.value?.apiResponse, AccountListModel::class.java
+                )
                 intent.putExtra("Headermodel", model)
                 intent.putExtra("accountList", accountList)
                 (requireActivity() as MainActivity).resultLauncher.launch(intent)
@@ -151,6 +151,33 @@ class AccountCreatedFragment :
                             val mainModel =
                                 gson.fromJson(apiResponseData.apiResponse, UserModel::class.java)
                             if (mainModel.status == 200) {
+                                mainModel.data?.voice_id?.let {
+                                    pref.saveString(
+                                        SessionManager.VOICEFORAPI, it
+                                    )
+                                }
+                                mainModel.data?.engine?.let {
+                                    pref.saveString(
+                                        SessionManager.ENGINEFORAPI, it
+                                    )
+                                }
+                                mainModel.data?.voice_gender?.let {
+                                    pref.saveString(
+                                        SessionManager.VOICEGENDER, it
+                                    )
+                                }
+                                mainModel.data?.language_code?.let {
+                                    pref.saveString(
+                                        SessionManager.LANGUAGECODEFORAPI, it
+                                    )
+                                }
+                                mainModel.data?.language_region?.let {
+                                    pref.saveString(
+                                        SessionManager.LANGUAGENAMEFORAPI, it
+                                    )
+                                }
+
+
                                 if (mainModel.data!!.subscriptionStatus == 1) {
                                     inAppPurchaseSM.setBoolean(SessionManager.isPremium, true)
                                 } else {
@@ -175,17 +202,15 @@ class AccountCreatedFragment :
                                 if (model.status == 200) {
                                     mBinding.tablayout.setupWithViewPager(mBinding.viewPager)
                                     val sectionsPagerAdapter = SectionsPagerAdapter(
-                                        childFragmentManager,
-                                        model.data
+                                        childFragmentManager, model.data
                                     )
 //                                    filterTabDataList.value?.get(0).name
 
                                     filterTabDataList.value?.size
-                                    mBinding.txtInformation.text = if (model.data.size == 1)
-                                        "${model.data[0].name.toString()} Account"
-                                    else if (model.data.size == 2)
-                                        "${model.data[0].name.toString()} & ${model.data[1].name.toString()} Accounts"
-                                    else ""
+                                    mBinding.txtInformation.text =
+                                        if (model.data.size == 1) "${model.data[0].name.toString()} Account"
+                                        else if (model.data.size == 2) "${model.data[0].name.toString()} & ${model.data[1].name.toString()} Accounts"
+                                        else ""
 
                                     if (model.data.size == 1) {
                                         savedSessionManagerTab1.setTab1(model.data[0].name.toString())
@@ -213,11 +238,10 @@ class AccountCreatedFragment :
             filterTabDataList.observe(requireActivity()) { header ->
                 if (isVisible) {
                     if (header != null) {
-                        mBinding.txtInformation.text = if (header.size == 1)
-                            "${header[0].name.toString()} Account"
-                        else if (filterTabDataList.value?.size == 3)
-                            "${header[0].name.toString()} & ${header[1].name.toString()} Accounts"
-                        else ""
+                        mBinding.txtInformation.text =
+                            if (header.size == 1) "${header[0].name.toString()} Account"
+                            else if (filterTabDataList.value?.size == 3) "${header[0].name.toString()} & ${header[1].name.toString()} Accounts"
+                            else ""
 
                         Log.e("TAG_headerSize", "observer: ${header.size}")
                         if (header.size == 1) {
@@ -261,21 +285,17 @@ class AccountCreatedFragment :
     private fun openFilterDialog() {
         val bottomSheetDialog: BottomSheetDialog?
         val itemClickListener: ItemClickListener
-        bottomSheetDialog =
-            BottomSheetDialog(requireActivity(), R.style.NoBackgroundDialogTheme)
+        bottomSheetDialog = BottomSheetDialog(requireActivity(), R.style.NoBackgroundDialogTheme)
         val view = LayoutInflater.from(requireActivity()).inflate(
-            R.layout.bottomshit_filter_header,
-            requireActivity().findViewById(R.id.linearLayout)
+            R.layout.bottomshit_filter_header, requireActivity().findViewById(R.id.linearLayout)
         )
         val rvFilter = view.findViewById(R.id.rv_filter) as RecyclerView
         val btnSubmit = view.findViewById(R.id.btn_submit) as Button
         bottomSheetDialog.setContentView(view)
         var adapter = FilterTabAdapter()
-        val model =
-            gson.fromJson(
-                viewModel.headerTitleList.value!!.apiResponse,
-                HeaderModel::class.java
-            )
+        val model = gson.fromJson(
+            viewModel.headerTitleList.value!!.apiResponse, HeaderModel::class.java
+        )
 
         itemClickListener = object : ItemClickListener {
             @SuppressLint("NotifyDataSetChanged")
@@ -290,14 +310,11 @@ class AccountCreatedFragment :
                 val tempModel = model.data
                 tempModel.add(
                     com.bannking.app.model.retrofitResponseModel.headerModel.Data(
-                        "${model.data[0].id},${model.data[1].id}",
-                        "Both"
+                        "${model.data[0].id},${model.data[1].id}", "Both"
                     )
                 )
                 adapter = FilterTabAdapter(
-                    tempModel,
-                    itemClickListener,
-                    viewModel.filterTabDataList.value
+                    tempModel, itemClickListener, viewModel.filterTabDataList.value
                 )
                 rvFilter.layoutManager = LinearLayoutManager(requireActivity())
                 rvFilter.adapter = adapter

@@ -52,14 +52,15 @@ class ExploreExpensesActivity :
 
 
     }
-    private fun uiColor(){
+
+    private fun uiColor() {
         if (UiExtension.isDarkModeEnabled()) {
-            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.imgBack.setColorFilter(ContextCompat.getColor(this, R.color.white))
             binding!!.tvExplore.setTextColor(ContextCompat.getColor(this, R.color.white))
             binding!!.rlExplore.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
         } else {
             binding!!.rlExplore.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
-            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.black))
+            binding!!.imgBack.setColorFilter(ContextCompat.getColor(this, R.color.black))
             binding!!.tvExplore.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
 
         }
@@ -73,8 +74,7 @@ class ExploreExpensesActivity :
                     if (apiResponseData.code in 199..299) {
                         updateExpensesDataList(
                             gson.fromJson(
-                                apiResponseData.apiResponse,
-                                ExploreExpensesModel::class.java
+                                apiResponseData.apiResponse, ExploreExpensesModel::class.java
                             ), apiResponseData.code
                         )
                     } else if (apiResponseData.code in 400..500) {
@@ -84,10 +84,8 @@ class ExploreExpensesActivity :
             }
             progressObservable.observe(this@ExploreExpensesActivity) {
                 if (it != null) {
-                    if (it)
-                        dialogClass.showLoadingDialog()
-                    else
-                        dialogClass.hideLoadingDialog()
+                    if (it) dialogClass.showLoadingDialog()
+                    else dialogClass.hideLoadingDialog()
                 }
             }
         }
@@ -183,8 +181,8 @@ class ExploreExpensesActivity :
 
             entries.add(
                 PieEntry(
-                    String.format("%.1f", objectData.value?.toFloat())
-                        .toFloat(), "${objectData.value} %"
+                    String.format("%.1f", objectData.value?.toFloat()).toFloat(),
+                    "${objectData.value} %"
                 )
             )
             colors.add(Color.parseColor(objectData.color))
@@ -217,21 +215,21 @@ class ExploreExpensesActivity :
         } else {
             data.setValueTextColor(Color.BLACK)
         }
-        binding?.chart1?.setData(data)
+        binding?.chart1?.data = data
 
         // undo all highlights
 //        binding?.chart1?.highlightValues(null)
 
         // loading chart
         data.setValueFormatter(PercentFormatter())
-        dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE)
-        dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE)
-        dataSet.setValueLinePart1OffsetPercentage(100f)
-        dataSet.setValueLinePart1Length(0.6f)
-        dataSet.setValueLinePart2Length(0.6f)
-        dataSet.setSelectionShift(5f)
-        binding!!.chart1.getData().setDrawValues(false)
-        binding?.chart1?.setUsePercentValues(true);
+        dataSet.xValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE
+        dataSet.yValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE
+        dataSet.valueLinePart1OffsetPercentage = 100f
+        dataSet.valueLinePart1Length = 0.6f
+        dataSet.valueLinePart2Length = 0.6f
+        dataSet.selectionShift = 5f
+        binding!!.chart1.data.setDrawValues(false)
+        binding?.chart1?.setUsePercentValues(true)
         binding?.chart1?.invalidate()
 
     }
@@ -241,12 +239,11 @@ class ExploreExpensesActivity :
         super.onResume()
         binding!!.txtUpgrade.isVisible = !isPremium
     }
-    fun ellipse(angle: Float): Float{
+
+    fun ellipse(angle: Float): Float {
         return kotlin.math.tan(
-            (
-                    if (angle % 180f in 0.0..90.0) (angle % 180f) / 2
-                    else 90f - (angle % 180f) / 2
-                    ) * Utils.FDEG2RAD.toDouble()
+            (if (angle % 180f in 0.0..90.0) (angle % 180f) / 2
+            else 90f - (angle % 180f) / 2) * Utils.FDEG2RAD.toDouble()
         ).toFloat()
     }
 }

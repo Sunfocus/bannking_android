@@ -99,6 +99,8 @@ class TabOneFragment :
 
         accountName = savedSessionManagerTab1.getTab1().toString()
 
+       val premiumFeatures =  inAppPurchaseSM.getBoolean(SessionManager.isPremium)
+
         // create an object textToSpeech and adding features into it
         mTextToSpeech = TextToSpeech(
             requireContext().applicationContext
@@ -131,6 +133,8 @@ class TabOneFragment :
                         locale = Locale.forLanguageTag("it")
                     }
                     mTextToSpeech!!.language = locale
+
+
                 }
                 val defaultEngine: String = mTextToSpeech!!.defaultEngine
 
@@ -183,26 +187,34 @@ class TabOneFragment :
 
             }, object : OnClickAnnouncementDialog {
                 override fun clickOnAnnouncementDialog(list: Data) {
-                    showAnnouncementDialog(list)
-                    Log.d("sdfsdfsdfds", list.toString())
-//                showAnnouncementDialogDemo(list)
+                    if (premiumFeatures){
+                        voiceForAccountRead(accountName, list)
+                    }else{
+                        showAnnouncementDialog(list)
+                    }
+
                 }
 
             }, object : OnClickAnnouncement {
                 override fun clickOnAnnouncement(list: Data) {
-//                    speechToText(accountName, list)
-                    voiceForAccountRead(accountName, list)
+                    if (premiumFeatures){
+                        voiceForAccountRead(accountName, list)
+                    }else{
+                        speechToText(accountName, list)
+                    }
+
                 }
 
             })
         mBinding.rvExpenses.adapter = adapter
     }
 
+
+
     private fun voiceForAccountRead(accountName: String, list: Data) {
-        returnz = Constant.convertNumericToSpokenWords(
-            list.amount, savedSessionManagerCurrency.getCurrency()
-        )
-        val completeText = "Your $accountName account balance ending in ${list.account} is $returnz"
+        val completeText =
+            "Your $accountName account balance ending in ${list.account_code} is ${list.currency!!.icon}${list.amount}"
+
 
         val engine = pref.getString(SessionManager.ENGINEFORAPI)
         val voiceId = pref.getString(SessionManager.VOICEFORAPI)
@@ -302,7 +314,7 @@ class TabOneFragment :
                                             filterTabDataList.value!![0].name.toString()
                                         )
                                     }
-                                    Log.e("dsfhghdsfsd", mainModel.data.size.toString())
+
 
                                     if (filterdata.size != 0) {
                                         adapter?.updateList(filterdata)
@@ -338,7 +350,6 @@ class TabOneFragment :
 
         }
     }
-
 
     override fun onStop() {
         super.onStop()
@@ -395,7 +406,7 @@ class TabOneFragment :
         }
     }
 
-    fun setDataInDeleteBankAccount(strHeaderId: String) {
+    private fun setDataInDeleteBankAccount(strHeaderId: String) {
         viewModel.progressObservable.value = true
         requireActivity().application.FCM_TOKEN.let {
             val apiBody = JsonObject()
@@ -707,61 +718,66 @@ class TabOneFragment :
     }
 
     private fun speakText(text: String) {
-        if (mTextToSpeech!!.isSpeaking) {
-            mTextToSpeech!!.stop()
-        }
+        try {
+            Log.d("sdsadasdsad",text)
+            if (mTextToSpeech!!.isSpeaking) {
+                mTextToSpeech!!.stop()
+            }
 
-        mTextToSpeech!!.setPitch(1.toFloat())
-        mTextToSpeech!!.setSpeechRate(0.9.toFloat())
+            mTextToSpeech!!.setPitch(1.toFloat())
+            mTextToSpeech!!.setSpeechRate(0.9.toFloat())
 
-        if (savedSessionManagerVoice.getAnnouncementVoice() == "Male") {
-            val availableVoices: Set<Voice> = mTextToSpeech!!.voices
-            var selectedVoice: Voice? = null
-            for (voice in availableVoices) {
-                if (savedSessionManager.getLanguage() == "Arabic") {
-                    if (voice.name == "ar-xa-x-ard-local") {
-                        selectedVoice = voice
-                        mTextToSpeech!!.voice = selectedVoice
-                        break
+
+            if (savedSessionManagerVoice.getAnnouncementVoice() == "Male") {
+                val availableVoices: Set<Voice> = mTextToSpeech!!.voices
+                var selectedVoice: Voice? = null
+                for (voice in availableVoices) {
+                    if (savedSessionManager.getLanguage() == "Arabic") {
+                        if (voice.name == "ar-xa-x-ard-local") {
+                            selectedVoice = voice
+                            mTextToSpeech!!.voice = selectedVoice
+                            break
+                        }
+                    } else {
+                        if (voice.name == "en-us-x-iom-local") {
+                            selectedVoice = voice
+                            mTextToSpeech!!.voice = selectedVoice
+                            break
+                        }
                     }
-                } else {
-                    if (voice.name == "en-us-x-iom-local") {
-                        selectedVoice = voice
-                        mTextToSpeech!!.voice = selectedVoice
-                        break
+                }
+            } else if (savedSessionManagerVoice.getAnnouncementVoice() == "Female") {
+                val availableVoices: Set<Voice> = mTextToSpeech!!.voices
+                var selectedVoice: Voice? = null
+                for (voice in availableVoices) {
+                    if (savedSessionManager.getLanguage() == "Arabic") {
+                        if (voice.name == "ar-xa-x-arc-network") {
+                            selectedVoice = voice
+                            mTextToSpeech!!.voice = selectedVoice
+                            break
+                        }
+                    } else {
+                        if (voice.name == "en-us-x-iog-network") {
+                            selectedVoice = voice
+                            mTextToSpeech!!.voice = selectedVoice
+                            break
+                        }
                     }
                 }
             }
-        } else if (savedSessionManagerVoice.getAnnouncementVoice() == "Female") {
-            val availableVoices: Set<Voice> = mTextToSpeech!!.voices
-            var selectedVoice: Voice? = null
-            for (voice in availableVoices) {
-                if (savedSessionManager.getLanguage() == "Arabic") {
-                    if (voice.name == "ar-xa-x-arc-network") {
-                        selectedVoice = voice
-                        mTextToSpeech!!.voice = selectedVoice
-                        break
-                    }
-                } else {
-                    if (voice.name == "en-us-x-iog-network") {
-                        selectedVoice = voice
-                        mTextToSpeech!!.voice = selectedVoice
-                        break
-                    }
-                }
+
+            val words: List<String> = text.split("*")
+
+            for (word in words) {
+                mTextToSpeech!!.speak(word, TextToSpeech.QUEUE_ADD, null, null)
+                mTextToSpeech!!.playSilentUtterance(
+                    70, TextToSpeech.QUEUE_ADD, UUID.randomUUID().toString()
+                )
             }
+        }catch (e:Exception){
+            Log.e("catchError",e.message.toString())
         }
 
-
-        val words: List<String> = text.split("*")
-
-        for (word in words) {
-            Log.e("AMittt", word)
-            mTextToSpeech!!.speak(word, TextToSpeech.QUEUE_ADD, null, null)
-            mTextToSpeech!!.playSilentUtterance(
-                70, TextToSpeech.QUEUE_ADD, UUID.randomUUID().toString()
-            )
-        }
 
     }
 
@@ -820,6 +836,36 @@ class TabOneFragment :
                         list.account_code.toString()
                     ) + "*bedraagt*" + returnz
                 )
+            }else if (savedSessionManager.getLanguage() == "Hindi"){
+                speakText(
+                    "आपके" + list.account + "का बैलेंस*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*और*" + returnz
+                )
+            } else if(savedSessionManager.getLanguage() == "Chinese"){
+                speakText(
+                    "你的" + list.account + "账户余额 以...结尾*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*是*" + returnz
+                )
+            }else if (savedSessionManager.getLanguage() == "Japanese"){
+                speakText(
+                    "あなたの" + list.account + "口座残高 で終わる*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "* です *" + returnz
+                )
+            }else if (savedSessionManager.getLanguage() == "German"){
+                speakText(
+                    "Dein" + list.account + "Kontostand endet mit*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "* ist *" + returnz
+                )
+            }else if (savedSessionManager.getLanguage() == "Italian"){
+                speakText(
+                    "Il tuo" + list.account + "Saldo del conto che termina con*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "* è *" + returnz
+                )
             }
         } else if (savedSessionManagerVoice.getAnnouncementVoice() == "Female") {
             if (savedSessionManager.getLanguage() == "English") {
@@ -864,6 +910,36 @@ class TabOneFragment :
                         list.account_code.toString()
                     ) + "*bedraagt*" + returnz
                 )
+            }else if (savedSessionManager.getLanguage() == "Hindi"){
+                speakText(
+                    "आपके" + list.account + "का बैलेंस*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*और*" + returnz
+                )
+            } else if(savedSessionManager.getLanguage() == "Chinese"){
+                speakText(
+                    "你的" + list.account + "账户余额 以...结尾*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*是*" + returnz
+                )
+            }else if (savedSessionManager.getLanguage() == "Japanese"){
+                speakText(
+                    "あなたの" + list.account + "口座残高 で終わる*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "* です *" + returnz
+                )
+            }else if (savedSessionManager.getLanguage() == "German"){
+                speakText(
+                    "Dein" + list.account + "Kontostand endet mit*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "* ist *" + returnz
+                )
+            }else if (savedSessionManager.getLanguage() == "Italian"){
+                speakText(
+                    "Il tuo" + list.account + "Saldo del conto che termina con*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "* è *" + returnz
+                )
             }
         } else if (savedSessionManagerVoice.getAnnouncementVoice() == "") {
             if (savedSessionManager.getLanguage() == "English") {
@@ -907,6 +983,36 @@ class TabOneFragment :
                     "Uw" + list.account + "Accountsaldo eindigend op*" + utils.numberToText(
                         list.account_code.toString()
                     ) + "*bedraagt*" + returnz
+                )
+            }else if (savedSessionManager.getLanguage() == "Hindi"){
+                speakText(
+                    "आपके" + list.account + "का बैलेंस*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*और*" + returnz
+                )
+            } else if(savedSessionManager.getLanguage() == "Chinese"){
+                speakText(
+                    "你的" + list.account + "账户余额 以...结尾*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "*是*" + returnz
+                )
+            }else if (savedSessionManager.getLanguage() == "Japanese"){
+                speakText(
+                    "あなたの" + list.account + "口座残高 で終わる*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "* です *" + returnz
+                )
+            }else if (savedSessionManager.getLanguage() == "German"){
+                speakText(
+                    "Dein" + list.account + "Kontostand endet mit*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "* ist *" + returnz
+                )
+            }else if (savedSessionManager.getLanguage() == "Italian"){
+                speakText(
+                    "Il tuo" + list.account + "Saldo del conto che termina con*" + utils.numberToText(
+                        list.account_code.toString()
+                    ) + "* è *" + returnz
                 )
             }
         }

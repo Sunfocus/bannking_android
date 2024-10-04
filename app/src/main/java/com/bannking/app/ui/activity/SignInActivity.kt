@@ -491,11 +491,6 @@ class SignInActivity :
 
                                         }
 
-//                                        Handler().postDelayed({
-//                                            val intent = Intent(this@SignInActivity, MainActivity::class.java)
-//                                            startActivity(intent)
-//                                            finish()
-//                                        }, 1000)
                                     } else {
                                         dialogClass.showError(mainModel.message.toString())
                                     }

@@ -14,7 +14,6 @@ data class UserModel(
 )
 
 data class Data(
-
     @SerializedName("id") var id: Int? = null,
     @SerializedName("username") var username: String? = null,
     @SerializedName("name") var name: String? = null,
@@ -24,10 +23,8 @@ data class Data(
     @SerializedName("subscriptionStatus") var subscriptionStatus: Int? = null,
     @SerializedName("face_id_status") var face_id_status: Boolean? = null,
     @SerializedName("notification_status") var notification_status: Boolean? = null,
-//    @SerializedName("language_name") var languageName: String? = null,
     @SerializedName("language") var language: Language? = Language(),
     @SerializedName("currency_id") var currencyId: Int? = null,
-//    @SerializedName("currency_name") var currencyName: String? = null,
     @SerializedName("currency") var currency: Currency? =Currency(),
     @SerializedName("profile_image") var image: String? = null,
     @SerializedName("notification") var notification: Int? = null,

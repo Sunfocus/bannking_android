@@ -16,7 +16,7 @@
 
         <ImageView
             android:id="@+id/img_flag"
-            android:layout_width="0dp"
+            android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_weight="0.2"
             android:src="@drawable/ic_us_flag" />
@@ -33,22 +33,6 @@
             android:textSize="17sp"
             tools:text="@string/str_english" />
 
-        <!--        <ImageView-->
-        <!--            android:id="@+id/img_check_box"-->
-        <!--            android:layout_width="0dp"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_weight="0.2"-->
-        <!--            android:src="@drawable/radio_button_shape" />-->
-
-
-        <!--        <RadioButton-->
-        <!--            android:id="@+id/radio_button"-->
-        <!--            android:layout_width="0dp"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:padding="12dp"-->
-        <!--            android:layout_weight="0.2"-->
-        <!--            android:textColor="@android:color/darker_gray"-->
-        <!--            android:textSize="18sp" />-->
 
 
         <RadioButton

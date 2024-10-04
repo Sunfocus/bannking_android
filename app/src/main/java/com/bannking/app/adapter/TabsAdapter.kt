@@ -79,7 +79,7 @@ class TabsAdapter(
             mBinding!!.tvAvail.setTextColor(ContextCompat.getColor(context, R.color.black))
         }
 
-        Log.e("sdfsdfsdfsd",list.toString())
+
         if (position == list!!.size - 1) {
             val params = holder.itemView.layoutParams as RecyclerView.LayoutParams
             params.bottomMargin = 400
@@ -97,7 +97,7 @@ class TabsAdapter(
             mBinding!!.txtAmount.text = "${list!![position].currency!!.icon}${amount}"
         } else {
             val amount = formatMoney(list!![position].amount!!.toDouble())
-            Log.e("asdjghjsadsda",amount)
+
 //            mBinding!!.txtAmount.setTextColor(context.resources.getColor(R.color.clr_blue))
             mBinding!!.txtAmount.text = "${list!![position].currency!!.icon}${amount}"
         }
@@ -111,13 +111,12 @@ class TabsAdapter(
         }
 
         mBinding!!.imgAnnounce.setOnClickListener {
-            listnerAnnouncement.clickOnAnnouncement(list!![position])
-          /*  val type = sessionManager.getAnnouncementVoice()
+            val type = sessionManager.getAnnouncementVoice()
             if (type.equals("")) {
                 listnerAnnouncementDialog.clickOnAnnouncementDialog(list!![position])
             } else {
                 listnerAnnouncement.clickOnAnnouncement(list!![position])
-            }*/
+            }
         }
 
         holder.itemView.setOnClickListener {

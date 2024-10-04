@@ -70,7 +70,7 @@ class TabTwoFragment :
     var accountName: String = ""
     var returnz: String = ""
     private var mediaPlayer: MediaPlayer? = null
-    private lateinit var pref:SharedPref
+    private lateinit var pref: SharedPref
 
     override fun getBinding(inflater: LayoutInflater, container: ViewGroup): FragmentTabTwoBinding {
         return FragmentTabTwoBinding.inflate(inflater, container, false)
@@ -111,16 +111,18 @@ class TabTwoFragment :
                         locale = Locale.forLanguageTag("pt")
                     } else if (savedSessionManager.getLanguage() == "Dutch") {
                         locale = Locale.forLanguageTag("nl")
-                    }else if (savedSessionManager.getLanguage() == "Hindi") {
+                    } else if (savedSessionManager.getLanguage() == "Hindi") {
                         locale = Locale.forLanguageTag("hi")
-                    }else if (savedSessionManager.getLanguage() == "Japanese") {
+                    } else if (savedSessionManager.getLanguage() == "Japanese") {
                         locale = Locale.forLanguageTag("ja")
-                    }else if (savedSessionManager.getLanguage() == "German") {
+                    } else if (savedSessionManager.getLanguage() == "German") {
                         locale = Locale.forLanguageTag("de")
-                    }else if (savedSessionManager.getLanguage() == "Italian") {
+                    } else if (savedSessionManager.getLanguage() == "Italian") {
                         locale = Locale.forLanguageTag("it")
                     }
                     mTextToSpeech!!.language = locale
+
+
                 }
                 val defaultEngine: String = mTextToSpeech!!.defaultEngine
 
@@ -163,7 +165,7 @@ class TabTwoFragment :
                 Log.e("LOG_TAG", "TTS Initilization Failed")
             }
         }
-
+        val premiumFeatures = inAppPurchaseSM.getBoolean(SessionManager.isPremium)
         list = arrayListOf()
         adapter =
             TabsAdapter(requireActivity(), list, savedSessionManagerVoice, object : MoreDotClick {
@@ -174,23 +176,33 @@ class TabTwoFragment :
 
             }, object : OnClickAnnouncementDialog {
                 override fun clickOnAnnouncementDialog(list: Data) {
-                    showAnnouncementDialog(list)
+                    if (premiumFeatures) {
+                        voiceForAccountRead(accountName, list)
+                    } else {
+                        showAnnouncementDialog(list)
+                    }
                 }
 
             }, object : OnClickAnnouncement {
                 override fun clickOnAnnouncement(list: Data) {
-//                    speechToText(accountName, list)
-                    voiceForAccountRead(accountName, list)
+                    if (premiumFeatures) {
+                        voiceForAccountRead(accountName, list)
+                    } else {
+                        speechToText(accountName, list)
+                    }
                 }
 
             })
         mBinding.rvIncome.adapter = adapter
     }
+
     private fun voiceForAccountRead(accountName: String, list: Data) {
         returnz = Constant.convertNumericToSpokenWords(
             list.amount, savedSessionManagerCurrency.getCurrency()
         )
-        val completeText = "Your $accountName account balance ending in ${list.account} is $returnz"
+
+        val completeText =
+            "Your $accountName account balance ending in ${list.account_code} is ${list.amount}"
 
         val engine = pref.getString(SessionManager.ENGINEFORAPI)
         val voiceId = pref.getString(SessionManager.VOICEFORAPI)
@@ -306,7 +318,7 @@ class TabTwoFragment :
             }
 
             errorResponse.observe(this@TabTwoFragment) { message ->
-                if (isVisible){
+                if (isVisible) {
                     if (message != null) {
                         dialogClass.showErrorMessageDialog(message)
                     }
@@ -345,7 +357,7 @@ class TabTwoFragment :
         }
     }
 
-    fun showDotClickDialog(list: Data, greaterValue: Boolean) {
+    private fun showDotClickDialog(list: Data, greaterValue: Boolean) {
         val dialog = Dialog(requireActivity())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
@@ -425,7 +437,7 @@ class TabTwoFragment :
         alertDialog.show()
     }
 
-    fun setDataInDeleteBankAccount(strHeaderId: String) {
+    private fun setDataInDeleteBankAccount(strHeaderId: String) {
         viewModel.progressObservable.value = true
         requireActivity().application.FCM_TOKEN.let {
             val apiBody = JsonObject()
@@ -660,60 +672,64 @@ class TabTwoFragment :
     }
 
     private fun speakText(text: String) {
-        if (mTextToSpeech!!.isSpeaking) {
-            mTextToSpeech!!.stop()
-        }
+        try {
+            if (mTextToSpeech!!.isSpeaking) {
+                mTextToSpeech!!.stop()
+            }
 
-        mTextToSpeech!!.setPitch(1.toFloat())
-        mTextToSpeech!!.setSpeechRate(0.9.toFloat())
+            mTextToSpeech!!.setPitch(1.toFloat())
+            mTextToSpeech!!.setSpeechRate(0.9.toFloat())
 
-        if (savedSessionManagerVoice.getAnnouncementVoice() == "Male") {
-            val availableVoices: Set<Voice> = mTextToSpeech!!.voices
-            var selectedVoice: Voice? = null
-            for (voice in availableVoices) {
-                if (savedSessionManager.getLanguage() == "Arabic") {
-                    if (voice.name == "ar-xa-x-ard-local") {
-                        selectedVoice = voice
-                        mTextToSpeech!!.voice = selectedVoice
-                        break
+            if (savedSessionManagerVoice.getAnnouncementVoice() == "Male") {
+                val availableVoices: Set<Voice> = mTextToSpeech!!.voices
+                var selectedVoice: Voice? = null
+                for (voice in availableVoices) {
+                    if (savedSessionManager.getLanguage() == "Arabic") {
+                        if (voice.name == "ar-xa-x-ard-local") {
+                            selectedVoice = voice
+                            mTextToSpeech!!.voice = selectedVoice
+                            break
+                        }
+                    } else {
+                        if (voice.name == "en-us-x-iom-local") {
+                            selectedVoice = voice
+                            mTextToSpeech!!.voice = selectedVoice
+                            break
+                        }
                     }
-                } else {
-                    if (voice.name == "en-us-x-iom-local") {
-                        selectedVoice = voice
-                        mTextToSpeech!!.voice = selectedVoice
-                        break
+                }
+            } else if (savedSessionManagerVoice.getAnnouncementVoice() == "Female") {
+                val availableVoices: Set<Voice> = mTextToSpeech!!.voices
+                var selectedVoice: Voice? = null
+                for (voice in availableVoices) {
+                    if (savedSessionManager.getLanguage() == "Arabic") {
+                        if (voice.name == "ar-xa-x-arc-network") {
+                            selectedVoice = voice
+                            mTextToSpeech!!.voice = selectedVoice
+                            break
+                        }
+                    } else {
+                        if (voice.name == "en-us-x-iog-network") {
+                            selectedVoice = voice
+                            mTextToSpeech!!.voice = selectedVoice
+                            break
+                        }
                     }
                 }
             }
-        } else if (savedSessionManagerVoice.getAnnouncementVoice() == "Female") {
-            val availableVoices: Set<Voice> = mTextToSpeech!!.voices
-            var selectedVoice: Voice? = null
-            for (voice in availableVoices) {
-                if (savedSessionManager.getLanguage() == "Arabic") {
-                    if (voice.name == "ar-xa-x-arc-network") {
-                        selectedVoice = voice
-                        mTextToSpeech!!.voice = selectedVoice
-                        break
-                    }
-                } else {
-                    if (voice.name == "en-us-x-iog-network") {
-                        selectedVoice = voice
-                        mTextToSpeech!!.voice = selectedVoice
-                        break
-                    }
-                }
+
+            val words: List<String> = text.split("*")
+
+            for (word in words) {
+                mTextToSpeech!!.speak(word, TextToSpeech.QUEUE_ADD, null, null)
+                // Add a short pause between words (adjust the length as needed)
+                mTextToSpeech!!.playSilence(70, TextToSpeech.QUEUE_ADD, null)
             }
+
+        } catch (e: Exception) {
+            Log.e("catchError", e.message.toString())
         }
 
-        val words: List<String> = text.split("*")
-
-        for (word in words) {
-            mTextToSpeech!!.speak(word, TextToSpeech.QUEUE_ADD, null, null)
-            // Add a short pause between words (adjust the length as needed)
-            mTextToSpeech!!.playSilence(70, TextToSpeech.QUEUE_ADD, null)
-        }
-
-//        mTextToSpeech!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
     private fun speechToText(accountName: String, list: Data) {

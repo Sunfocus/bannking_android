@@ -55,6 +55,7 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
             apiBody.addProperty("LanguageCode", language)
             apiBody.addProperty("Text", completeText)
             apiBody.addProperty("OutputFormat", "mp3")
+            apiBody.addProperty("SampleRate", "48000")
         } catch (e: JSONException) {
             e.printStackTrace()
         }
@@ -86,6 +87,7 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
             override fun onFailure(call: Call<PostVoiceResponse>, t: Throwable) {
                 progressObservable.value = false
             }
+
         })
         return mutableLiveData
     }

@@ -482,24 +482,29 @@ class SoundActivity :
         binding!!.spinnerCL.setOnClickListener {
             openBottomSheet()
         }
-
+        val premiumFeatures =  inAppPurchaseSM.getBoolean(SessionManager.isPremium)
         binding!!.btnSaveAudio.setOnClickListener {
-            val userToken = sessionManager.getString(SessionManager.USERTOKEN)
-            if (voiceForApi.isEmpty() && engineForApi.isEmpty() && languageCodeForAPI.isEmpty()) {
+            if (premiumFeatures){
+                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+                if (voiceForApi.isEmpty() && engineForApi.isEmpty() && languageCodeForAPI.isEmpty()) {
+                    Toast.makeText(
+                        this@SoundActivity, "Please select any one voice maker!", Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    viewModel.updateVoiceMakerApi(
+                        userToken,
+                        languageCodeForAPI,
+                        languageNameForAPI,
+                        voiceForApi,
+                        engineForApi,
+                        voiceGender
+                    )
+                }
+            }else{
                 Toast.makeText(
-                    this@SoundActivity, "Please select any one voice maker!", Toast.LENGTH_SHORT
+                    this@SoundActivity, "Upgrade now to  unlock unlimited access to hidden features and enjoy premium benefits!", Toast.LENGTH_SHORT
                 ).show()
-            } else {
-                viewModel.updateVoiceMakerApi(
-                    userToken,
-                    languageCodeForAPI,
-                    languageNameForAPI,
-                    voiceForApi,
-                    engineForApi,
-                    voiceGender
-                )
             }
-
         }
     }
 

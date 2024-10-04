@@ -17,7 +17,6 @@ import com.bannking.app.core.BaseActivity
 import com.bannking.app.model.retrofitResponseModel.languageModel.Data
 import com.bannking.app.utils.CheckBoxListener
 import com.bannking.app.utils.Constants
-import com.bannking.app.utils.DialogClass
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -49,6 +48,7 @@ class LanguageAdapter : RecyclerView.Adapter<LanguageAdapter.ViewHolder> {
         )
     }
 
+    @Suppress("DEPRECATION")
     @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: ViewHolder, pos: Int) {
         val position = holder.adapterPosition
@@ -71,28 +71,29 @@ class LanguageAdapter : RecyclerView.Adapter<LanguageAdapter.ViewHolder> {
 //        holder.radioButton.isChecked = position == selectedPosition
 
         holder.radioButton.setOnCheckedChangeListener { _, b ->
-          /*  if (BaseActivity.isPremium){*/
-                if (b) {
-                    selectedPosition = holder.adapterPosition
-                    itemClickListener.onClickCheckBox(
-                        arrayList[position].id,
-                        Constants.CLICKLANGUAGE,
-                        name = arrayList[position].name
-                    )
-                }
-           /* }else{
-                val dialogClass=DialogClass(context)
-                dialogClass.showAccountNotSubscriptionDialog(context.resources.getString(R.string.str_non_premium_message))
-                holder.radioButton.isChecked=false
-                notifyDataSetChanged()
-            }*/
+            /*  if (BaseActivity.isPremium){*/
+            if (b) {
+                selectedPosition = holder.adapterPosition
+                itemClickListener.onClickCheckBox(
+                    arrayList[position].id,
+                    Constants.CLICKLANGUAGE,
+                    name = arrayList[position].name
+                )
+            }
+            /* }else{
+                 val dialogClass=DialogClass(context)
+                 dialogClass.showAccountNotSubscriptionDialog(context.resources.getString(R.string.str_non_premium_message))
+                 holder.radioButton.isChecked=false
+                 notifyDataSetChanged()
+             }*/
 
         }
+
         Glide.with(context)
             .asBitmap()
             .load(Constants.IMG_BASE_URL + arrayList[position].img)
-            .placeholder(R.drawable.glide_dot) //<== will simply not work:
-            .error(R.drawable.glide_warning) // <== is also useless
+            .placeholder(R.drawable.glide_dot)
+            .error(R.drawable.glide_warning)
             .into(object : SimpleTarget<Bitmap?>() {
                 override fun onResourceReady(
                     resource: Bitmap,
@@ -102,16 +103,15 @@ class LanguageAdapter : RecyclerView.Adapter<LanguageAdapter.ViewHolder> {
                 }
 
             })
+
     }
 
     override fun getItemId(position: Int): Long {
         return position.toLong()
     }
-
     override fun getItemViewType(position: Int): Int {
         return position
     }
-
     override fun getItemCount(): Int {
         return arrayList.size
     }

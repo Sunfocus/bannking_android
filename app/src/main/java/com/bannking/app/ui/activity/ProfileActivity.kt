@@ -553,7 +553,7 @@ class ProfileActivity :
     private fun updateUi(data: com.bannking.app.model.retrofitResponseModel.userModel.Data?) {
         val setdata: com.bannking.app.model.retrofitResponseModel.userModel.Data =
             data ?: userModel!!
-        Log.d("hjdsffsjsdfds", setdata.image.toString())
+
         if (setdata.image != null) {
             Glide.with(this@ProfileActivity).load(Constants.IMG_BASE_URL + setdata.image)
                 .into(binding!!.profileImage)
@@ -623,7 +623,7 @@ class ProfileActivity :
 
 //            switchNotification.isChecked = sessionManager.getBoolean(SessionManager.isNotification)
 
-            Log.e("fgfdjhgkjdfhgjdf", userModel?.notification!!.toInt().toString())
+
 
             switchNotification.isChecked = userModel?.notification_status!! == true
 
@@ -923,7 +923,6 @@ class ProfileActivity :
             if (model.status == 200) {
                 if (model.data != null) {
                     languageDataList = model.data!!
-                    Log.d("sdfsdfjsdfsdf", model.data!!.toString())
                     model.data?.let { languageAdapter.updateList(it) }
                 }
             }

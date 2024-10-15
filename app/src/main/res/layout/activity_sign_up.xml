@@ -7,295 +7,318 @@
     android:background="@drawable/background_gradiant"
     tools:context=".ui.activity.SignUpActivity">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/img_back"
-        android:layout_width="wrap_content"
-        android:layout_height="?actionBarSize"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:src="@drawable/ic_back_white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/ll_logos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:orientation="horizontal"
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="190dp"
-            android:layout_height="50dp"
-            android:src="@drawable/logo_text" />
-
-    </LinearLayout>
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvItsFree"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="@string/it_s_free"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_logos" />
-
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/edt_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/edittext_border_shape"
-        android:backgroundTint="@color/white"
-        android:hint="@string/str_email"
-        android:minHeight="45dp"
-        android:paddingHorizontal="10dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/clr_dark_gray"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvItsFree" />
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/etFirstName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/edittext_border_shape"
-        android:backgroundTint="@color/white"
-        android:hint="@string/first_name"
-        android:minHeight="45dp"
-        android:paddingHorizontal="10dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/clr_dark_gray"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edt_email" />
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/edt_username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/edittext_border_shape"
-        android:backgroundTint="@color/white"
-        android:hint="@string/str_username"
-        android:minHeight="45dp"
-        android:paddingHorizontal="10dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/clr_dark_gray"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etFirstName" />
-
-
-    <RelativeLayout
-        android:id="@+id/rlEditPass"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/edittext_border_shape"
-        android:backgroundTint="@color/white"
-        app:layout_constraintTop_toBottomOf="@+id/edt_username">
-
-        <EditText
-            android:id="@+id/edt_password"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_toStartOf="@+id/img_password_toggle"
-            android:background="@null"
-            android:hint="@string/str_password"
-            android:inputType="textPassword"
-            android:maxLines="1"
-            android:paddingHorizontal="10dp"
-            android:singleLine="true"
-            android:textAlignment="viewStart"
-            android:textColor="@color/black"
-            android:textColorHint="@color/clr_dark_gray"
-            android:textDirection="anyRtl"
-            android:textSize="14sp" />
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/img_password_toggle"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerInParent="false"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center"
-            android:layout_marginEnd="10dp"
-            android:padding="3dp"
-            android:src="@drawable/ic_eye_close"
-            app:tint="@color/colorPrimary" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_back"
+                android:layout_width="wrap_content"
+                android:layout_height="?actionBarSize"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:src="@drawable/ic_back_white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <LinearLayout
+                android:id="@+id/ll_logos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-    </RelativeLayout>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="190dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/logo_text" />
 
-    <RelativeLayout
-        android:id="@+id/rlConfirm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/edittext_border_shape"
-        android:backgroundTint="@color/white"
-        app:layout_constraintTop_toBottomOf="@+id/rlEditPass">
+            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvItsFree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="@string/it_s_free"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ll_logos" />
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edt_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/edittext_border_shape"
+                android:backgroundTint="@color/white"
+                android:hint="@string/str_email"
+                android:minHeight="45dp"
+                android:paddingHorizontal="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/clr_dark_gray"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvItsFree" />
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etFirstName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/edittext_border_shape"
+                android:backgroundTint="@color/white"
+                android:hint="@string/first_name"
+                android:minHeight="45dp"
+                android:paddingHorizontal="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/clr_dark_gray"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edt_email" />
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edt_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/edittext_border_shape"
+                android:backgroundTint="@color/white"
+                android:hint="@string/str_username"
+                android:minHeight="45dp"
+                android:paddingHorizontal="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/clr_dark_gray"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etFirstName" />
+            <RelativeLayout
+                android:id="@+id/rlEditPass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/edittext_border_shape"
+                android:backgroundTint="@color/white"
+                app:layout_constraintTop_toBottomOf="@+id/edt_username">
 
-        <EditText
-            android:id="@+id/edt_cnf_password"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_toStartOf="@+id/img_password_conf_toggle"
-            android:background="@null"
-            android:hint="@string/str_confirm_password"
-            android:inputType="textPassword"
-            android:maxLines="1"
-            android:paddingHorizontal="10dp"
-            android:singleLine="true"
-            android:textAlignment="viewStart"
-            android:textColor="@color/black"
-            android:textColorHint="@color/clr_dark_gray"
-            android:textDirection="anyRtl"
-            android:textSize="14sp" />
+                <EditText
+                    android:id="@+id/edt_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_toStartOf="@+id/img_password_toggle"
+                    android:background="@null"
+                    android:hint="@string/str_password"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:paddingHorizontal="10dp"
+                    android:singleLine="true"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/clr_dark_gray"
+                    android:textDirection="anyRtl"
+                    android:textSize="14sp" />
 
-        <ImageView
-            android:id="@+id/img_password_conf_toggle"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerInParent="false"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center"
-            android:layout_marginEnd="10dp"
-            android:padding="3dp"
-            android:src="@drawable/ic_eye_close"
-            app:tint="@color/colorPrimary" />
+                <ImageView
+                    android:id="@+id/img_password_toggle"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="false"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="10dp"
+                    android:padding="3dp"
+                    android:src="@drawable/ic_eye_close"
+                    app:tint="@color/colorPrimary" />
 
-    </RelativeLayout>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/rlConfirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/edittext_border_shape"
+                android:backgroundTint="@color/white"
+                app:layout_constraintTop_toBottomOf="@+id/rlEditPass">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txt_privacy_policy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/source_sans_regular"
-        android:text="@string/by_clicking_the_sign_up_button_you_agree_to_our"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="12sp"
-        app:layout_constraintTop_toBottomOf="@+id/rlConfirm" />
+                <EditText
+                    android:id="@+id/edt_cnf_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_toStartOf="@+id/img_password_conf_toggle"
+                    android:background="@null"
+                    android:hint="@string/str_confirm_password"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:paddingHorizontal="10dp"
+                    android:singleLine="true"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/clr_dark_gray"
+                    android:textDirection="anyRtl"
+                    android:textSize="14sp" />
 
-    <LinearLayout
-        android:id="@+id/llPrivacyTerm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_privacy_policy">
+                <ImageView
+                    android:id="@+id/img_password_conf_toggle"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="false"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="10dp"
+                    android:padding="3dp"
+                    android:src="@drawable/ic_eye_close"
+                    app:tint="@color/colorPrimary" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvTermCondition"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/terms_conditions"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
+            </RelativeLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/txt_privacy_policy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/source_sans_regular"
+                android:text="@string/by_clicking_the_sign_up_button_you_agree_to_our"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@+id/rlConfirm" />
+            <LinearLayout
+                android:id="@+id/llPrivacyTerm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_privacy_policy">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:layout_marginEnd="2dp"
-            android:text="@string/and"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvTermCondition"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/terms_conditions"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvPolicy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/privacy_policy"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:text="@string/and"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
 
-    </LinearLayout>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvPolicy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/privacy_policy"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_sign_up"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="30dp"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/btn_first_bg"
-        android:text="@string/str_sign_up"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@+id/llPrivacyTerm" />
+            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_sign_up"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/btn_first_bg"
+                android:text="@string/str_sign_up"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                app:layout_constraintTop_toBottomOf="@+id/llPrivacyTerm" />
+            <LinearLayout
+                android:id="@+id/LLGoogleSign"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/btn_first_bg"
+                android:backgroundTint="@color/black"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="@dimen/_11sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_sign_up">
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/signInGoogle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:layout_marginStart="@dimen/_minus10sdp"
+                    android:src="@drawable/google_ph" />
 
-        android:layout_marginHorizontal="30dp"
-        app:layout_constraintTop_toBottomOf="@+id/btn_sign_up" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/signInGoogle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:text="@string/str_sign_in"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/txt_sing_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/have_an_account"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/LLGoogleSign" />
+            <LinearLayout
+                android:id="@+id/LLVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="@dimen/_20sdp"
+                android:gravity="bottom"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/txt_sing_in"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txt_sing_in"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/have_an_account"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signInGoogle" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_banking_logo" />
 
-    <LinearLayout
-        android:id="@+id/LLVersion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:gravity="bottom"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_banking_logo" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvVersion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:text="1.0.6"
-            android:textColor="@color/white"
-            android:textSize="11sp" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvVersion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:text="1.0.6"
+                    android:textColor="@color/white"
+                    android:textSize="11sp" />
 
 
-    </LinearLayout>
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
 
     <!--<LinearLayout

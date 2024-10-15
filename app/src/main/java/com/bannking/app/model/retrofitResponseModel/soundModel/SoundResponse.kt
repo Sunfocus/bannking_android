@@ -18,5 +18,6 @@ data class Voices(
     val VoiceEffects: List<String>,
     val VoiceGender: String,
     val VoiceId: String,
-    val VoiceWebname: String
+    val VoiceWebname: String,
+    var checkValue:Boolean?=false
 )

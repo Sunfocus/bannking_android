@@ -18,8 +18,7 @@ import com.bannking.app.model.retrofitResponseModel.soundModel.Voices
 class AudioTypeAdapter(
     private var mContext: Context,
     private var VoicesParameter: ArrayList<Voices>,
-    private val onClickItem: AudioPlayListener,
-    private var selectedPosition: Int
+    private val onClickItem: AudioPlayListener
 ) : RecyclerView.Adapter<AudioTypeViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioTypeViewHolder {
@@ -31,19 +30,15 @@ class AudioTypeAdapter(
         return VoicesParameter.size
     }
 
-    fun updateSelectedPosition(position: Int) {
-        selectedPosition = position
-    }
     override fun onBindViewHolder(
-        holder: AudioTypeViewHolder,
-        @SuppressLint("RecyclerView") position: Int
+        holder: AudioTypeViewHolder, @SuppressLint("RecyclerView") position: Int
     ) {
         /**Set dark mode**/
 
 //        setDarkMode(holder)
 
         if (UiExtension.isDarkModeEnabled()) {
-            if (position == selectedPosition) {
+            if (VoicesParameter[position].checkValue == true) {
                 holder.clAudioItem.setBackgroundResource(R.drawable.drawable_selected_night)
             } else {
                 holder.clAudioItem.setBackgroundResource(R.drawable.drawable_unselected_night)
@@ -51,7 +46,7 @@ class AudioTypeAdapter(
             holder.tvAudioName.setTextColor(ContextCompat.getColor(mContext, R.color.white))
             holder.tvSubAudioName.setTextColor(ContextCompat.getColor(mContext, R.color.white))
         } else {
-            if (position == selectedPosition) {
+            if (VoicesParameter[position].checkValue == true) {
                 holder.clAudioItem.setBackgroundResource(R.drawable.drawable_selected)
             } else {
                 holder.clAudioItem.setBackgroundResource(R.drawable.bg_gender_audio)
@@ -60,7 +55,9 @@ class AudioTypeAdapter(
             holder.tvSubAudioName.setTextColor(ContextCompat.getColor(mContext, R.color.black))
         }
 
-        holder.ivPlayAudio.setOnClickListener {
+        holder.itemView.setOnClickListener {
+            VoicesParameter.map { it.checkValue = false }
+            VoicesParameter[position].checkValue = true
             onClickItem.clickedItem(position, VoicesParameter[position])
         }
         holder.tvAudioName.text = VoicesParameter[position].VoiceWebname

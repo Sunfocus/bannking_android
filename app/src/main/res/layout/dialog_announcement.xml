@@ -25,11 +25,42 @@
 
 
         <LinearLayout
-            android:id="@+id/linear"
+            android:id="@+id/LLTextName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/img_close"
             android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvMan"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Man"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14ssp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvWomMan"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Woman"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14ssp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/linear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/LLTextName"
+            android:orientation="horizontal">
+
 
             <RadioGroup
                 android:id="@+id/radiogrp"
@@ -37,50 +68,49 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-
                 <RadioButton
                     android:id="@+id/btn_maleVoice"
-                    android:padding="10dp"
-                    android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
                     android:layout_marginVertical="10dp"
+                    android:layout_weight="1"
                     android:background="@drawable/edittext_border_shape"
                     android:drawableEnd="@drawable/ic_male"
+                    android:padding="10dp"
                     android:textAllCaps="false" />
 
                 <RadioButton
                     android:id="@+id/btn_femaleVoice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="10dp"
                     android:layout_marginHorizontal="10dp"
                     android:layout_marginVertical="10dp"
+                    android:layout_weight="1"
                     android:background="@drawable/edittext_border_shape"
                     android:drawableEnd="@drawable/ic_female"
+                    android:padding="10dp"
                     android:textAllCaps="false" />
 
                 <RadioButton
                     android:id="@+id/btn_otherVoice"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="30dp"
                     android:layout_marginVertical="10dp"
                     android:background="@drawable/edittext_border_shape"
                     android:text="Male Voice"
-                    android:textAllCaps="false" />
+                    android:textAllCaps="false"
+                    android:visibility="gone" />
             </RadioGroup>
 
         </LinearLayout>
 
         <Button
             android:id="@+id/btn_schedule_transfer"
-            android:layout_below="@id/linear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/linear"
             android:layout_marginHorizontal="30dp"
             android:layout_marginVertical="10dp"
             android:background="@drawable/edittext_border_shape"

@@ -1,6 +1,7 @@
 package com.bannking.app.ui.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.media.MediaPlayer
 import android.util.DisplayMetrics
 import android.util.Log
@@ -24,6 +25,7 @@ import com.bannking.app.model.retrofitResponseModel.soundModel.SoundResponse
 import com.bannking.app.model.retrofitResponseModel.soundModel.UpdateSoundResponse
 import com.bannking.app.model.retrofitResponseModel.soundModel.Voices
 import com.bannking.app.model.viewModel.SoundViewModel
+import com.bannking.app.utils.AdController
 import com.bannking.app.utils.SessionManager
 import com.bannking.app.utils.SharedPref
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -38,7 +40,7 @@ import java.io.UnsupportedEncodingException
 class SoundActivity :
     BaseActivity<SoundViewModel, ActivitySoundBinding?>(SoundViewModel::class.java),
     AudioPlayListener {
-    private var selectedPosition: Int = -1
+    private var premiumFeatures: Boolean = false
     private var voiceForApi = ""
     private var engineForApi = ""
     private var voiceGender = ""
@@ -85,7 +87,7 @@ class SoundActivity :
     override fun initialize() {
         setUIColor()
         val voiceGenderName = pref.getString(SessionManager.VOICEGENDER)
-
+        premiumFeatures = inAppPurchaseSM.getBoolean(SessionManager.isPremium)
         if (voiceGenderName.isNotEmpty()) {
             when (voiceGenderName) {
                 "Child" -> {
@@ -109,12 +111,11 @@ class SoundActivity :
                 }
 
                 else -> {
-                    childSelect()
-                    setAdapter(childVoices)
+                    maleSelect()
+                    setAdapter(maleVoices)
                 }
             }
         }
-
 
 
     }
@@ -180,8 +181,8 @@ class SoundActivity :
 
                             childVoices =
                                 model.data.voices_list.filter { it.VoiceGender == "Male (Child)" || it.VoiceGender == "Female (Child)" } as ArrayList
-                            childSelect()
-                            setAdapter(childVoices)
+                            maleSelect()
+                            setAdapter(maleVoices)
                         }
 
                     } else dialogClass.showError("Something went wrong")
@@ -240,7 +241,6 @@ class SoundActivity :
 
         }
     }
-
 
     override fun onStop() {
         super.onStop()
@@ -482,9 +482,9 @@ class SoundActivity :
         binding!!.spinnerCL.setOnClickListener {
             openBottomSheet()
         }
-        val premiumFeatures =  inAppPurchaseSM.getBoolean(SessionManager.isPremium)
+        premiumFeatures = inAppPurchaseSM.getBoolean(SessionManager.isPremium)
         binding!!.btnSaveAudio.setOnClickListener {
-            if (premiumFeatures){
+            if (premiumFeatures) {
                 val userToken = sessionManager.getString(SessionManager.USERTOKEN)
                 if (voiceForApi.isEmpty() && engineForApi.isEmpty() && languageCodeForAPI.isEmpty()) {
                     Toast.makeText(
@@ -500,14 +500,12 @@ class SoundActivity :
                         voiceGender
                     )
                 }
-            }else{
-                Toast.makeText(
-                    this@SoundActivity, "Upgrade now to  unlock unlimited access to hidden features and enjoy premium benefits!", Toast.LENGTH_SHORT
-                ).show()
+            } else {
+                val intent = Intent(this, UpgradeActivity::class.java)
+                startActivity(intent)
             }
         }
     }
-
 
     private fun allSelect() {
         if (UiExtension.isDarkModeEnabled()) {
@@ -713,17 +711,20 @@ class SoundActivity :
 
         if (getWhichVoice.isNotEmpty()) {
             val checkedPosition = VoicesParameter.indexOfFirst { it.VoiceId == getWhichVoice }
-            selectedPosition = checkedPosition
+            if (checkedPosition != -1) {
+                VoicesParameter[checkedPosition].checkValue = true
+                VoicesParameter.sortedBy { it.checkValue }
+            }
         }
-
         if (VoicesParameter.isEmpty()) {
             binding!!.tvItemsNotFound.visibility = View.VISIBLE
             binding!!.rvAudioTpe.visibility = View.GONE
 
         } else {
+
             binding!!.rvAudioTpe.visibility = View.VISIBLE
             binding!!.tvItemsNotFound.visibility = View.GONE
-            audioTypeAdapter = AudioTypeAdapter(this, VoicesParameter, this,selectedPosition)
+            audioTypeAdapter = AudioTypeAdapter(this, VoicesParameter, this)
             binding!!.rvAudioTpe.adapter = audioTypeAdapter
         }
     }
@@ -733,10 +734,14 @@ class SoundActivity :
         engineForApi = voices.Engine
         voiceForApi = voices.VoiceId
         languageCodeForAPI = voices.Language
-        selectedPosition = position
-        audioTypeAdapter.updateSelectedPosition(position)
         audioTypeAdapter.notifyDataSetChanged()
-        viewModel.postVoiceInLanguageList(voices.Engine, voices.VoiceId, voices.Language)
+        if (premiumFeatures) {
+            viewModel.postVoiceInLanguageList(voices.Engine, voices.VoiceId, voices.Language)
+        } else {
+            AdController.showInterAd(this@SoundActivity, null, 0) {
+                viewModel.postVoiceInLanguageList(voices.Engine, voices.VoiceId, voices.Language)
+            }
+        }
     }
 
 }

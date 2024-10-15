@@ -122,8 +122,8 @@
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/source_sans_regular"
                     android:text="@string/str_transfer_from"
-                    android:textColor="@color/grey"
                     android:textAlignment="viewStart"
+                    android:textColor="@color/grey"
                     android:textDirection="anyRtl" />
 
                 <LinearLayout
@@ -225,15 +225,17 @@
 
         </ScrollView>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_pay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="53dp"
             android:background="@drawable/edittext_border_shape"
+            android:backgroundTint="@color/str_orange"
             android:text="@string/str_pay"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
     </RelativeLayout>
 
 

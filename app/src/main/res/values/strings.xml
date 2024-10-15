@@ -196,6 +196,7 @@
     <string name="str_remove_header">Are you sure.\nyou want to delete account title?</string>
     <string name="str_you_have_only_tab_available">You have only tab available</string>
     <string name="str_hide_all_ads">Hide all ads</string>
+    <string name="unlimited_voice_reader_changes">Unlimited voice reader changes</string>
     <string name="str_customize_budget_funds_and_goals">Customize budget, funds and goals</string>
     <string name="str_transaction_creation_accounts_and_tracking">Transaction creation, accounts and tracking</string>
     <string name="str_budget_adjustment_budgeting_lessons_and_more">Budget adjustment, budgeting lessons and more</string>
@@ -303,5 +304,6 @@
     <string name="child">Child</string>
     <string name="save">Save</string>
     <string name="unrecognized_transactions">Skip the hassle of manual tracking! Securely connect all your bank accounts to see live transactions in real-time, all in one place. Effortlessly manage your finances and monitor your spending, while easily flagging fraudulent or unrecognized transactions.</string>
+
 
 </resources>

@@ -13,7 +13,6 @@ class RetrofitClient private constructor() {
     val myApi: ApiInterFace
     private var client = OkHttpClient.Builder()
     private val logig: HttpLoggingInterceptor = HttpLoggingInterceptor()
-
     companion object {
         @get:Synchronized
         var instance: RetrofitClient? = null
@@ -25,7 +24,6 @@ class RetrofitClient private constructor() {
             }
             private set
     }
-
     init {
 
         val logInterceptor by lazy {

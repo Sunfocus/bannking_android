@@ -89,6 +89,8 @@ class ProfileActivity :
 
         this.viewModel = viewModel
         val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+        Log.d("userToken", userToken.toString())
+
         viewModel.setDataInLanguageList(userToken)
         viewModel.setDataInCurrencyList(userToken)
         //   textToSpeech = TextToSpeech(this@ProfileActivity, this)
@@ -114,13 +116,13 @@ class ProfileActivity :
                         locale = Locale.forLanguageTag("pt")
                     } else if (savedSessionManager.getLanguage() == "Dutch") {
                         locale = Locale.forLanguageTag("nl")
-                    }else if (savedSessionManager.getLanguage() == "Hindi") {
+                    } else if (savedSessionManager.getLanguage() == "Hindi") {
                         locale = Locale.forLanguageTag("hi")
-                    }else if (savedSessionManager.getLanguage() == "Japanese") {
+                    } else if (savedSessionManager.getLanguage() == "Japanese") {
                         locale = Locale.forLanguageTag("ja")
-                    }else if (savedSessionManager.getLanguage() == "German") {
+                    } else if (savedSessionManager.getLanguage() == "German") {
                         locale = Locale.forLanguageTag("de")
-                    }else if (savedSessionManager.getLanguage() == "Italian") {
+                    } else if (savedSessionManager.getLanguage() == "Italian") {
                         locale = Locale.forLanguageTag("it")
                     }
 
@@ -447,18 +449,22 @@ class ProfileActivity :
                                         updateLocale(Locales.Dutch)
                                         savedSessionManager.setLanguage("Dutch")
                                     }
+
                                     "Hindi" -> {
                                         updateLocale(Locales.Hindi)
                                         savedSessionManager.setLanguage("Hindi")
                                     }
+
                                     "Japanese" -> {
                                         updateLocale(Locales.Japanese)
                                         savedSessionManager.setLanguage("Japanese")
                                     }
+
                                     "German" -> {
                                         updateLocale(Locales.German)
                                         savedSessionManager.setLanguage("German")
                                     }
+
                                     "Italian" -> {
                                         updateLocale(Locales.Italian)
                                         savedSessionManager.setLanguage("Italian")
@@ -601,11 +607,8 @@ class ProfileActivity :
                 viewModel.setDataUpdateDataList(switchNotification.isChecked, userToken)
             }
             llBank.setOnClickListener {
-                Toast.makeText(
-                    this@ProfileActivity,
-                    "This feature is currently under development and will be available in a future update. Thank you for your patience!",
-                    Toast.LENGTH_SHORT
-                ).show()
+                val intent = Intent(this@ProfileActivity, BankActivity::class.java)
+                startActivity(intent)
             }
             tvVerified.setOnClickListener {
                 if (userModel!!.is_email_verified != 1) {
@@ -622,7 +625,6 @@ class ProfileActivity :
 
 
 //            switchNotification.isChecked = sessionManager.getBoolean(SessionManager.isNotification)
-
 
 
             switchNotification.isChecked = userModel?.notification_status!! == true
@@ -670,9 +672,8 @@ class ProfileActivity :
             }
 
             llVoice.setOnClickListener {
-                val intent = Intent(this@ProfileActivity,SoundActivity::class.java)
-                startActivity(intent)
-              /*  val bottomSheetDialog =
+                val intent = Intent(this@ProfileActivity, SoundActivity::class.java)
+                startActivity(intent)/*  val bottomSheetDialog =
                     BottomSheetDialog(this@ProfileActivity, R.style.NoBackgroundDialogTheme)
                 this@ProfileActivity.bottomSheetDialog = bottomSheetDialog
                 val view = LayoutInflater.from(this@ProfileActivity)

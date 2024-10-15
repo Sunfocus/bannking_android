@@ -28,6 +28,7 @@ import com.bannking.app.model.viewModel.SignInViewModel
 import com.bannking.app.network.RetrofitClient
 import com.bannking.app.utils.Constants
 import com.bannking.app.utils.SessionManager
+import com.bannking.app.utils.SharedPref
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -41,6 +42,7 @@ class SignInActivity :
     BaseActivity<SignInViewModel, ActivitySigninBinding>(SignInViewModel::class.java) {
     lateinit var viewModel: SignInViewModel
     private var isShowPassword = false
+    private lateinit var pref:SharedPref
     private lateinit var savedSessionManager: SessionManager
 
     override fun getBinding(): ActivitySigninBinding {
@@ -296,6 +298,9 @@ class SignInActivity :
                                 )
                                 if (commonResponseModel.code in 199..299) {
                                     if (mainModel.status == 200) {
+                                        pref = SharedPref(this@SignInActivity)
+                                        pref.saveBoolean("HideTransactions", true)
+
                                         sessionManager.setUserDetails(
                                             SessionManager.userData, mainModel.data!!
                                         )
@@ -458,6 +463,74 @@ class SignInActivity :
                                             "Dutch" -> {
                                                 if (this@SignInActivity.getCurrentLanguage() != Locales.Dutch) updateLocale(
                                                     Locales.Dutch
+                                                )
+                                                else {
+                                                    sessionManager.setBoolean(
+                                                        SessionManager.isDeleteORLogOut, false
+                                                    )
+                                                    val intent = Intent(
+                                                        this@SignInActivity,
+                                                        MainActivity::class.java
+                                                    )
+                                                    startActivity(intent)
+                                                    finish()
+                                                }
+                                            }
+
+                                            "Hindi" -> {
+                                                if (this@SignInActivity.getCurrentLanguage() != Locales.Hindi) updateLocale(
+                                                    Locales.Hindi
+                                                )
+                                                else {
+                                                    sessionManager.setBoolean(
+                                                        SessionManager.isDeleteORLogOut, false
+                                                    )
+                                                    val intent = Intent(
+                                                        this@SignInActivity,
+                                                        MainActivity::class.java
+                                                    )
+                                                    startActivity(intent)
+                                                    finish()
+                                                }
+                                            }
+
+                                            "Japanese" -> {
+                                                if (this@SignInActivity.getCurrentLanguage() != Locales.Japanese) updateLocale(
+                                                    Locales.Japanese
+                                                )
+                                                else {
+                                                    sessionManager.setBoolean(
+                                                        SessionManager.isDeleteORLogOut, false
+                                                    )
+                                                    val intent = Intent(
+                                                        this@SignInActivity,
+                                                        MainActivity::class.java
+                                                    )
+                                                    startActivity(intent)
+                                                    finish()
+                                                }
+                                            }
+
+                                            "German" -> {
+                                                if (this@SignInActivity.getCurrentLanguage() != Locales.German) updateLocale(
+                                                    Locales.German
+                                                )
+                                                else {
+                                                    sessionManager.setBoolean(
+                                                        SessionManager.isDeleteORLogOut, false
+                                                    )
+                                                    val intent = Intent(
+                                                        this@SignInActivity,
+                                                        MainActivity::class.java
+                                                    )
+                                                    startActivity(intent)
+                                                    finish()
+                                                }
+                                            }
+
+                                            "Italian" -> {
+                                                if (this@SignInActivity.getCurrentLanguage() != Locales.Italian) updateLocale(
+                                                    Locales.Italian
                                                 )
                                                 else {
                                                     sessionManager.setBoolean(

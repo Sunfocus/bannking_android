@@ -15,9 +15,6 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
-import android.view.MenuItem
-import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
@@ -42,7 +39,6 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
-import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*
 
 
@@ -55,6 +51,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
     lateinit var savedSessionManagerCurrency: SessionManager
     lateinit var savedSessionManagerLanguage: SessionManager
     private val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
+
     //Amit
     private lateinit var saveReviewManager: SessionManager
     private lateinit var reviewManager: ReviewManager
@@ -148,7 +145,8 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
             when {
                 ContextCompat.checkSelfPermission(
                     this, Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED -> {}
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                }
 
                 shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
                     showForcePermissionDialog()
@@ -165,6 +163,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
         }
 
     }
+
     //Amit
     private fun showForcePermissionDialog() {
         val forceDialog = AlertDialog.Builder(this).setTitle("Permission Required")
@@ -177,6 +176,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
 
         forceDialog.show()
     }
+
     //Amit
     private fun openAppSettings() {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -216,6 +216,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
             }
         }
     }
+
     //Amit
     private fun startReviewFlow() {
         reviewInfo?.let {
@@ -285,7 +286,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
                             viewModel.accountListData.value?.apiResponse,
                             AccountListModel::class.java
                         )
-                    if (accountListModel.data.isNotEmpty() && accountListModel!= null ) {
+                    if (accountListModel.data.isNotEmpty() && accountListModel != null) {
 
                         val intent = Intent(this@MainActivity, AccountMenuNewActivity::class.java)
                         val model =
@@ -313,28 +314,31 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
                 }
 
                 R.id.nav_spending_plan -> {
-                    Toast.makeText(
+                    val intent = Intent(this@MainActivity, BankActivity::class.java)
+                    startActivity(intent)
+
+                    /*Toast.makeText(
                         this@MainActivity,
                         "This feature is currently under development and will be available in a future update. Thank you for your patience!",
                         Toast.LENGTH_SHORT
-                    ).show()
+                    ).show()*/
 
-                /*    val model =
-                        gson.fromJson(
-                            viewModel.headerTitleList.value?.apiResponse,
-                            HeaderModel::class.java
-                        )
-                    val accountList =
-                        gson.fromJson(
-                            viewModel.accountListData.value?.apiResponse,
-                            AccountListModel::class.java
-                        )
-                    startActivityForResult(
-                        Intent(
-                            this@MainActivity, SpendingPlanActivity::class.java
-                        ).putExtra("ComeFrom", "Navigation")
-                            .putExtra("Headermodel", model).putExtra("accountList", accountList), Constants.MAIN_TO_SPENDING
-                    )*/
+                    /*    val model =
+                            gson.fromJson(
+                                viewModel.headerTitleList.value?.apiResponse,
+                                HeaderModel::class.java
+                            )
+                        val accountList =
+                            gson.fromJson(
+                                viewModel.accountListData.value?.apiResponse,
+                                AccountListModel::class.java
+                            )
+                        startActivityForResult(
+                            Intent(
+                                this@MainActivity, SpendingPlanActivity::class.java
+                            ).putExtra("ComeFrom", "Navigation")
+                                .putExtra("Headermodel", model).putExtra("accountList", accountList), Constants.MAIN_TO_SPENDING
+                        )*/
                 }
 
 
@@ -419,7 +423,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
 
         Glide.with(this@MainActivity)
             .asBitmap()
-            .load(Constants.IMG_BASE_URL+userModel!!.image)
+            .load(Constants.IMG_BASE_URL + userModel!!.image)
             .placeholder(R.drawable.glide_dot) //<== will simply not work:
             .error(R.drawable.glide_warning) // <== is also useless
             .into(object : SimpleTarget<Bitmap?>() {
@@ -430,7 +434,6 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
                     binding!!.imgProfile.setImageBitmap(resource)
                 }
             })
-
 
 
         val menu = binding!!.bottomNavigationBar.menu

@@ -117,6 +117,7 @@ class AccountCreatedFragment :
                     intent.putExtra("Headermodel", model)
                     intent.putExtra("accountList", accountList)
                     (requireActivity() as MainActivity).resultLauncher.launch(intent)
+                    (requireActivity() as MainActivity).overridePendingTransition(0, 0)
                 }
             } else {
                 val intent = Intent(requireActivity(), AccountMenuNewActivity::class.java)
@@ -129,6 +130,7 @@ class AccountCreatedFragment :
                 intent.putExtra("Headermodel", model)
                 intent.putExtra("accountList", accountList)
                 (requireActivity() as MainActivity).resultLauncher.launch(intent)
+                (requireActivity() as MainActivity).overridePendingTransition(0, 0)
             }
 
 
@@ -216,7 +218,7 @@ class AccountCreatedFragment :
                                         savedSessionManagerTab1.setTab1(model.data[0].name.toString())
                                     } else if (model.data.size == 2) {
                                         savedSessionManagerTab1.setTab1(model.data[0].name.toString())
-                                        savedSessionManagerTab2.setTab2(model.data[1].name.toString())
+                                        savedSessionManagerTab1.setTab1(model.data[1].name.toString())
                                     }
 
                                     mBinding.viewPager.adapter = sectionsPagerAdapter

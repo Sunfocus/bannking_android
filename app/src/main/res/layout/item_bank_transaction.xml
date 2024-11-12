@@ -43,6 +43,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvDateOfTrans" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTransactionId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="Transaction ID:"
+            android:textSize="@dimen/_12ssp"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTransactionDetails" />
+
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTransactionAmount"
@@ -58,7 +72,7 @@
             android:textSize="@dimen/_12ssp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvTransactionDetails" />
+            app:layout_constraintTop_toBottomOf="@+id/tvTransactionId" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTransactionDedCred"
@@ -74,7 +88,7 @@
             android:textSize="@dimen/_12ssp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvTransactionDetails" />
+            app:layout_constraintTop_toBottomOf="@+id/tvTransactionId" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

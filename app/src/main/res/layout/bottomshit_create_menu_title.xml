@@ -64,6 +64,16 @@
                 android:background="@drawable/edittext_border_shape"
                 android:text="@string/str_submit"
                 android:textAllCaps="false" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnDeleteTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/clr_red"
+                android:background="@drawable/edittext_border_shape"
+                android:text="@string/delete_account_title"
+                android:textAllCaps="false" />
 
 
         </LinearLayout>

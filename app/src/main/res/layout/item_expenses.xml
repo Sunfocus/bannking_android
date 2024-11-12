@@ -1,34 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cvAccountList"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="20dp"
-    android:id="@+id/cvAccountList"
     android:layout_marginVertical="10dp"
     android:background="@color/white"
     android:clipToPadding="false"
     android:outlineSpotShadowColor="@android:color/transparent"
     app:cardCornerRadius="8dp"
-    app:cardElevation="16dp"
-    tools:ignore="UnusedAttribute">
+    app:cardElevation="16dp">
 
-    <LinearLayout
-        android:id="@+id/llAccountList"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clAccountList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:orientation="horizontal"
         android:paddingVertical="12dp"
-        android:paddingStart="12dp"
-        android:weightSum="1">
+        android:paddingStart="12dp">
 
+        <!-- Inside Bank Section (Hidden by default) -->
         <LinearLayout
+            android:id="@+id/LLInsideBank"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/llImageContainer"
+     >
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -72,7 +76,6 @@
                     tools:text="Transaction code" />
             </RelativeLayout>
 
-
             <TextView
                 android:id="@+id/txt_amount"
                 android:layout_width="match_parent"
@@ -89,22 +92,94 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/source_sans_regular"
                 android:singleLine="true"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text="@string/str_available_balance"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Outside Bank Section -->
+        <LinearLayout
+            android:id="@+id/LLOutSideBank"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/llImageContainer"
+       >
+
+            <TextView
+                android:id="@+id/tvBankNameTab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:fontFamily="@font/source_sans_regular"
+                android:maxEms="10"
+                android:singleLine="true"
+                android:textColor="@color/clr_text"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                tools:text="Transaction Name" />
+
+            <TextView
+                android:id="@+id/txtSubBnkName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/source_sans_regular"
+                android:singleLine="true"
+                android:textColor="@color/clr_text"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                tools:text="Transaction code" />
+
+            <TextView
+                android:id="@+id/txtAmountBank"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/source_sans_regular"
+                android:singleLine="true"
+                android:textColor="@color/clr_text_blu"
+                android:textSize="28sp"
+                tools:text="$445.49" />
+
+            <TextView
+                android:id="@+id/tvAvailBalanceBank"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/source_sans_regular"
+                android:singleLine="true"
+                android:layout_marginTop="@dimen/_5sdp"
                 android:text="@string/str_available_balance"
                 android:textColor="@color/black"
                 android:textSize="12sp" />
 
         </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvChildSubBankTypeTab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/LLOutSideBank"
+            tools:listitem="@layout/item_bank_child" />
 
+        <!-- Image Section -->
         <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/llImageContainer"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/img_more"
-                android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:src="@drawable/ic_more" />
@@ -117,9 +192,15 @@
                 android:paddingEnd="10dp"
                 android:src="@drawable/ic_announce" />
 
+            <ImageView
+                android:id="@+id/imgBankArrowTab"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:src="@drawable/expand_down"
+                android:layout_gravity="end"
+                app:tint="@color/clr_blue" />
         </LinearLayout>
 
-
-    </LinearLayout>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

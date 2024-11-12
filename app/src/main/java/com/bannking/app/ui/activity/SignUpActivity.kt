@@ -374,7 +374,7 @@ class SignUpActivity : BaseActivity<OtpViewModel, ActivitySignUpBinding>(OtpView
            imgBack.setOnClickListener {
                 finish()
             }
-            signInGoogle.setOnClickListener {
+            LLGoogleSign.setOnClickListener {
                 signOut()
             }
 

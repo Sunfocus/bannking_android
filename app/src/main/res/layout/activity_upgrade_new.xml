@@ -265,6 +265,19 @@
                                 android:textStyle="bold"
                                 app:drawableStartCompat="@drawable/ic_upgrade_tick" />
 
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/source_sans_pro"
+                                android:paddingVertical="1dp"
+                                android:paddingStart="10dp"
+                                android:text="@string/connect_your_bank"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:drawableStartCompat="@drawable/ic_upgrade_tick" />
+
 
                         </LinearLayout>
 

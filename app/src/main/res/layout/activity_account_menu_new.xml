@@ -199,10 +199,10 @@
         android:id="@+id/txt_upgrade"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/bottomNavHeader"
         android:layout_marginHorizontal="30dp"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/edittext_border_shape"
         android:backgroundTint="@color/clr_pink_upgrade"
         android:fontFamily="@font/source_sans_regular"
@@ -213,5 +213,25 @@
         android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/nav_shape"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:elevation="10dp"
+        android:outlineProvider="paddedBounds"
+        android:padding="7dp"
+        app:elevation="20dp"
+        app:itemBackground="@drawable/top_corner_shape"
+        app:itemIconTint="@color/active_tab_color"
+        app:itemTextAppearanceActive="@style/BottomNavigationView"
+        app:itemTextAppearanceInactive="@style/BottomNavigationView"
+        app:itemTextColor="@color/active_tab_color"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/nav_menu" />
 
 </RelativeLayout>

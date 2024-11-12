@@ -1,8 +1,14 @@
 package com.bannking.app.ui.activity
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.bannking.app.R
@@ -10,10 +16,17 @@ import com.bannking.app.UiExtension
 import com.bannking.app.adapter.ExploreExpensesAdapter
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.databinding.ActivityExploreExpensesBinding
+import com.bannking.app.model.retrofitResponseModel.accountListModel.AccountListModel
 import com.bannking.app.model.retrofitResponseModel.exploreExpensesModel.Data
 import com.bannking.app.model.retrofitResponseModel.exploreExpensesModel.ExploreExpensesModel
+import com.bannking.app.model.retrofitResponseModel.headerModel.HeaderModel
 import com.bannking.app.model.viewModel.ExploreExpensesViewModel
+import com.bannking.app.utils.Constants
 import com.bannking.app.utils.SessionManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -235,9 +248,110 @@ class ExploreExpensesActivity :
     }
 
 
+    var resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val data: Intent? = result.data
+            if (result.resultCode == 1011) {
+                val intent = Intent(this@ExploreExpensesActivity, BudgetPlannerActivity::class.java)
+                intent.putExtra("SelectedMenu", data?.getStringExtra("SelectedMenu"))
+                resultLauncher2.launch(intent)
+            }
+        }
+
+    private var resultLauncher2 =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                viewModel.setIdInFilterDatanull(null)
+                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+//                viewModel.setDataInAccountList(userToken!!)
+                viewModel.setDataInHeaderTitleList(userToken)
+            }
+        }
+
+
     override fun onResume() {
         super.onResume()
         binding!!.txtUpgrade.isVisible = !isPremium
+
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+        viewModel.setDataInHeaderTitleList(userToken)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (userToken != null) {
+                viewModel.setDataInAccountList(userToken)
+            }
+        }, 100)
+
+        binding!!.bottomNavExpense.selectedItemId = R.id.nav_explore
+
+        binding!!.bottomNavExpense.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_account -> {
+                    val intent = Intent(this@ExploreExpensesActivity, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    finish()
+                }
+
+                R.id.nav_header -> {
+                    val accountListModel = gson.fromJson(
+                        viewModel.accountListData.value?.apiResponse, AccountListModel::class.java
+                    )
+                    if (accountListModel.data != null && accountListModel.data.isNotEmpty() && accountListModel != null) {
+
+                        val intent = Intent(this@ExploreExpensesActivity, AccountMenuNewActivity::class.java)
+                        val model = gson.fromJson(
+                            viewModel.headerTitleList.value?.apiResponse, HeaderModel::class.java
+                        )
+                        val accountList = gson.fromJson(
+                            viewModel.accountListData.value?.apiResponse,
+                            AccountListModel::class.java
+                        )
+                        intent.putExtra("Headermodel", model)
+                        intent.putExtra("accountList", accountList)
+                        resultLauncher.launch(intent)
+                    }
+
+                }
+
+                R.id.nav_spending_plan -> {
+                    val intent = Intent(this@ExploreExpensesActivity, HeaderForBankActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+
+                }
+
+                R.id.nav_explore -> {}
+
+                R.id.nav_menu -> {
+                    val intent = Intent(this@ExploreExpensesActivity, ProfileActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                }
+
+            }
+            true
+        }
+
+        val menu = binding!!.bottomNavExpense.menu
+        binding!!.bottomNavExpense.itemIconTintList = null
+        val menuItem = menu.findItem(R.id.nav_menu)
+        Glide.with(this).asBitmap().load(Constants.IMG_BASE_URL + userModel!!.image).apply(
+            RequestOptions.circleCropTransform().override(100, 100)
+                .placeholder(R.drawable.sample_user)
+        ).into(object : CustomTarget<Bitmap>() {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                menuItem?.icon = BitmapDrawable(resources, resource)
+            }
+            override fun onLoadCleared(placeholder: Drawable?) {
+
+            }
+
+        })
+
     }
 
     fun ellipse(angle: Float): Float {

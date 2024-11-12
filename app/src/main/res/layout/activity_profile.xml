@@ -165,7 +165,7 @@
             android:layout_marginTop="20dp"
             android:orientation="vertical"
             android:paddingHorizontal="30dp"
-            android:paddingBottom="40dp">
+            android:paddingBottom="@dimen/_100sdp">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -930,6 +930,28 @@
 
     </ScrollView>
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bootomNavProfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/nav_shape"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:elevation="10dp"
+        android:outlineProvider="paddedBounds"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="7dp"
+        app:elevation="20dp"
+        app:itemBackground="@drawable/top_corner_shape"
+        app:itemIconTint="@color/active_tab_color"
+        app:itemTextAppearanceActive="@style/BottomNavigationView"
+        app:itemTextAppearanceInactive="@style/BottomNavigationView"
+        app:itemTextColor="@color/active_tab_color"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/nav_menu" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

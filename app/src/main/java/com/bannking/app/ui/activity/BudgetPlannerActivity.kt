@@ -285,7 +285,6 @@ class BudgetPlannerActivity :
         val btnDone: Button = view.findViewById(R.id.btn_done)
         val chkAccount: CheckBox = view.findViewById(R.id.chk_account)
         val chkAccountCode: CheckBox = view.findViewById(R.id.chk_account_code)
-        val chkAmount: CheckBox = view.findViewById(R.id.chk_amount)
         val edtAccount: EditText = view.findViewById(R.id.edt_account)
         val edtAccountCode: EditText = view.findViewById(R.id.edt_account_code)
         val edtAmount: EasyMoneyEditText = view.findViewById(R.id.edt_amount)
@@ -294,9 +293,6 @@ class BudgetPlannerActivity :
         edtAccountCode.setText("")
 
 
-        chkAmount.setOnCheckedChangeListener { _, isChecked ->
-            edtAmount.isEnabled = isChecked
-        }
 
         chkAccountCode.setOnCheckedChangeListener { _, isChecked ->
             edtAccountCode.isEnabled = isChecked

@@ -13,6 +13,7 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bannking.app.model.retrofitResponseModel.accountListModel.Data
+import com.bannking.app.model.retrofitResponseModel.accountListModel.ExtraData
 import java.io.ByteArrayOutputStream
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
@@ -70,6 +71,21 @@ class Utils {
         }
         return filterable
     }
+
+    fun filterAccountListExtraData(data: ArrayList<ExtraData>, query: Int): ArrayList<ExtraData> {
+        val filterable: ArrayList<ExtraData> = arrayListOf()
+
+        for (item in data) {
+            // Check if accountTitleId is not null and matches the query
+            if (item.accountTitleId != null && item.accountTitleId == query) {
+                filterable.add(item.apply {
+                    accountTitleId = item.accountTitleId
+                })
+            }
+        }
+        return filterable
+    }
+
 
     fun <T> removeDuplicates(list: ArrayList<T>): ArrayList<T>? {
 

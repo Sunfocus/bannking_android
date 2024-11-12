@@ -1,5 +1,6 @@
 package com.bannking.app.model.viewModel
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -8,10 +9,11 @@ import com.bannking.app.UiExtension.FCM_TOKEN
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.core.BaseViewModel
 import com.bannking.app.core.CommonResponseModel
+import com.bannking.app.model.DeleteBankResponse
+import com.bannking.app.model.HideBankResponse
 import com.bannking.app.model.PostVoiceErrorResponse
 import com.bannking.app.model.PostVoiceResponse
 import com.bannking.app.model.retrofitResponseModel.headerModel.Data
-import com.bannking.app.model.retrofitResponseModel.soundModel.SoundResponse
 import com.bannking.app.network.ApiInterFace
 import com.bannking.app.network.RetrofitClient
 import com.bannking.app.network.RetrofitClients
@@ -34,7 +36,8 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
     var progressObservable: MutableLiveData<Boolean> = MutableLiveData(null)
     var deleteBankAccount: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
     var filterTabDataList: MutableLiveData<ArrayList<Data>> = MutableLiveData(null)
-//    var fcmToken : MutableLiveData<String> = MutableLiveData("")
+
+    //    var fcmToken : MutableLiveData<String> = MutableLiveData("")
     var getProfileData: MutableLiveData<CommonResponseModel> = MutableLiveData(null)
 
     var errorResponse: MutableLiveData<String> = MutableLiveData(null)
@@ -45,7 +48,7 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
         voiceId: String,
         language: String,
         completeText: String
-    ):LiveData<PostVoiceResponse> {
+    ): LiveData<PostVoiceResponse> {
         progressObservable.value = true
         val mutableLiveData = MutableLiveData<PostVoiceResponse>()
         val apiBody = JsonObject()
@@ -61,7 +64,10 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
         }
         val call = RetrofitClients.voiceMakerApiClient().create(ApiInterFace::class.java)
         call.postVoiceMakerLiveOb(apiBody).enqueue(object : Callback<PostVoiceResponse> {
-            override fun onResponse(call: Call<PostVoiceResponse>, response: Response<PostVoiceResponse>) {
+            override fun onResponse(
+                call: Call<PostVoiceResponse>,
+                response: Response<PostVoiceResponse>
+            ) {
                 progressObservable.value = false
                 if (response.isSuccessful) {
                     if (response.code() in 199..299) {
@@ -85,6 +91,110 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
             }
 
             override fun onFailure(call: Call<PostVoiceResponse>, t: Throwable) {
+                progressObservable.value = false
+            }
+
+        })
+        return mutableLiveData
+    }
+
+    fun hideBankFromList(
+        institutionId: String, userToken: String?, accountId: String
+    ): LiveData<HideBankResponse> {
+        progressObservable.value = true
+        val mutableLiveData = MutableLiveData<HideBankResponse>()
+        val apiBody = JsonObject()
+        try {
+            apiBody.addProperty("accountId", accountId)
+            apiBody.addProperty("instituteId", institutionId)
+          } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+
+        val call = RetrofitClient.instance!!.myApi.hideBankAccount(userToken!!,apiBody)
+
+        call.enqueue(object : Callback<HideBankResponse> {
+            override fun onResponse(
+                call: Call<HideBankResponse>,
+                response: Response<HideBankResponse>
+            ) {
+                progressObservable.value = false
+                if (response.isSuccessful) {
+                    if (response.code() in 199..299) {
+                        mutableLiveData.postValue(response.body())
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<HideBankResponse>, t: Throwable) {
+                progressObservable.value = false
+            }
+
+        })
+        return mutableLiveData
+    }
+
+
+    fun showAllBankFromList(
+        institutionId: String, userToken: String?, accountId: String
+    ): LiveData<HideBankResponse> {
+        progressObservable.value = true
+        val mutableLiveData = MutableLiveData<HideBankResponse>()
+        val apiBody = JsonObject()
+        try {
+            apiBody.addProperty("instituteId", institutionId)
+            apiBody.addProperty("accountId", accountId)
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+
+        val call = RetrofitClient.instance!!.myApi.showAllBankAccount(userToken!!,apiBody)
+
+        call.enqueue(object : Callback<HideBankResponse> {
+            override fun onResponse(
+                call: Call<HideBankResponse>,
+                response: Response<HideBankResponse>
+            ) {
+                progressObservable.value = false
+                if (response.isSuccessful) {
+                    if (response.code() in 199..299) {
+                        mutableLiveData.postValue(response.body())
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<HideBankResponse>, t: Throwable) {
+                progressObservable.value = false
+            }
+
+        })
+        return mutableLiveData
+    }
+
+
+
+    fun removeBankFromList(
+        institutionId: String, userToken: String?
+
+    ): LiveData<DeleteBankResponse> {
+        progressObservable.value = true
+        val mutableLiveData = MutableLiveData<DeleteBankResponse>()
+        val call = RetrofitClient.instance!!.myApi.removeBankPlaid(institutionId, userToken!!)
+
+        call.enqueue(object : Callback<DeleteBankResponse> {
+            override fun onResponse(
+                call: Call<DeleteBankResponse>,
+                response: Response<DeleteBankResponse>
+            ) {
+                progressObservable.value = false
+                if (response.isSuccessful) {
+                    if (response.code() in 199..299) {
+                        mutableLiveData.postValue(response.body())
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<DeleteBankResponse>, t: Throwable) {
                 progressObservable.value = false
             }
 
@@ -130,6 +240,7 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
             })
         }
     }
+
     fun setDataInAccountList(userToken: String) {
         App.FCM_TOKEN.let {
             progressObservable.value = true
@@ -143,7 +254,7 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
             }
             val call = RetrofitClient.instance?.myApi?.accountList(userToken)
 
-            Log.d("UserToken",userToken)
+            Log.d("UserToken", userToken)
             call?.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false
@@ -190,7 +301,12 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance?.myApi?.deleteBankAccount(strAccountId,type,budgetId!!,userToken!!)
+            val call = RetrofitClient.instance?.myApi?.deleteBankAccount(
+                strAccountId,
+                type,
+                budgetId!!,"",
+                userToken!!
+            )
 
             call?.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -269,11 +385,13 @@ class MainViewModel(val App: Application) : BaseViewModel(App) {
 
     }
 
+    @SuppressLint("NullSafeMutableLiveData")
     fun setIdInFilterData(id: ArrayList<Data>?) {
         accountListData.value
         filterTabDataList.value = id
     }
 
+    @SuppressLint("NullSafeMutableLiveData")
     fun setIdInFilterDatanull(id: ArrayList<Data>?) {
 //        accountListData.value
         filterTabDataList.value = id

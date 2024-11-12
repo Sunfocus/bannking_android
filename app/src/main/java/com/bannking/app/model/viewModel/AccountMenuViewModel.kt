@@ -2,12 +2,15 @@ package com.bannking.app.model.viewModel
 
 import android.app.Application
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.bannking.app.UiExtension.FCM_TOKEN
 import com.bannking.app.core.BaseActivity
 
 import com.bannking.app.core.BaseViewModel
 import com.bannking.app.core.CommonResponseModel
+import com.bannking.app.model.CustomHeaderResponse
+import com.bannking.app.model.DeleteBankResponse
 import com.bannking.app.network.RetrofitClient
 import com.bannking.app.utils.Constants
 import com.google.gson.JsonObject
@@ -55,8 +58,7 @@ class AccountMenuViewModel(val App: Application) : BaseViewModel(App) {
                             accountTitleList.value =
                                 CommonResponseModel(jsonObject, response.code())
                         }
-                    } else
-                        accountTitleList.value = CommonResponseModel(null, 500)
+                    } else accountTitleList.value = CommonResponseModel(null, 500)
                 }
 
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {
@@ -65,6 +67,70 @@ class AccountMenuViewModel(val App: Application) : BaseViewModel(App) {
                 }
             })
         }
+    }
+
+    fun updateCustomHeader(
+        userToken: String?,
+        name: String?,
+        id: String?
+    ): LiveData<CustomHeaderResponse> {
+        progressObservable.value = true
+        val mutableLiveData = MutableLiveData<CustomHeaderResponse>()
+
+        val apiBody = JsonObject()
+        try {
+            apiBody.addProperty("accountTitleId", id)
+            apiBody.addProperty("name", name)
+
+        } catch (e: Exception) {
+            Log.e("TAG_EXCEPTION", "setDataInAccountTitleList: " + e.message.toString())
+        }
+
+        val call = RetrofitClient.instance!!.myApi.updateHeaderTitle(userToken!!, apiBody)
+        call.enqueue(object : Callback<CustomHeaderResponse> {
+            override fun onResponse(
+                call: Call<CustomHeaderResponse>, response: Response<CustomHeaderResponse>
+            ) {
+                progressObservable.value = false
+                if (response.isSuccessful) {
+                    if (response.code() in 199..299) {
+                        mutableLiveData.postValue(response.body())
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<CustomHeaderResponse>, t: Throwable) {
+                progressObservable.value = false
+            }
+        })
+        return mutableLiveData
+    }
+
+    fun deleteCustomHeader(
+        userToken: String?,
+        id: String?
+    ): LiveData<DeleteBankResponse> {
+        progressObservable.value = true
+        val mutableLiveData = MutableLiveData<DeleteBankResponse>()
+
+        val call = RetrofitClient.instance!!.myApi.deleteHeaderTitle(userToken!!, id!!)
+        call.enqueue(object : Callback<DeleteBankResponse> {
+            override fun onResponse(
+                call: Call<DeleteBankResponse>, response: Response<DeleteBankResponse>
+            ) {
+                progressObservable.value = false
+                if (response.isSuccessful) {
+                    if (response.code() in 199..299) {
+                        mutableLiveData.postValue(response.body())
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<DeleteBankResponse>, t: Throwable) {
+                progressObservable.value = false
+            }
+        })
+        return mutableLiveData
     }
 
     fun setDataInCreateOwnMenuTitleList(strTitleName: String, userToken: String?) {
@@ -79,7 +145,10 @@ class AccountMenuViewModel(val App: Application) : BaseViewModel(App) {
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
-            val call = RetrofitClient.instance!!.myApi.createOwnAccountTitle(apiBody.toString(),userToken!!)
+            val call = RetrofitClient.instance!!.myApi.createOwnAccountTitle(
+                apiBody.toString(),
+                userToken!!
+            )
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false
@@ -136,8 +205,7 @@ class AccountMenuViewModel(val App: Application) : BaseViewModel(App) {
                             saveHeaderDataList.value =
                                 CommonResponseModel(jsonObject, response.code())
                         }
-                    } else
-                        saveHeaderDataList.value = CommonResponseModel(null, 500)
+                    } else saveHeaderDataList.value = CommonResponseModel(null, 500)
                 }
 
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {

@@ -1,18 +1,22 @@
 package com.bannking.app.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bannking.app.R
-import com.bannking.app.model.AccountsData
 import com.bannking.app.model.ItemClicked
+import com.bannking.app.model.retrofitResponseModel.accountListModel.AccountsData
 
 class SubBankAdapter(
     private var mContext: Context,
     private var accountsList: ArrayList<AccountsData>,
+    private var extraDataHideList: ArrayList<AccountsData>,
     private var institutionId: String,
     var onItemClicked: ItemClicked
 ) : RecyclerView.Adapter<SubBankViewHolder>() {
@@ -25,11 +29,24 @@ class SubBankAdapter(
         return accountsList.size
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: SubBankViewHolder, position: Int) {
 
-        holder.tvSubBankName.text = accountsList[position].accountName
-        holder.tvSubBankAccNo.text = "****${accountsList[position].accountNumber}"
-        holder.tvSubBankAmount.text = "$${accountsList[position].balance}"
+        Log.d("sdfsdfdsf",accountsList.size.toString())
+
+        holder.txtAmountBankChild.text = "$"+accountsList[position].balance.toString()
+        holder.txtSubBnkNameChild.text =
+            "${accountsList[position].accountName}...${accountsList[position].accountNumber}"
+
+
+        holder.img_announceChild.setOnClickListener {
+            onItemClicked.onClickedBankItemVoice(accountsList[position])
+        }
+        holder.img_moreChild.setOnClickListener {
+            onItemClicked.onClickedBankItemMore(accountsList[position].accountId,institutionId,accountsList,extraDataHideList)
+
+        }
+
         holder.itemView.setOnClickListener {
             onItemClicked.onClickedBankItem(
                 position,
@@ -45,7 +62,8 @@ class SubBankAdapter(
 
 class SubBankViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    val tvSubBankName: TextView = itemView.findViewById(R.id.tvSubBankName)
-    val tvSubBankAccNo: TextView = itemView.findViewById(R.id.tvSubBankAccNo)
-    val tvSubBankAmount: TextView = itemView.findViewById(R.id.tvSubBankAmount)
+    val txtSubBnkNameChild: TextView = itemView.findViewById(R.id.txtSubBnkNameChild)
+    val txtAmountBankChild: TextView = itemView.findViewById(R.id.txtAmountBankChild)
+    val img_moreChild: ImageView = itemView.findViewById(R.id.img_moreChild)
+    val img_announceChild: ImageView = itemView.findViewById(R.id.img_announceChild)
 }

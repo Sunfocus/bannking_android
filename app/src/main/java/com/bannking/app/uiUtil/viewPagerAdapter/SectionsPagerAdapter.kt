@@ -26,7 +26,17 @@ class SectionsPagerAdapter(
         return if (dataList.size == 0) {
             ""
         } else {
-            dataList[position].name.toString()
+            when (dataList[position].name) {
+                "Certificate of Deposit" -> {
+                  "CD"
+                }
+                "Individual Retirement" -> {
+                    "IRA"
+                }
+                else -> {
+                    dataList[position].name.toString()
+                }
+            }
         }
     }
 

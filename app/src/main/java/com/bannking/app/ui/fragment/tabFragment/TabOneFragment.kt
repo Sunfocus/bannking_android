@@ -1,6 +1,7 @@
 package com.bannking.app.ui.fragment.tabFragment
 
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
@@ -16,47 +17,44 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.RadioButton
-import android.widget.RadioGroup
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatButton
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.bannking.app.R
 import com.bannking.app.UiExtension.FCM_TOKEN
+import com.bannking.app.adapter.HideListener
+import com.bannking.app.adapter.ShowHideAdapter
 import com.bannking.app.adapter.TabsAdapter
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.core.BaseFragment
 import com.bannking.app.databinding.FragmentTabOneBinding
 import com.bannking.app.model.CommonResponseApi
 import com.bannking.app.model.PostVoiceResponse
-import com.bannking.app.model.retrofitResponseModel.accountListModel.AccountListModel
-import com.bannking.app.model.retrofitResponseModel.accountListModel.Data
+import com.bannking.app.model.retrofitResponseModel.accountListModel.*
 import com.bannking.app.model.retrofitResponseModel.headerModel.HeaderModel
 import com.bannking.app.model.viewModel.MainViewModel
 import com.bannking.app.network.RetrofitClient
 import com.bannking.app.ui.activity.ScheduleTransferActivity
 import com.bannking.app.ui.activity.SoundActivity
-import com.bannking.app.utils.Constant
-import com.bannking.app.utils.Constants
+import com.bannking.app.utils.*
 import com.bannking.app.utils.Constants._DELETE_ACCOUNT
 import com.bannking.app.utils.Constants._DELETE_ACCOUNT_TITLE
-import com.bannking.app.utils.Gender
-import com.bannking.app.utils.MoreDotClick
-import com.bannking.app.utils.OnClickAnnouncement
-import com.bannking.app.utils.OnClickAnnouncementDialog
-import com.bannking.app.utils.SessionManager
-import com.bannking.app.utils.SharedPref
-import com.bannking.app.utils.Utils
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.gson.JsonObject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.Locale
-import java.util.UUID
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class TabOneFragment :
@@ -67,6 +65,9 @@ class TabOneFragment :
     var util: Utils = Utils()
     var adapter: TabsAdapter? = null
     lateinit var list: ArrayList<Data>
+    lateinit var extraData: ArrayList<ExtraData>
+    lateinit var extraDataHideList: ArrayList<ExtraData>
+    lateinit var hiddenData: ArrayList<HiddenData>
     var tabOneID: String = ""
     private lateinit var savedSessionManagerVoice: SessionManager
     private lateinit var savedSessionManager: SessionManager
@@ -78,6 +79,8 @@ class TabOneFragment :
     private var mediaPlayer: MediaPlayer? = null
 
     private lateinit var pref: SharedPref
+
+    private var showHideDialog: Dialog? = null
 
     override fun getBinding(inflater: LayoutInflater, container: ViewGroup): FragmentTabOneBinding {
         return FragmentTabOneBinding.inflate(inflater, container, false)
@@ -176,26 +179,83 @@ class TabOneFragment :
             }
         }
         list = arrayListOf()
-        adapter =
-            TabsAdapter(requireActivity(), list, savedSessionManagerVoice, object : MoreDotClick {
+        extraData = arrayListOf()
+        hiddenData = arrayListOf()
+        extraDataHideList = arrayListOf()
+        adapter = TabsAdapter(requireActivity(),
+            list,
+            extraData,
+            hiddenData,
+            extraDataHideList,
+            savedSessionManagerVoice,
+            object : MoreDotClick {
                 override fun openDialogBox(list: Data, list1: ArrayList<Data>) {
                     val greaterValue = hasAnotherAccountWithSameBudgetTitle(list1, list)
                     showDotClickDialog(list, greaterValue)
                 }
 
-            }, object : OnClickAnnouncementDialog {
+                override fun openDialogBoxExtraData(
+                    currentExtraItem: ExtraData,
+                    extraData: ArrayList<AccountsData>,
+                    hiddenData: ArrayList<HiddenData>?
+                ) {
+//                    showBottomSheet(
+//                        "",
+//                        "",
+//                        "delete",
+//                        currentExtraItem.institutionName,
+//                        currentExtraItem.institutionId
+//                    )
+
+                    dialogForShowHide("", currentExtraItem.institutionId, extraData, hiddenData)
+
+
+                }
+
+                override fun dotForChildren(
+                    accountId: String,
+                    instituteId: String,
+                    accountsList: ArrayList<AccountsData>,
+                    hiddenData: ArrayList<HiddenData>?,
+                    extraDataHideList: ArrayList<AccountsData>
+                ) {
+//                    showBottomSheet(
+//                        accountId,
+//                        instituteId,
+//                        "hide",
+//                        "",
+//                        ""
+//                    )
+                    dialogForShowHide(accountId, instituteId, extraDataHideList, hiddenData)
+                }
+
+            },
+            object : OnClickAnnouncementDialog {
                 override fun clickOnAnnouncementDialog(list: Data) {
-                    if (!premiumFeatures) {
+                    if (premiumFeatures) {
                         voiceForAccountRead(accountName, list)
                     } else {
-                        showAnnouncementDialog(list)
+                        val intent = Intent(requireActivity(), SoundActivity::class.java)
+                        startActivity(intent)
+//                        showAnnouncementDialog(list)
                     }
 
                 }
 
-            }, object : OnClickAnnouncement {
+                override fun clickOnAnnouncementDialogExtra(currentExtraItem: AccountsData) {
+                    if (premiumFeatures) {
+                        voiceForAccountReadForExtra(currentExtraItem.accountName, currentExtraItem)
+                    } else {
+                        val intent = Intent(requireActivity(), SoundActivity::class.java)
+                        startActivity(intent)
+//                        showAnnouncementDialogExtra(currentExtraItem)
+                    }
+                }
+
+            },
+            object : OnClickAnnouncement {
                 override fun clickOnAnnouncement(list: Data) {
-                    if (!premiumFeatures) {
+                    if (premiumFeatures) {
                         voiceForAccountRead(accountName, list)
                     } else {
                         speechToText(accountName, list)
@@ -203,8 +263,167 @@ class TabOneFragment :
 
                 }
 
+                override fun clickOnAnnouncementExtra(currentExtraItem: AccountsData) {
+                    if (premiumFeatures) {
+                        voiceForAccountReadForExtra(currentExtraItem.accountName, currentExtraItem)
+                    } else {
+                        speechToTextExtra(currentExtraItem.accountName, currentExtraItem)
+                    }
+                }
+
             })
         mBinding.rvExpenses.adapter = adapter
+    }
+
+
+    private fun dialogForShowHide(
+        accountIds: String,
+        instituteId: String,
+        accountsList: ArrayList<AccountsData>,
+        hiddenData: ArrayList<HiddenData>?
+    ) {
+        showHideDialog?.dismiss()
+        showHideDialog = Dialog(requireActivity())
+        showHideDialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        showHideDialog!!.setCancelable(false)
+        showHideDialog!!.setContentView(R.layout.dialog_for_show_hide)
+        showHideDialog!!.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        showHideDialog!!.window!!.setLayout(
+            ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT
+        )
+        val btnCancel = showHideDialog!!.findViewById<AppCompatButton>(R.id.btnCancelUnlinkBank)
+        val btnUnlinkBank = showHideDialog!!.findViewById<AppCompatButton>(R.id.btnUnlinkBank)
+        val rvSubBankName = showHideDialog!!.findViewById<RecyclerView>(R.id.rvSubBankName)
+
+        btnUnlinkBank.setOnClickListener {
+            showRemoveBankDialog(requireActivity(), instituteId)
+            showHideDialog!!.dismiss()
+        }
+        btnCancel.setOnClickListener {
+            showHideDialog!!.cancel()
+        }
+
+        val adapter =
+            ShowHideAdapter(requireActivity(), accountsList, hiddenData, object : HideListener {
+                override fun hideShowBank(accountId: String, isChecked: Boolean) {
+                    if (isChecked) {
+                        hideBankDetails(accountId, instituteId)
+                    } else {
+                        showHideBankApi(instituteId, accountId)
+                    }
+                }
+
+            })
+        rvSubBankName.adapter = adapter
+
+        showHideDialog!!.show()
+
+    }
+
+    private fun showBottomSheet(
+        accountId: String,
+        instituteId: String,
+        whichType: String,
+        institutionName: String,
+        institutionId: String
+    ) {
+        val bottomSheetDialog =
+            BottomSheetDialog(requireActivity(), R.style.NoBackgroundDialogTheme)
+        val view = layoutInflater.inflate(R.layout.bottom_sheet_hide_show, null)
+        bottomSheetDialog.setContentView(view)
+        val showHiddenAccounts = view.findViewById<TextView>(R.id.showHiddenAccounts)
+        val deleteAccount = view.findViewById<TextView>(R.id.deleteAccount)
+
+        if (whichType == "hide") {
+            deleteAccount.text = "Hide Account"
+            showHiddenAccounts.visibility = View.GONE
+        } else {
+            deleteAccount.text = "Delete Account"
+            showHiddenAccounts.visibility = View.VISIBLE
+
+        }
+        showHiddenAccounts.setOnClickListener {
+//            showHideBankApi(institutionId)
+            bottomSheetDialog.dismiss()
+        }
+
+        deleteAccount.setOnClickListener {
+            if (whichType == "hide") {
+                hideBankDetails(accountId, instituteId)
+            } else {
+//                showRemoveBankDialog(requireActivity(), institutionName, institutionId)
+            }
+
+            bottomSheetDialog.dismiss()
+        }
+
+        view.findViewById<TextView>(R.id.cancelButton).setOnClickListener {
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetDialog.show()
+    }
+
+    private fun showHideBankApi(institutionId: String, accountId: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+            viewModel.showAllBankFromList(institutionId, userToken, accountId)
+                .observe(this@TabOneFragment) {
+                    if (userToken != null) {
+                        viewModel.setDataInAccountList(userToken)
+                    }
+                }
+        }
+    }
+
+
+    private fun hideBankDetails(accountId: String, instituteId: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+            viewModel.hideBankFromList(instituteId, userToken, accountId)
+                .observe(this@TabOneFragment) {
+                    if (userToken != null) {
+                        viewModel.setDataInAccountList(userToken)
+                    }
+                }
+        }
+    }
+
+
+    private fun removeBankFromDatabase(institutionId: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+            viewModel.removeBankFromList(institutionId, userToken).observe(this@TabOneFragment) {
+                if (userToken != null) {
+                    viewModel.setDataInAccountList(userToken)
+                }
+            }
+        }
+
+    }
+
+    private fun showRemoveBankDialog(
+        context: Context,
+        institutionId: String,
+    ) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Remove Bank")
+        builder.setMessage("Are you sure you want to remove your Bank details?")
+
+        // Set up the positive button
+        builder.setPositiveButton("Remove") { dialog: DialogInterface, _: Int ->
+            removeBankFromDatabase(institutionId)
+            dialog.dismiss()
+        }
+
+        // Set up the negative button
+        builder.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->
+            dialog.dismiss() // Dismiss the dialog
+        }
+
+        // Create and show the dialog
+        val dialog = builder.create()
+        dialog.show()
     }
 
 
@@ -258,6 +477,77 @@ class TabOneFragment :
         } else if (savedSessionManager.getLanguage() == "Italian") {
             completeText =
                 "Il tuo $accountName Saldo del conto che termina con $spacedAccountCode è ${list.currency!!.icon}${list.amount}"
+        }
+
+
+        val engine = pref.getString(SessionManager.ENGINEFORAPI)
+        val voiceId = pref.getString(SessionManager.VOICEFORAPI)
+        val langCode = pref.getString(SessionManager.LANGUAGECODEFORAPI)
+
+        if (engine.isNotEmpty() && voiceId.isNotEmpty() && langCode.isNotEmpty()) {
+            viewModel.postVoiceInLanguageList(engine, voiceId, langCode, completeText)
+                .observe(this@TabOneFragment) { its ->
+                    val apiResponseData = its as PostVoiceResponse
+                    if (apiResponseData.success) {
+                        playAudio(apiResponseData.path)
+                    } else dialogClass.showError("Something went wrong")
+                }
+        } else {
+            val intent = Intent(activity, SoundActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun voiceForAccountReadForExtra(accountName: String, list: AccountsData) {
+        val spacedAccountCode = list.accountId.map { it.toString() }.joinToString(" ")
+        var completeText = ""
+
+        if (savedSessionManager.getLanguage() == "English") {
+            completeText =
+                "Your $accountName account balance ending in $spacedAccountCode is $${list.balance}"
+        } else if (savedSessionManager.getLanguage() == "Spanish") {
+            completeText =
+                "Su cuenta  $accountName Saldo de cuenta que termina en $spacedAccountCode cuesta $${list.balance}"
+
+        } else if (savedSessionManager.getLanguage() == "French") {
+            completeText =
+                "Votre compte $accountName Solde du compte se terminant par $spacedAccountCode est de $${list.balance}"
+
+        } else if (savedSessionManager.getLanguage() == "Arabic") {
+            completeText =
+                " حسابك $accountName رصيد الحساب ينتهي بـ $spacedAccountCode يكون $${list.balance}"
+
+        } else if (savedSessionManager.getLanguage() == "Russia") {
+            completeText =
+                "Твой $accountName Баланс счета заканчивается на $spacedAccountCode является $${list.balance}"
+
+        } else if (savedSessionManager.getLanguage() == "Portuguese") {
+            completeText =
+                "Sua conta $accountName Saldo da conta terminando em $spacedAccountCode é $${list.balance}"
+
+        } else if (savedSessionManager.getLanguage() == "Dutch") {
+            completeText =
+                "Uw $accountName Accountsaldo eindigend op $spacedAccountCode bedraagt $${list.balance}"
+
+        } else if (savedSessionManager.getLanguage() == "Hindi") {
+            completeText =
+                "आपके $accountName खाते का शेष समाप्त हो रहा है $spacedAccountCode है $${list.balance}"
+
+        } else if (savedSessionManager.getLanguage() == "Chinese") {
+            completeText =
+                "你的 $accountName 账户余额 以...结尾 $spacedAccountCode 是 $${list.balance}"
+
+        } else if (savedSessionManager.getLanguage() == "Japanese") {
+            completeText =
+                "あなたの $accountName 口座残高 で終わる $spacedAccountCode です $${list.balance}"
+
+        } else if (savedSessionManager.getLanguage() == "German") {
+            completeText =
+                "Dein $accountName Kontostand endet mit $spacedAccountCode ist $${list.balance}"
+
+        } else if (savedSessionManager.getLanguage() == "Italian") {
+            completeText =
+                "Il tuo $accountName Saldo del conto che termina con $spacedAccountCode è $${list.balance}"
         }
 
 
@@ -335,11 +625,14 @@ class TabOneFragment :
                 if (isVisible) {
                     if (accountList != null) {
                         if (accountList.code in 199..299) {
+                            Log.e("sdfdsfsdfsdfsd", "yessss")
                             if (accountList.apiResponse != null) {
                                 val mainModel = gson.fromJson(
                                     accountList.apiResponse, AccountListModel::class.java
                                 )
+                                mainModel.extraData.size
                                 if (mainModel.data.size != 0) {
+
                                     val filterdata = if (filterTabDataList.value.isNullOrEmpty()) {
                                         val model = gson.fromJson(
                                             headerTitleList.value!!.apiResponse,
@@ -361,21 +654,157 @@ class TabOneFragment :
                                     }
 
 
-                                    if (filterdata.size != 0) {
-                                        adapter?.updateList(filterdata)
-                                        if (filterdata.size == 1) {
-                                            val saveReviewManager =
-                                                saveReviewManager.getLong(SessionManager.REVIEWMANAGER)
+                                    if (mainModel.extraData.size != 0) {
+                                        val filterableData =
+                                            if (filterTabDataList.value.isNullOrEmpty()) {
+                                                val model = gson.fromJson(
+                                                    headerTitleList.value!!.apiResponse,
+                                                    HeaderModel::class.java
+                                                )
+                                                try {
+                                                    tabOneID = model.data[0].id.toString()
+                                                } catch (_: Exception) {
+                                                }
 
-                                            val twentyFourInMillis =
-                                                24 * 60 * 60 * 1000 // 24hr in milliseconds
-                                            val currentTime = System.currentTimeMillis()
-                                            // Calculate the time difference
-                                            val timeDifference = currentTime - saveReviewManager
-                                            if (timeDifference > twentyFourInMillis) {
-                                                requestReviewFlow()
+                                                utils.filterAccountListExtraData(
+                                                    mainModel.extraData,
+                                                    model.data[0].id!!.toInt()
+                                                )
+
+                                            } else {
+                                                utils.filterAccountListExtraData(
+                                                    mainModel.extraData,
+                                                    filterTabDataList.value!![0].id!!.toInt()
+                                                )
                                             }
+
+                                        val filteredExtraData =
+                                            if (mainModel.hiddenData.isEmpty()) {
+                                                filterableData
+                                            } else {
+                                                filterableData.map { extraData ->
+                                                    val filteredAccountsData =
+                                                        extraData.accountsData.filter { accountData ->
+                                                            mainModel.hiddenData.none { hiddenData ->
+                                                                hiddenData.accountId == accountData.accountId
+                                                            }
+                                                        }.toCollection(ArrayList())
+
+                                                    extraData.copy(accountsData = filteredAccountsData)
+                                                }.toCollection(ArrayList())
+                                            }
+
+                                        adapter?.updateList(filterdata, filteredExtraData,mainModel.hiddenData,filterableData)
+
+                                    } else {
+
+                                        val filterableData =
+                                            if (filterTabDataList.value.isNullOrEmpty()) {
+                                                val model = gson.fromJson(
+                                                    headerTitleList.value!!.apiResponse,
+                                                    HeaderModel::class.java
+                                                )
+                                                try {
+                                                    tabOneID = model.data[0].id.toString()
+                                                } catch (_: Exception) {
+                                                }
+
+                                                utils.filterAccountListExtraData(
+                                                    mainModel.extraData,
+                                                    model.data[0].id!!.toInt()
+                                                )
+
+                                            } else {
+                                                utils.filterAccountListExtraData(
+                                                    mainModel.extraData,
+                                                    filterTabDataList.value!![0].id!!.toInt()
+                                                )
+                                            }
+                                        val filteredExtraData =
+                                            if (mainModel.hiddenData.isEmpty()) {
+                                                filterableData
+                                            } else {
+                                                filterableData.map { extraData ->
+                                                    val filteredAccountsData =
+                                                        extraData.accountsData.filter { accountData ->
+                                                            mainModel.hiddenData.none { hiddenData ->
+                                                                hiddenData.accountId == accountData.accountId
+                                                            }
+                                                        }.toCollection(ArrayList())
+
+                                                    extraData.copy(accountsData = filteredAccountsData)
+                                                }.toCollection(ArrayList())
+                                            }
+
+                                        adapter?.updateList(
+                                            filterdata,
+                                            filteredExtraData,
+                                            mainModel.hiddenData,
+                                            filterableData
+                                        )
+
+                                    }
+                                    if (filterdata.size == 1) {
+                                        val saveReviewManager =
+                                            saveReviewManager.getLong(SessionManager.REVIEWMANAGER)
+
+                                        val twentyFourInMillis =
+                                            24 * 60 * 60 * 1000 // 24hr in milliseconds
+                                        val currentTime = System.currentTimeMillis()
+                                        // Calculate the time difference
+                                        val timeDifference = currentTime - saveReviewManager
+                                        if (timeDifference > twentyFourInMillis) {
+                                            requestReviewFlow()
                                         }
+                                    }
+
+                                } else {
+                                    if (mainModel.extraData.size != 0) {
+                                        val filterableData =
+                                            if (filterTabDataList.value.isNullOrEmpty()) {
+                                                val model = gson.fromJson(
+                                                    headerTitleList.value!!.apiResponse,
+                                                    HeaderModel::class.java
+                                                )
+                                                try {
+                                                    tabOneID = model.data[0].id.toString()
+                                                } catch (_: Exception) {
+                                                }
+
+                                                utils.filterAccountListExtraData(
+                                                    mainModel.extraData,
+                                                    model.data[0].id!!.toInt()
+                                                )
+
+                                            } else {
+                                                utils.filterAccountListExtraData(
+                                                    mainModel.extraData,
+                                                    filterTabDataList.value!![0].id!!.toInt()
+                                                )
+                                            }
+
+                                        val filteredExtraData =
+                                            if (mainModel.hiddenData.isEmpty()) {
+                                                filterableData
+                                            } else {
+                                                filterableData.map { extraData ->
+                                                    val filteredAccountsData =
+                                                        extraData.accountsData.filter { accountData ->
+                                                            mainModel.hiddenData.none { hiddenData ->
+                                                                hiddenData.accountId == accountData.accountId
+                                                            }
+                                                        }.toCollection(ArrayList())
+
+                                                    extraData.copy(accountsData = filteredAccountsData)
+                                                }.toCollection(ArrayList())
+                                            }
+
+                                        adapter?.updateList(
+                                            list,
+                                            filteredExtraData,
+                                            mainModel.hiddenData,
+                                            filterableData
+                                        )
                                     }
                                 }
                             }
@@ -395,6 +824,7 @@ class TabOneFragment :
 
         }
     }
+
 
     override fun onStop() {
         super.onStop()
@@ -442,6 +872,11 @@ class TabOneFragment :
     }
 
     private fun startReviewFlow() {
+        if (!isAdded) {
+            // Fragment is not attached to an activity, so return or handle it
+            return
+        }
+
         reviewInfo?.let {
             val flow = reviewManager.launchReviewFlow(requireActivity(), it)
             flow.addOnCompleteListener { _ ->
@@ -450,6 +885,7 @@ class TabOneFragment :
             }
         }
     }
+
 
     private fun setDataInDeleteBankAccount(strHeaderId: String) {
         viewModel.progressObservable.value = true
@@ -656,6 +1092,77 @@ class TabOneFragment :
                     selection(btn_maleVoice, btn_femaleVoice, btn_otherVoice, btn_otherVoice)
                     speechToTextForDialog(
                         accountName, list, util.getGenderDescription(Gender.OTHER)
+                    )
+                }
+            }
+        })
+
+        var voice = ""
+        btnScheduleTransfer.setOnClickListener {
+            if (btn_maleVoice.isChecked) {
+                voice = util.getGenderDescription(Gender.MALE)
+            } else if (btn_femaleVoice.isChecked) {
+                voice = util.getGenderDescription(Gender.FEMALE)
+            } else if (btn_otherVoice.isChecked) {
+                voice = util.getGenderDescription(Gender.OTHER)
+            }
+            savedSessionManagerVoice.setAnnouncementVoice(voice)
+            dialog.dismiss()
+            if (mTextToSpeech!!.isSpeaking) {
+                mTextToSpeech!!.stop()
+            }
+        }
+        dialog.show()
+    }
+
+    fun showAnnouncementDialogExtra(list: AccountsData) {
+        val dialog = Dialog(requireActivity())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.dialog_announcement)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val imgClose: ImageView = dialog.findViewById(R.id.img_close)
+        val radiogrp: RadioGroup = dialog.findViewById(R.id.radiogrp)
+        val btn_maleVoice: RadioButton = dialog.findViewById(R.id.btn_maleVoice)
+        val btn_femaleVoice: RadioButton = dialog.findViewById(R.id.btn_femaleVoice)
+        val btn_otherVoice: RadioButton = dialog.findViewById(R.id.btn_otherVoice)
+        val btnScheduleTransfer: Button = dialog.findViewById(R.id.btn_schedule_transfer)
+
+        if (savedSessionManagerVoice.getAnnouncementVoice() == "Male") {
+            btn_maleVoice.isChecked = true
+        } else if (savedSessionManagerVoice.getAnnouncementVoice() == "Female") {
+            btn_femaleVoice.isChecked = true
+        }
+
+        imgClose.setOnClickListener {
+            dialog.dismiss()
+            if (mTextToSpeech!!.isSpeaking) {
+                mTextToSpeech!!.stop()
+            }
+        }
+
+        radiogrp.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId -> // find which radio button is selected
+            when (checkedId) {
+                R.id.btn_maleVoice -> {
+                    selection(btn_maleVoice, btn_femaleVoice, btn_otherVoice, btn_maleVoice)
+                    speechToTextForDialogExtra(
+                        list.accountName,
+                        list,
+                        util.getGenderDescription(Gender.MALE)
+                    )
+                }
+
+                R.id.btn_femaleVoice -> {
+                    selection(btn_maleVoice, btn_femaleVoice, btn_otherVoice, btn_femaleVoice)
+                    speechToTextForDialogExtra(
+                        list.accountName, list, util.getGenderDescription(Gender.FEMALE)
+                    )
+                }
+
+                R.id.btn_otherVoice -> {
+                    selection(btn_maleVoice, btn_femaleVoice, btn_otherVoice, btn_otherVoice)
+                    speechToTextForDialogExtra(
+                        list.accountName, list, util.getGenderDescription(Gender.OTHER)
                     )
                 }
             }
@@ -1059,6 +1566,243 @@ class TabOneFragment :
         }
     }
 
+    private fun speechToTextExtra(accountName: String, list: AccountsData) {
+        try {
+
+            val amount = utils.removeCurrencySymbol(list.balance.toString())
+
+            returnz = Constant.convertNumericToSpokenWords(
+                amount, savedSessionManagerCurrency.getCurrency()
+            )
+        } catch (e: NumberFormatException) {
+            //Toast.makeToast("illegal number or empty number" , toast.long)
+        }
+
+        if (savedSessionManagerVoice.getAnnouncementVoice() == "Male") {
+            if (savedSessionManager.getLanguage() == "English") {
+                speakText(
+                    "Your " + accountName + " Account Balance ending in*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*is*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Spanish") {
+                speakText(
+                    "Su cuenta " + accountName + " Saldo de cuenta que termina en*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*cuesta*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "French") {
+                speakText(
+                    "Votre compte " + accountName + " Solde du compte se terminant par*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*est de*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Arabic") {
+                speakText(
+                    "حسابك  " + accountName + "رصيد الحساب ينتهي بـ* " + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*يكون*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Russia") {
+                speakText(
+                    "Твой" + accountName + "Баланс счета заканчивается на*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*является*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Portuguese") {
+                speakText(
+                    "Sua conta" + accountName + "Saldo da conta terminando em*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*é*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Dutch") {
+                speakText(
+                    "Uw" + accountName + "Accountsaldo eindigend op*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*bedraagt*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Hindi") {
+                speakText(
+                    "आपके" + accountName + "का बैलेंस*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*और*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Chinese") {
+                speakText(
+                    "你的" + accountName + "账户余额 以...结尾*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*是*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Japanese") {
+                speakText(
+                    "あなたの" + accountName + "口座残高 で終わる*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "* です *" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "German") {
+                speakText(
+                    "Dein" + accountName + "Kontostand endet mit*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "* ist *" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Italian") {
+                speakText(
+                    "Il tuo" + accountName + "Saldo del conto che termina con*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "* è *" + returnz
+                )
+            }
+        } else if (savedSessionManagerVoice.getAnnouncementVoice() == "Female") {
+            if (savedSessionManager.getLanguage() == "English") {
+                speakText(
+                    "Your " + accountName + " Account Balance ending in*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*is*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Spanish") {
+                speakText(
+                    "Su cuenta " + accountName + " Saldo de cuenta que termina en*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*cuesta*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "French") {
+                speakText(
+                    "Votre compte " + accountName + " Solde du compte se terminant par*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*est de*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Arabic") {
+                speakText(
+                    "حسابك  " + accountName + "رصيد الحساب ينتهي بـ* " + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*يكون*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Russia") {
+                speakText(
+                    "Твой" + accountName + "Баланс счета заканчивается на*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*является*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Portuguese") {
+                speakText(
+                    "Sua conta" + accountName + "Saldo da conta terminando em*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*é*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Dutch") {
+                speakText(
+                    "Uw" + accountName + "Accountsaldo eindigend op*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*bedraagt*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Hindi") {
+                speakText(
+                    "आपके" + accountName + "का बैलेंस*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*और*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Chinese") {
+                speakText(
+                    "你的" + accountName + "账户余额 以...结尾*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*是*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Japanese") {
+                speakText(
+                    "あなたの" + accountName + "口座残高 で終わる*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "* です *" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "German") {
+                speakText(
+                    "Dein" + accountName + "Kontostand endet mit*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "* ist *" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Italian") {
+                speakText(
+                    "Il tuo" + accountName + "Saldo del conto che termina con*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "* è *" + returnz
+                )
+            }
+        } else if (savedSessionManagerVoice.getAnnouncementVoice() == "") {
+            if (savedSessionManager.getLanguage() == "English") {
+                speakText(
+                    "Your " + accountName + " Account Balance ending in*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*is*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Spanish") {
+                speakText(
+                    "Su cuenta " + accountName + " Saldo de cuenta que termina en*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*cuesta*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "French") {
+                speakText(
+                    "Votre compte " + accountName + " Solde du compte se terminant par*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*est de*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Arabic") {
+                speakText(
+                    "حسابك  " + accountName + "رصيد الحساب ينتهي بـ* " + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*يكون*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Russia") {
+                speakText(
+                    "Твой" + accountName + "Баланс счета заканчивается на*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*является*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Portuguese") {
+                speakText(
+                    "Sua conta" + accountName + "Saldo da conta terminando em*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*é*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Dutch") {
+                speakText(
+                    "Uw" + accountName + "Accountsaldo eindigend op*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*bedraagt*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Hindi") {
+                speakText(
+                    "आपके" + accountName + "का बैलेंस*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*और*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Chinese") {
+                speakText(
+                    "你的" + accountName + "账户余额 以...结尾*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*是*" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Japanese") {
+                speakText(
+                    "あなたの" + accountName + "口座残高 で終わる*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "* です *" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "German") {
+                speakText(
+                    "Dein" + accountName + "Kontostand endet mit*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "* ist *" + returnz
+                )
+            } else if (savedSessionManager.getLanguage() == "Italian") {
+                speakText(
+                    "Il tuo" + accountName + "Saldo del conto che termina con*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "* è *" + returnz
+                )
+            }
+        }
+    }
+
 
     private fun speechToTextForDialog(accountName: String, list: Data, type: String) {
 
@@ -1162,95 +1906,107 @@ class TabOneFragment :
         }
     }
 
-    private fun speechToTextForDialogDemo1(accountName: String, list: Data, type: String) {
+    private fun speechToTextForDialogExtra(accountName: String, list: AccountsData, type: String) {
+
+        try {
+            val amount = utils.removeCurrencySymbol(list.balance.toString())
+            returnz = Constant.convertNumericToSpokenWords(
+                amount, savedSessionManagerCurrency.getCurrency()
+            )
+        } catch (e: NumberFormatException) {
+            //Toast.makeToast("illegal number or empty number" , toast.long)
+        }
+
         if (type == "Male") {
             if (savedSessionManager.getLanguage() == "English") {
                 speakTextDialog(
-                    "Your " + accountName + " Account ending in" + utils.numberToText(
-                        list.account_code.toString()
-                    ) + "is," + list.amount, type
+                    "Your " + accountName + " Account Balance ending in*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*is*" + returnz, type
                 )
             } else if (savedSessionManager.getLanguage() == "Spanish") {
                 speakTextDialog(
-                    "Su cuenta " + accountName + " que termina en" + utils.numberToText(
-                        list.account_code.toString()
-                    ) + "cuesta" + list.amount, type
+                    "Su cuenta " + accountName + " Saldo de cuenta que termina en*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*cuesta*" + returnz, type
                 )
             } else if (savedSessionManager.getLanguage() == "French") {
                 speakTextDialog(
-                    "Votre compte " + accountName + " se terminant par" + utils.numberToText(
-                        list.account_code.toString()
-                    ) + "est de" + list.amount, type
+                    "Votre compte " + accountName + " Solde du compte se terminant par*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*est de*" + returnz, type
                 )
             } else if (savedSessionManager.getLanguage() == "Arabic") {
                 speakTextDialog(
-                    "حسابك  " + accountName + " المنتهي بالرقم" + utils.numberToText(
-                        list.account_code.toString()
-                    ) + "هو" + list.amount, type
+                    "حسابك  " + accountName + "رصيد الحساب ينتهي بـ* " + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*يكون*" + returnz, type
                 )
             } else if (savedSessionManager.getLanguage() == "Russia") {
                 speakTextDialog(
-                    "Стоимость вашего" + accountName + "счета, оканчивающегося на" + utils.numberToText(
-                        list.account_code.toString()
-                    ) + "составляет" + list.amount, type
+                    "Твой" + accountName + "Баланс счета заканчивается на*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*является*" + returnz, type
                 )
             } else if (savedSessionManager.getLanguage() == "Portuguese") {
                 speakTextDialog(
-                    "Sua conta" + accountName + "terminando em" + utils.numberToText(
-                        list.account_code.toString()
-                    ) + "é" + list.amount, type
+                    "Sua conta" + accountName + "Saldo da conta terminando em*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*é*" + returnz, type
                 )
             } else if (savedSessionManager.getLanguage() == "Dutch") {
                 speakTextDialog(
-                    "Uw" + accountName + "account eindigend op" + utils.numberToText(
-                        list.account_code.toString()
-                    ) + "bedraagt" + list.amount, type
+                    "Uw" + accountName + "Accountsaldo eindigend op*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*bedraagt*" + returnz, type
                 )
             }
         } else if (type == "Female") {
             if (savedSessionManager.getLanguage() == "English") {
                 speakTextDialog(
-                    "Your " + accountName + " Account ending in" + utils.numberToText(
-                        list.account_code.toString()
-                    ) + "is" + list.amount, type
+                    "Your " + accountName + " Account Balance ending in*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*is*" + returnz, type
                 )
             } else if (savedSessionManager.getLanguage() == "Spanish") {
                 speakTextDialog(
-                    "Su cuenta " + accountName + " que termina en" + utils.numberToText(
-                        list.account_code.toString()
-                    ) + "cuesta" + list.amount, type
+                    "Su cuenta " + accountName + " Saldo de cuenta que termina en*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*cuesta*" + returnz, type
                 )
             } else if (savedSessionManager.getLanguage() == "French") {
                 speakTextDialog(
-                    "Votre compte " + accountName + " se terminant par" + utils.numberToText(
-                        list.account_code.toString()
-                    ) + "est de" + list.amount, type
+                    "Votre compte " + accountName + " Solde du compte se terminant par*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*est de*" + returnz, type
                 )
             } else if (savedSessionManager.getLanguage() == "Arabic") {
                 speakTextDialog(
-                    "حسابك  " + accountName + " المنتهي بالرقم" + utils.numberToText(
-                        list.account_code.toString()
-                    ) + "هو" + list.amount, type
+                    "حسابك  " + accountName + "رصيد الحساب ينتهي بـ* " + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*يكون*" + returnz, type
                 )
             } else if (savedSessionManager.getLanguage() == "Russia") {
                 speakTextDialog(
-                    "Стоимость вашего" + accountName + "счета, оканчивающегося на" + utils.numberToText(
-                        list.account_code.toString()
-                    ) + "составляет" + list.amount, type
+                    "Твой" + accountName + "Баланс счета заканчивается на*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*является*" + returnz, type
                 )
             } else if (savedSessionManager.getLanguage() == "Portuguese") {
                 speakTextDialog(
-                    "Sua conta" + accountName + "terminando em" + utils.numberToText(
-                        list.account_code.toString()
-                    ) + "é" + list.amount, type
+                    "Sua conta" + accountName + "Saldo da conta terminando em*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*é*" + returnz, type
                 )
             } else if (savedSessionManager.getLanguage() == "Dutch") {
                 speakTextDialog(
-                    "Uw" + accountName + "account eindigend op" + utils.numberToText(
-                        list.account_code.toString()
-                    ) + "bedraagt" + list.amount, type
+                    "Uw" + accountName + "Accountsaldo eindigend op*" + utils.numberToText(
+                        list.accountNumber.toString()
+                    ) + "*bedraagt*" + returnz, type
                 )
             }
         }
     }
+
+
 }

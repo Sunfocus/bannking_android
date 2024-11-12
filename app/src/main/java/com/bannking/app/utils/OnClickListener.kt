@@ -1,5 +1,8 @@
 package com.bannking.app.utils
 
+import com.bannking.app.model.retrofitResponseModel.accountListModel.AccountsData
+import com.bannking.app.model.retrofitResponseModel.accountListModel.ExtraData
+import com.bannking.app.model.retrofitResponseModel.accountListModel.HiddenData
 import com.bannking.app.model.retrofitResponseModel.budgetPlannerModel.Data
 import com.bannking.app.model.retrofitResponseModel.budgetPlannerModel.SubBudgetPlanner
 
@@ -41,6 +44,18 @@ interface MoreDotClick {
         list: com.bannking.app.model.retrofitResponseModel.accountListModel.Data,
         list1: ArrayList<com.bannking.app.model.retrofitResponseModel.accountListModel.Data>
     )
+    fun openDialogBoxExtraData(
+        currentExtraItem: ExtraData,
+        extraData: ArrayList<AccountsData>,
+        hiddenData: ArrayList<HiddenData>?
+    )
+    fun dotForChildren(
+        accountId: String,
+        instituteId: String,
+        accountsList: ArrayList<AccountsData>,
+        hiddenData: ArrayList<HiddenData>?,
+        extraDataHideList: ArrayList<AccountsData>
+    )
 }
 
 interface ItemClickListener {
@@ -49,10 +64,12 @@ interface ItemClickListener {
 
 interface OnClickAnnouncementDialog {
     fun clickOnAnnouncementDialog(list: com.bannking.app.model.retrofitResponseModel.accountListModel.Data)
+    fun clickOnAnnouncementDialogExtra(currentExtraItem: AccountsData)
 }
 
 interface OnClickAnnouncement {
     fun clickOnAnnouncement(list: com.bannking.app.model.retrofitResponseModel.accountListModel.Data)
+    fun clickOnAnnouncementExtra(currentExtraItem: AccountsData)
 }
 
 

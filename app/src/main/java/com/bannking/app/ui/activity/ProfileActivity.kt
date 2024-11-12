@@ -4,9 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
@@ -15,27 +20,37 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bannking.app.BuildConfig
 import com.bannking.app.R
 import com.bannking.app.UiExtension
+import com.bannking.app.UiExtension.isDarkModeEnabled
 import com.bannking.app.adapter.CurrencyAdapter
 import com.bannking.app.adapter.LanguageAdapter
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.databinding.ActivityProfileBinding
 import com.bannking.app.model.CommonResponseApi
 import com.bannking.app.model.LanguagesResponse
+import com.bannking.app.model.retrofitResponseModel.accountListModel.AccountListModel
+import com.bannking.app.model.retrofitResponseModel.headerModel.HeaderModel
 import com.bannking.app.model.retrofitResponseModel.languageModel.Data
 import com.bannking.app.model.retrofitResponseModel.languageModel.LanguageModel
 import com.bannking.app.model.retrofitResponseModel.userModel.UserModel
 import com.bannking.app.model.viewModel.ProfileViewModel
+import com.bannking.app.ui.fragment.AccountCreatedFragment
+import com.bannking.app.ui.fragment.AccountsFragment
 import com.bannking.app.utils.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
@@ -188,6 +203,12 @@ class ProfileActivity :
         }
 
 //        viewModel.setDataProfileDataList()
+
+        if (isDarkModeEnabled()) {
+            binding!!.bootomNavProfile.setBackgroundResource(R.drawable.nav_shape_night) // Dark mode background color
+        } else {
+            binding!!.bootomNavProfile.setBackgroundResource(R.drawable.nav_shape) // Light mode background color
+        }
     }
 
     override fun setMethod() {
@@ -607,7 +628,7 @@ class ProfileActivity :
                 viewModel.setDataUpdateDataList(switchNotification.isChecked, userToken)
             }
             llBank.setOnClickListener {
-                val intent = Intent(this@ProfileActivity, BankActivity::class.java)
+                val intent = Intent(this@ProfileActivity, HeaderForBankActivity::class.java)
                 startActivity(intent)
             }
             tvVerified.setOnClickListener {
@@ -673,7 +694,8 @@ class ProfileActivity :
 
             llVoice.setOnClickListener {
                 val intent = Intent(this@ProfileActivity, SoundActivity::class.java)
-                startActivity(intent)/*  val bottomSheetDialog =
+                startActivity(intent)
+            /*  val bottomSheetDialog =
                     BottomSheetDialog(this@ProfileActivity, R.style.NoBackgroundDialogTheme)
                 this@ProfileActivity.bottomSheetDialog = bottomSheetDialog
                 val view = LayoutInflater.from(this@ProfileActivity)
@@ -1020,7 +1042,112 @@ class ProfileActivity :
 //        binding!!.cardUpgrade.isVisible = !isPremium
         binding!!.cardRemoveAds.isVisible = !isPremium
 //        binding!!.llUpgrade.isVisible = !isPremium
+
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+        viewModel.setDataInHeaderTitleList(userToken)
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (userToken != null) {
+                viewModel.setDataInAccountList(userToken)
+            }
+        }, 100)
+
+        binding!!.bootomNavProfile.selectedItemId = R.id.nav_menu
+
+        binding!!.bootomNavProfile.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_account -> {
+                    val intent = Intent(this@ProfileActivity, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    finish()
+                }
+
+                R.id.nav_header -> {
+                    val accountListModel = gson.fromJson(
+                        viewModel.accountListData.value?.apiResponse, AccountListModel::class.java
+                    )
+                    if (accountListModel.data != null && accountListModel.data.isNotEmpty() && accountListModel != null) {
+
+                        val intent = Intent(this@ProfileActivity, AccountMenuNewActivity::class.java)
+                        val model = gson.fromJson(
+                            viewModel.headerTitleList.value?.apiResponse, HeaderModel::class.java
+                        )
+                        val accountList = gson.fromJson(
+                            viewModel.accountListData.value?.apiResponse,
+                            AccountListModel::class.java
+                        )
+                        intent.putExtra("Headermodel", model)
+                        intent.putExtra("accountList", accountList)
+                        resultLauncher.launch(intent)
+                        overridePendingTransition(0, 0)
+                    }
+                }
+
+                R.id.nav_spending_plan -> {
+                    val intent = Intent(this@ProfileActivity, HeaderForBankActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+
+                }
+
+                R.id.nav_explore ->{
+                    val intent = Intent(this@ProfileActivity,ExploreExpensesActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+
+                }
+
+                R.id.nav_menu -> {
+
+                }
+
+            }
+            true
+        }
+
+        val menu = binding!!.bootomNavProfile.menu
+        binding!!.bootomNavProfile.itemIconTintList = null
+        val menuItem = menu.findItem(R.id.nav_menu)
+        Glide.with(this).asBitmap().load(Constants.IMG_BASE_URL + userModel!!.image).apply(
+            RequestOptions.circleCropTransform().override(100, 100)
+                .placeholder(R.drawable.sample_user)
+        ).into(object : CustomTarget<Bitmap>() {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                menuItem?.icon = BitmapDrawable(resources, resource)
+            }
+
+            override fun onLoadCleared(placeholder: Drawable?) {
+
+            }
+        })
     }
+
+
+    var resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val data: Intent? = result.data
+            if (result.resultCode == 1011) {
+                val intent = Intent(this@ProfileActivity, BudgetPlannerActivity::class.java)
+                intent.putExtra("SelectedMenu", data?.getStringExtra("SelectedMenu"))
+                resultLauncher2.launch(intent)
+                overridePendingTransition(0, 0)
+            }
+        }
+
+    private var resultLauncher2 =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                viewModel.setIdInFilterDatanull(null)
+                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+//                viewModel.setDataInAccountList(userToken!!)
+                viewModel.setDataInHeaderTitleList(userToken)
+            }
+        }
+
+
 
     private fun speechToText() {
         if (savedSessionManagerVoice.getAnnouncementVoice() == "Male") {

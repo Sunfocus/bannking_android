@@ -153,7 +153,7 @@ class SplashActivity :
                     FCM_TOKEN.let {
                         if (it?.isNotEmpty() == true) {
                             if (isLogin) {
-                                if (currentTime - lastActiveTime > 86400000) { // 24 hour in milliseconds
+                                if (currentTime - lastActiveTime > 300000) { // 3 minutes in milliseconds
                                     Handler().postDelayed({
                                         sessionManager.setBoolean(SessionManager.isLogin, false)
                                         sessionManager.setBoolean("FaceLogin", true)

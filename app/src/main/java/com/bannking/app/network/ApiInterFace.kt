@@ -1,13 +1,9 @@
 package com.bannking.app.network
 
-import com.bannking.app.model.CommonResponseApi
-import com.bannking.app.model.ExchangeTokenResponse
-import com.bannking.app.model.GetBankBalanceSpendResponse
-import com.bannking.app.model.GetBankLinkTokenResponse
-import com.bannking.app.model.GetBankListResponse
-import com.bannking.app.model.GetTransactionResponse
-import com.bannking.app.model.PostVoiceResponse
+import com.bannking.app.model.*
 import com.bannking.app.model.retrofitResponseModel.soundModel.SoundResponse
+import com.bannking.app.model.retrofitResponseModel.tranSectionListModel.TranSectionListModel
+import com.bannking.app.model.retrofitResponseModel.userModel.UserModel
 import com.bannking.app.utils.Constants
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
@@ -41,22 +37,19 @@ interface ApiInterFace {
     @Headers("Content-Type: application/json")
     @PATCH("user/updateExtraUserFieldData")
     fun changeLanguage(
-        @Body body: String,
-        @Header(Constants.AUTHORIZATION) token: String
+        @Body body: String, @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
     @PATCH("user/update_currency")
     fun changeCurrency(
-        @Body body: String,
-        @Header(Constants.AUTHORIZATION) token: String
+        @Body body: String, @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
     @PATCH("/user/updateUserVoiceData")
     fun updateVoiceMakerData(
-        @Body body: JsonObject,
-        @Header(Constants.AUTHORIZATION) token: String
+        @Body body: JsonObject, @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
@@ -66,15 +59,13 @@ interface ApiInterFace {
     @Headers("Content-Type: application/json")
     @POST("user/change_notification")
     fun changeNotification(
-        @Body body: String,
-        @Header(Constants.AUTHORIZATION) token: String
+        @Body body: String, @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
     @POST("user/changePassword")
     fun changePassword(
-        @Body body: String,
-        @Header(Constants.AUTHORIZATION) token: String
+        @Body body: String, @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
     //Na
@@ -112,8 +103,7 @@ interface ApiInterFace {
     @Headers("Content-Type: application/json")
     @POST("user/createAccountTitle")
     fun createOwnAccountTitle(
-        @Body body: String,
-        @Header(Constants.AUTHORIZATION) token: String
+        @Body body: String, @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
@@ -128,8 +118,19 @@ interface ApiInterFace {
     @GET("user/transaction_list")
     fun transactionList(
         @Query("account_id") accountID: String,
+        @Query("searchText") filters: String,
+        @Query("dateFilter") sortDate: String,
         @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
+
+    @Headers("Content-Type: application/json")
+    @GET("user/transaction_list")
+    fun transactionListLive(
+        @Query("account_id") accountID: String,
+        @Query("searchText") filters: String,
+        @Query("dateFilter") sortDate: String,
+        @Header(Constants.AUTHORIZATION) token: String
+    ): Call<TranSectionListModel>
 
     //na
     @Headers("Content-Type: application/json")
@@ -139,27 +140,28 @@ interface ApiInterFace {
     @Headers("Content-Type: application/json")
     @POST("user/create_transaction_detail")
     fun createTransactionDetail(
-        @Body body: String,
-        @Header(Constants.AUTHORIZATION) token: String
+        @Body body: String, @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
     @POST("user/create_account")
     fun createAccount(
-        @Body body: String,
-        @Header(Constants.AUTHORIZATION) token: String
+        @Body body: String, @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
     @POST("user/createSubBudgetPlanner")
     fun createSubBudgetAccount(
-        @Body body: String,
-        @Header(Constants.AUTHORIZATION) token: String
+        @Body body: String, @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
     @GET("user/profile")
     fun getProfile(@Header(Constants.AUTHORIZATION) token: String): Call<JsonObject>
+
+    @Headers("Content-Type: application/json")
+    @GET("user/profile")
+    fun getProfileLive(@Header(Constants.AUTHORIZATION) token: String): Call<UserModel>
 
 
     @Multipart
@@ -173,7 +175,8 @@ interface ApiInterFace {
         @Part("name") name: RequestBody?,
         @Part("face_id_status") faceIdStatus: RequestBody?,
         @Part("deleteOldImageUrl") oldImageUrl: RequestBody?,
-        @Part image: MultipartBody.Part, @Header(Constants.AUTHORIZATION) tokens: String
+        @Part image: MultipartBody.Part,
+        @Header(Constants.AUTHORIZATION) tokens: String
     ): Call<JsonObject>
 
 
@@ -191,8 +194,7 @@ interface ApiInterFace {
     @Headers("Content-Type: application/json")
     @POST("user/schedule_transfer")
     fun scheduleTransfer(
-        @Body body: String,
-        @Header(Constants.AUTHORIZATION) token: String
+        @Body body: String, @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
@@ -210,6 +212,7 @@ interface ApiInterFace {
         @Query("accountId") accountID: String,
         @Query("type") type: String,
         @Query("budgetId") budget_id: String,
+        @Query("accountTitleId") accountTitleId: String,
         @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
@@ -225,8 +228,7 @@ interface ApiInterFace {
     @Headers("Content-Type: application/json")
     @PATCH("user/update_account")
     fun updateAccount(
-        @Body body: String,
-        @Header(Constants.AUTHORIZATION) token: String
+        @Body body: String, @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
     //Na
@@ -245,22 +247,19 @@ interface ApiInterFace {
     @Headers("Content-Type: application/json")
     @POST("subs/androidInitialPurchase")
     fun purchaseSubscriptionNew(
-        @Body body: String,
-        @Header(Constants.AUTHORIZATION) token: String
+        @Body body: String, @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
     @POST("subs/purchaseLifeTimePlan")
     fun purchaseSubscriptionLifeTime(
-        @Body body: String,
-        @Header(Constants.AUTHORIZATION) token: String
+        @Body body: String, @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
     @POST("user/createBudgetPlanner")
     fun createOwnBudgetPlanner(
-        @Body body: String,
-        @Header(Constants.AUTHORIZATION) token: String
+        @Body body: String, @Header(Constants.AUTHORIZATION) token: String
     ): Call<JsonObject>
 
     @Headers("Content-Type: application/json")
@@ -286,18 +285,46 @@ interface ApiInterFace {
     @POST("/api/link/token/create")
     fun getTokenForAddBank(@Header(Constants.AUTHORIZATION) token: String): Call<GetBankLinkTokenResponse>
 
+    @PATCH("/user/updateAccountTitle")
+    fun updateHeaderTitle(
+        @Header(Constants.AUTHORIZATION) token: String,
+        @Body jsonData: JsonObject
+    ): Call<CustomHeaderResponse>
+
+    @DELETE("/user/deleteAccountTitle")
+    fun deleteHeaderTitle(
+        @Header(Constants.AUTHORIZATION) token: String,
+        @Query("accountTitleId")accountTitleId:String
+    ): Call<DeleteBankResponse>
+
     @POST("/api/exchange_token")
     fun exchangeTokenForAddBank(
-        @Header(Constants.AUTHORIZATION) token: String,
-        @Body exchangeToken: JsonObject
+        @Header(Constants.AUTHORIZATION) token: String, @Body exchangeToken: JsonObject
     ): Call<ExchangeTokenResponse>
+
+    @POST("api/hide-plaid-bank-account")
+    fun hideBankAccount(
+        @Header(Constants.AUTHORIZATION) token: String, @Body hideBankObject: JsonObject
+    ): Call<HideBankResponse>
+
+ @POST("api/unhide-all-plaid-bank-account")
+    fun showAllBankAccount(
+        @Header(Constants.AUTHORIZATION) token: String, @Body hideBankObject: JsonObject
+    ): Call<HideBankResponse>
+
 
     @GET("/api/get-user-month-spending")
     fun getBankBalanceAndSpend(
         @Query("account_id") account_id: String,
         @Query("institutionId") institutionId: String,
-        @Header(Constants.AUTHORIZATION)token: String
-    ):Call<GetBankBalanceSpendResponse>
+        @Header(Constants.AUTHORIZATION) token: String
+    ): Call<GetBankBalanceSpendResponse>
+
+    @DELETE("/api/unlink-bank-account")
+    fun removeBankPlaid(
+        @Query("institution_id") institutionId: String,
+        @Header(Constants.AUTHORIZATION) token: String
+    ): Call<DeleteBankResponse>
 
     @GET("/api/get-user-transactions-with-filters")
     fun getTransactionFilter(
@@ -306,7 +333,7 @@ interface ApiInterFace {
         @Query("page") page: String,
         @Query("limit") limit: String,
         @Query("account_id") account_id: String,
-        @Query("institutionId") institutionId: String,
-        @Header(Constants.AUTHORIZATION)token: String
-    ):Call<GetTransactionResponse>
+        @Query("institution_id") institutionId: String,
+        @Header(Constants.AUTHORIZATION) token: String
+    ): Call<GetTransactionResponse>
 }

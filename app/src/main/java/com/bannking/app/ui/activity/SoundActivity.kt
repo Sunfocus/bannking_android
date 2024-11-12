@@ -1,14 +1,19 @@
 package com.bannking.app.ui.activity
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
-import android.widget.Toast
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -25,9 +30,7 @@ import com.bannking.app.model.retrofitResponseModel.soundModel.SoundResponse
 import com.bannking.app.model.retrofitResponseModel.soundModel.UpdateSoundResponse
 import com.bannking.app.model.retrofitResponseModel.soundModel.Voices
 import com.bannking.app.model.viewModel.SoundViewModel
-import com.bannking.app.utils.AdController
-import com.bannking.app.utils.SessionManager
-import com.bannking.app.utils.SharedPref
+import com.bannking.app.utils.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
@@ -55,7 +58,8 @@ class SoundActivity :
     private lateinit var viewModel: SoundViewModel
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var pref: SharedPref
-
+    private lateinit var savedSessionManagerVoice: SessionManager
+    var util: Utils = Utils()
     override fun getBinding(): ActivitySoundBinding {
         return ActivitySoundBinding.inflate(layoutInflater)
     }
@@ -63,7 +67,7 @@ class SoundActivity :
     override fun initViewModel(viewModel: SoundViewModel) {
         pref = SharedPref(this)
 
-
+        savedSessionManagerVoice = SessionManager(this@SoundActivity, SessionManager.VOICE)
         voiceMakerList = pref.getListOfVoiceMaker(SessionManager.VOICEMAKERLIST)
         if (voiceMakerList.isEmpty()) {
             viewModel.setDataInLanguageList("en-US")
@@ -459,6 +463,37 @@ class SoundActivity :
         binding!!.imgBack.setOnClickListener {
             finish()
         }
+
+        if (savedSessionManagerVoice.getAnnouncementVoice() == "Male") {
+            binding!!.btnMaleVoiceFree.isChecked = true
+        } else if (savedSessionManagerVoice.getAnnouncementVoice() == "Female") {
+            binding!!.btnFemaleVoiceFree.isChecked = true
+        }
+
+        var voice1 = ""
+        binding!!.radiogrp.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId -> // find which radio button is selected
+            when (checkedId) {
+                R.id.btn_maleVoiceFree -> {
+                    voice1 = util.getGenderDescription(Gender.MALE)
+                    savedSessionManagerVoice.setAnnouncementVoice(voice1)
+                }
+
+                R.id.btn_femaleVoiceFree -> {
+                    voice1 = util.getGenderDescription(Gender.FEMALE)
+                    savedSessionManagerVoice.setAnnouncementVoice(voice1)
+                }
+
+                R.id.btn_otherVoiceFree -> {
+                    voice1 = util.getGenderDescription(Gender.OTHER)
+                    savedSessionManagerVoice.setAnnouncementVoice(voice1)
+                }
+            }
+        })
+
+
+
+
+
         binding!!.tvAll.setOnClickListener {
             voiceGender = "All"
             allSelect()
@@ -503,8 +538,100 @@ class SoundActivity :
             } else {
                 val intent = Intent(this, UpgradeActivity::class.java)
                 startActivity(intent)
+//                showMembershipDialog()
             }
         }
+
+        if (premiumFeatures) {
+            binding!!.RlFree.visibility = View.GONE
+            binding!!.tvFreeVoice.visibility = View.GONE
+        } else {
+            binding!!.RlFree.visibility = View.VISIBLE
+            binding!!.tvFreeVoice.visibility = View.VISIBLE
+        }
+    }
+
+    private fun showMembershipDialog() {
+
+        val builder = AlertDialog.Builder(this)
+
+
+        builder.setTitle("Upgrade to Premium")
+        builder.setMessage("You are currently not a premium member. Choose an option below:")
+
+
+        builder.setPositiveButton("Premium") { dialog, _ ->
+            val intent = Intent(this, UpgradeActivity::class.java)
+            startActivity(intent)
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Free") { dialog, _ ->
+            showAnnouncementDialog()
+            dialog.dismiss()
+        }
+
+
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    private fun showAnnouncementDialog() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.dialog_announcement)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val imgClose: ImageView = dialog.findViewById(R.id.img_close)
+        val radiogrp: RadioGroup = dialog.findViewById(R.id.radiogrp)
+        val btn_maleVoice: RadioButton = dialog.findViewById(R.id.btn_maleVoice)
+        val btn_femaleVoice: RadioButton = dialog.findViewById(R.id.btn_femaleVoice)
+        val btn_otherVoice: RadioButton = dialog.findViewById(R.id.btn_otherVoice)
+        val btnScheduleTransfer: Button = dialog.findViewById(R.id.btn_schedule_transfer)
+
+        if (savedSessionManagerVoice.getAnnouncementVoice() == "Male") {
+            btn_maleVoice.isChecked = true
+        } else if (savedSessionManagerVoice.getAnnouncementVoice() == "Female") {
+            btn_femaleVoice.isChecked = true
+        }
+
+        imgClose.setOnClickListener {
+            dialog.dismiss()
+
+        }
+        var voice1 = ""
+        radiogrp.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId -> // find which radio button is selected
+            when (checkedId) {
+                R.id.btn_maleVoice -> {
+                    voice1 = util.getGenderDescription(Gender.MALE)
+                    savedSessionManagerVoice.setAnnouncementVoice(voice1)
+                }
+
+                R.id.btn_femaleVoice -> {
+                    voice1 = util.getGenderDescription(Gender.FEMALE)
+                    savedSessionManagerVoice.setAnnouncementVoice(voice1)
+                }
+
+                R.id.btn_otherVoice -> {
+                    voice1 = util.getGenderDescription(Gender.OTHER)
+                    savedSessionManagerVoice.setAnnouncementVoice(voice1)
+                }
+            }
+        })
+
+        var voice = ""
+        btnScheduleTransfer.setOnClickListener {
+            if (btn_maleVoice.isChecked) {
+                voice = util.getGenderDescription(Gender.MALE)
+            } else if (btn_femaleVoice.isChecked) {
+                voice = util.getGenderDescription(Gender.FEMALE)
+            } else if (btn_otherVoice.isChecked) {
+                voice = util.getGenderDescription(Gender.OTHER)
+            }
+            savedSessionManagerVoice.setAnnouncementVoice(voice)
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 
     private fun allSelect() {

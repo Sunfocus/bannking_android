@@ -1,9 +1,18 @@
 package com.bannking.app.ui.activity
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import com.bannking.app.R
+import com.bannking.app.UiExtension
 import com.bannking.app.adapter.BankAdapter
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.databinding.ActivityBankBinding
@@ -12,8 +21,15 @@ import com.bannking.app.model.ExchangeTokenResponse
 import com.bannking.app.model.GetBankLinkTokenResponse
 import com.bannking.app.model.GetBankListResponse
 import com.bannking.app.model.OnClickedItems
+import com.bannking.app.model.retrofitResponseModel.accountListModel.AccountListModel
+import com.bannking.app.model.retrofitResponseModel.headerModel.HeaderModel
 import com.bannking.app.model.viewModel.BankViewModel
+import com.bannking.app.utils.Constants
 import com.bannking.app.utils.SessionManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.plaid.link.FastOpenPlaidLink
 import com.plaid.link.Plaid
 import com.plaid.link.PlaidHandler
@@ -36,14 +52,50 @@ class BankActivity : BaseActivity<BankViewModel, ActivityBankBinding?>(BankViewM
     }
 
     override fun initialize() {
+        uiColor()
         premiumFeatures = inAppPurchaseSM.getBoolean(SessionManager.isPremium)
-
-        if (!premiumFeatures) {
+        Log.e("premiumFeatures", premiumFeatures.toString())
+        if (premiumFeatures) {
             binding!!.clBankDetails.visibility = View.GONE
             binding!!.rvBankName.visibility = View.VISIBLE
         } else {
             binding!!.clBankDetails.visibility = View.VISIBLE
             binding!!.rvBankName.visibility = View.GONE
+        }
+        if (UiExtension.isDarkModeEnabled()) {
+            binding!!.bottomNavBank.setBackgroundResource(R.drawable.nav_shape_night) // Dark mode background color
+        } else {
+            binding!!.bottomNavBank.setBackgroundResource(R.drawable.nav_shape) // Light mode background color
+        }
+    }
+
+    private fun uiColor() {
+        if (UiExtension.isDarkModeEnabled()) {
+            binding!!.clTopBank.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
+            binding!!.tvUnRecognizedDetails.setTextColor(
+                ContextCompat.getColor(
+                    this, R.color.white
+                )
+            )
+            binding!!.tvAudioIfo.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvTips.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.imgAddBank.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.ivHints.setColorFilter(this.resources.getColor(R.color.white))
+
+        } else {
+            binding!!.clTopBank.setBackgroundColor(
+                ContextCompat.getColor(
+                    this, R.color.clr_wild_sand
+                )
+            )
+            binding!!.tvUnRecognizedDetails.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding!!.tvAudioIfo.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.tvTips.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.clr_blue))
+            binding!!.imgAddBank.setColorFilter(this.resources.getColor(R.color.clr_blue))
+            binding!!.ivHints.setColorFilter(this.resources.getColor(R.color.clr_blue))
+
         }
     }
 
@@ -52,34 +104,46 @@ class BankActivity : BaseActivity<BankViewModel, ActivityBankBinding?>(BankViewM
             imgBack.setOnClickListener {
                 finish()
             }
-
-            clBankDetails.setOnClickListener {
-                val intent = Intent(this@BankActivity, UpgradeActivity::class.java)
-                startActivity(intent)
-            }
-
             val userToken = sessionManager.getString(SessionManager.USERTOKEN)
             premiumFeatures = inAppPurchaseSM.getBoolean(SessionManager.isPremium)
-            imgAddBank.setOnClickListener {
-                if (!premiumFeatures) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        viewModel.getTokenForPlaidApi(userToken).observe(this@BankActivity) {
-                            val response = it as GetBankLinkTokenResponse
-                            if (response.status == 200) {
-                                onLinkTokenSuccess(response.data.link_token)
-                            } else {
-                                Toast.makeText(
-                                    this@BankActivity, response.message, Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                    }
+
+            clBankDetails.setOnClickListener {
+                if (premiumFeatures) {
+                    getBankLinkToken(userToken)
                 } else {
                     val intent = Intent(this@BankActivity, UpgradeActivity::class.java)
                     startActivity(intent)
+                    finish()
                 }
             }
 
+
+
+            imgAddBank.setOnClickListener {
+                if (premiumFeatures) {
+                    getBankLinkToken(userToken)
+                } else {
+                    val intent = Intent(this@BankActivity, UpgradeActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+            }
+
+        }
+    }
+
+    private fun getBankLinkToken(userToken: String?) {
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.getTokenForPlaidApi(userToken).observe(this@BankActivity) {
+                val response = it as GetBankLinkTokenResponse
+                if (response.status == 200) {
+                    onLinkTokenSuccess(response.data.link_token)
+                } else {
+                    Toast.makeText(
+                        this@BankActivity, response.message, Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
     }
 
@@ -96,9 +160,11 @@ class BankActivity : BaseActivity<BankViewModel, ActivityBankBinding?>(BankViewM
 
     private fun setAdapter(model: ArrayList<BankListData>) {
         if (model.isEmpty()) {
-            binding!!.tvItemNotFound.visibility = View.VISIBLE
+            binding!!.clBankDetails.visibility = View.VISIBLE
             binding!!.rvBankName.visibility = View.GONE
         } else {
+            binding!!.clBankDetails.visibility = View.GONE
+            binding!!.rvBankName.visibility = View.VISIBLE
             bankAdapter = BankAdapter(this, model, this)
             binding!!.rvBankName.adapter = bankAdapter
         }
@@ -122,6 +188,7 @@ class BankActivity : BaseActivity<BankViewModel, ActivityBankBinding?>(BankViewM
         when (result) {
             is LinkSuccess -> showSuccess(result)
             is LinkExit -> showFailure(result)
+
         }
     }
 
@@ -136,20 +203,140 @@ class BankActivity : BaseActivity<BankViewModel, ActivityBankBinding?>(BankViewM
                         viewModel.setDataInBankList(userToken)
                             .observe(this@BankActivity) { responses ->
                                 val data = responses as GetBankListResponse
-                                if (data.data.size > 0) {
-                                    binding!!.tvItemNotFound.visibility = View.GONE
-                                    binding!!.rvBankName.visibility = View.VISIBLE
-                                    setAdapter(data.data)
+                                if (data.status == 200) {
+                                    if (data.data.size > 0) {
+                                        binding!!.clBankDetails.visibility = View.GONE
+                                        binding!!.rvBankName.visibility = View.VISIBLE
+                                        setAdapter(data.data)
+                                    } else {
+                                        binding!!.clBankDetails.visibility = View.VISIBLE
+                                        binding!!.rvBankName.visibility = View.GONE
+                                    }
                                 } else {
-                                    binding!!.tvItemNotFound.visibility = View.VISIBLE
+                                    binding!!.clBankDetails.visibility = View.VISIBLE
+                                    binding!!.rvBankName.visibility = View.GONE
+                                }
+
+                            }
+                        viewModel.errorResponse.observe(this@BankActivity) { its ->
+                            if (its != null){
+                                Log.e("errorMessage", its)
+                                if (!its.isNullOrEmpty()) {
+                                    binding!!.clBankDetails.visibility = View.VISIBLE
                                     binding!!.rvBankName.visibility = View.GONE
                                 }
                             }
+                        }
                     }
 
                 }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+        viewModel.setDataInHeaderTitleList(userToken)
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (userToken != null) {
+                viewModel.setDataInAccountList(userToken)
+            }
+        }, 100)
+
+        binding!!.bottomNavBank.selectedItemId = R.id.nav_spending_plan
+
+        binding!!.bottomNavBank.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_account -> {
+                    val intent = Intent(this@BankActivity, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    finish()
+                }
+
+                R.id.nav_header -> {
+                    val accountListModel = gson.fromJson(
+                        viewModel.accountListData.value?.apiResponse, AccountListModel::class.java
+                    )
+                    if (accountListModel.data != null && accountListModel.data.isNotEmpty() && accountListModel != null) {
+
+                        val intent = Intent(this@BankActivity, AccountMenuNewActivity::class.java)
+                        val model = gson.fromJson(
+                            viewModel.headerTitleList.value?.apiResponse, HeaderModel::class.java
+                        )
+                        val accountList = gson.fromJson(
+                            viewModel.accountListData.value?.apiResponse,
+                            AccountListModel::class.java
+                        )
+                        intent.putExtra("Headermodel", model)
+                        intent.putExtra("accountList", accountList)
+                        resultLauncher.launch(intent)
+                        overridePendingTransition(0, 0)
+                    }
+                }
+
+                R.id.nav_spending_plan -> {
+
+                }
+
+                R.id.nav_explore -> {
+                    val intent = Intent(this@BankActivity,ExploreExpensesActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                }
+
+                R.id.nav_menu -> {
+                    val intent = Intent(this@BankActivity, ProfileActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                }
+
+            }
+            true
+        }
+
+        val menu = binding!!.bottomNavBank.menu
+        binding!!.bottomNavBank.itemIconTintList = null
+        val menuItem = menu.findItem(R.id.nav_menu)
+        Glide.with(this).asBitmap().load(Constants.IMG_BASE_URL + userModel!!.image).apply(
+            RequestOptions.circleCropTransform().override(100, 100)
+                .placeholder(R.drawable.sample_user)
+        ).into(object : CustomTarget<Bitmap>() {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                menuItem?.icon = BitmapDrawable(resources, resource)
+            }
+
+            override fun onLoadCleared(placeholder: Drawable?) {
+            }
+        })
+
+    }
+
+    private var resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val data: Intent? = result.data
+            if (result.resultCode == 1011) {
+                val intent = Intent(this@BankActivity, BudgetPlannerActivity::class.java)
+                intent.putExtra("SelectedMenu", data?.getStringExtra("SelectedMenu"))
+                resultLauncher2.launch(intent)
+                overridePendingTransition(0, 0)
+            }
+        }
+
+    private var resultLauncher2 =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                viewModel.setIdInFilterDatanull(null)
+                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+//                viewModel.setDataInAccountList(userToken!!)
+                viewModel.setDataInHeaderTitleList(userToken)
+            }
+        }
+
 
     private fun showFailure(exit: LinkExit) {
         if (exit.error != null) {
@@ -164,18 +351,49 @@ class BankActivity : BaseActivity<BankViewModel, ActivityBankBinding?>(BankViewM
     override fun initViewModel(viewModel: BankViewModel) {
         val userToken = sessionManager.getString(SessionManager.USERTOKEN)
         premiumFeatures = inAppPurchaseSM.getBoolean(SessionManager.isPremium)
-        if (!premiumFeatures) {
+
+        if (userToken != null) {
+            viewModel.getUserProfileData(userToken).observe(this) { mainModel ->
+                if (mainModel.status == 200) {
+                    if (mainModel.data!!.subscriptionStatus == 1) {
+                        inAppPurchaseSM.setBoolean(SessionManager.isPremium, true)
+                    } else {
+                        inAppPurchaseSM.setBoolean(SessionManager.isPremium, false)
+                    }
+                }
+            }
+        }
+
+        if (premiumFeatures) {
             viewModel.setDataInBankList(userToken).observe(this) { response ->
                 val data = response as GetBankListResponse
-                if (data.data.size > 0) {
-                    binding!!.tvItemNotFound.visibility = View.GONE
-                    binding!!.rvBankName.visibility = View.VISIBLE
-                    setAdapter(data.data)
+                if (response.status == 200) {
+                    if (data.data.size > 0) {
+                        binding!!.clBankDetails.visibility = View.GONE
+                        binding!!.rvBankName.visibility = View.VISIBLE
+                        setAdapter(data.data)
+                    } else {
+                        binding!!.clBankDetails.visibility = View.VISIBLE
+                        binding!!.rvBankName.visibility = View.GONE
+                    }
+
                 } else {
-                    binding!!.tvItemNotFound.visibility = View.VISIBLE
+                    binding!!.clBankDetails.visibility = View.VISIBLE
                     binding!!.rvBankName.visibility = View.GONE
                 }
 
+            }
+
+            viewModel.errorResponse.observe(this@BankActivity) { its ->
+                its?.let { message ->  // Check if 'its' is not null
+                    Log.e("errorMessage", message)
+                    if (message.isNotEmpty()) {
+                        binding!!.clBankDetails.visibility = View.VISIBLE
+                        binding!!.rvBankName.visibility = View.GONE
+                    }
+                } ?: run {
+                    Log.e("errorMessage", "Error message is null")
+                }
             }
         } else {
             binding!!.clBankDetails.visibility = View.VISIBLE

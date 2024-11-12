@@ -3,14 +3,19 @@ package com.bannking.app.ui.activity
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +28,7 @@ import com.bannking.app.adapter.AccountMenuWithSavedAdapterNew
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.databinding.ActivityAccountMenuNewBinding
 import com.bannking.app.model.CommonResponseApi
+import com.bannking.app.model.EditHeaderTitle
 import com.bannking.app.model.retrofitResponseModel.accountListModel.AccountListModel
 import com.bannking.app.model.retrofitResponseModel.accountMenuTitleModel.AccountTitleModel
 import com.bannking.app.model.retrofitResponseModel.accountMenuTitleModel.Data
@@ -30,14 +36,20 @@ import com.bannking.app.model.viewModel.AccountMenuViewModel
 import com.bannking.app.network.RetrofitClient
 import com.bannking.app.utils.Constants
 import com.bannking.app.utils.SessionManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 
 class AccountMenuNewActivity :
-    BaseActivity<AccountMenuViewModel, ActivityAccountMenuNewBinding>(AccountMenuViewModel::class.java) {
+    BaseActivity<AccountMenuViewModel, ActivityAccountMenuNewBinding>(AccountMenuViewModel::class.java),
+    EditHeaderTitle {
 
     private lateinit var accountList: AccountListModel
     var adapter: AccountMenuNewAdapter? = null
@@ -58,21 +70,25 @@ class AccountMenuNewActivity :
     }
 
 
-    private fun uiChangeColor(){
+    private fun uiChangeColor() {
         if (UiExtension.isDarkModeEnabled()) {
-            binding!!.cvAccountMenu.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
+            binding!!.cvAccountMenu.setBackgroundColor(
+                ContextCompat.getColor(
+                    this, R.color.dark_mode
+                )
+            )
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
 
         } else {
             binding!!.cvAccountMenu.setBackgroundColor(
                 ContextCompat.getColor(
-                    this,
-                    R.color.clr_card_background
+                    this, R.color.clr_card_background
                 )
             )
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.black))
         }
     }
+
     override fun initialize() {
         uiChangeColor()
 
@@ -98,25 +114,46 @@ class AccountMenuNewActivity :
             }
         }
 
-        if (intent.hasExtra("accountList")){
-             accountList =
-                intent.getSerializableExtra("accountList") as AccountListModel
+        if (intent.hasExtra("accountList")) {
+            accountList = intent.getSerializableExtra("accountList") as AccountListModel
         }
 
         adapterNew = AccountMenuWithSavedAdapterNew(
             this@AccountMenuNewActivity, savedHeaderlist
         ) { postion ->
-          val finalList =  accountList.data.filter { it.userAccountTitle!!.name!!.toLowerCase() == savedHeaderlist[postion].name!!.toLowerCase()}
-            deleteConfirmationDialog(
-                finalList[0],
-                getString(R.string.str_remove_header),
-                "3"
-            ) {
-                adapter?.removeMenuTitle(savedHeaderlist[postion].name.toString())
-                savedHeaderlist.removeAt(postion)
-                adapterNew?.notifyItemRemoved(postion)
-                checkSavedHeaderList()
+
+            val finalList =
+                accountList.data.filter {
+                    it.userAccountTitle!!.name!!.lowercase(Locale.getDefault()) == savedHeaderlist[postion].name!!.lowercase(
+                        Locale.getDefault()
+                    )
+                }
+            if (finalList.size != 0) {
+                val headerTitleId = savedHeaderlist[postion].id!!.toString()
+                deleteConfirmationDialog(
+                    finalList[0], getString(R.string.str_remove_header), "3", "", headerTitleId
+                ) {
+                    adapter?.removeMenuTitle(savedHeaderlist[postion].name.toString())
+                    savedHeaderlist.removeAt(postion)
+                    adapterNew?.notifyItemRemoved(postion)
+                    checkSavedHeaderList()
+                }
+            } else {
+                val data = com.bannking.app.model.retrofitResponseModel.accountListModel.Data()
+                val headerTitle = savedHeaderlist[postion].name!!.toString()
+                val headerTitleId = savedHeaderlist[postion].id!!.toString()
+
+                deleteConfirmationDialog(
+                    data, getString(R.string.str_remove_header), "3", headerTitle,headerTitleId
+                ) {
+                    adapter?.removeMenuTitle(savedHeaderlist[postion].name.toString())
+                    savedHeaderlist.removeAt(postion)
+                    adapterNew?.notifyItemRemoved(postion)
+                    checkSavedHeaderList()
+                }
+
             }
+
         }
 
         binding!!.rvSelectedMenu.apply {
@@ -291,7 +328,7 @@ class AccountMenuNewActivity :
         val manager: LayoutManager = GridLayoutManager(this, 2, RecyclerView.VERTICAL, false)
         binding!!.rvMenu.layoutManager = manager
         adapter = AccountMenuNewAdapter(
-            this@AccountMenuNewActivity, list, dialogClass, savedHeaderlist, adapterNew
+            this@AccountMenuNewActivity, list, dialogClass, savedHeaderlist, adapterNew, this
         )
         binding!!.rvMenu.adapter = adapter
     }
@@ -301,7 +338,7 @@ class AccountMenuNewActivity :
         with(binding!!) {
 
             imgFloating.setOnClickListener {
-                clickOnOwnMenuTitle()
+                clickOnOwnMenuTitle(1, "", "")
             }
 
             imgBack.setOnClickListener { finish() }
@@ -312,22 +349,27 @@ class AccountMenuNewActivity :
 //                startActivity(Intent(this@AccountMenuNewActivity, UpgradeActivity::class.java))
                 if (savedHeaderlist.size == 1) {
                     finish()
-                    val intent = Intent(this@AccountMenuNewActivity, BudgetPlannerNewActivity::class.java)
+                    val intent =
+                        Intent(this@AccountMenuNewActivity, BudgetPlannerNewActivity::class.java)
                     intent.putExtra("SelectedItemMenu", savedHeaderlist[selectedTabIndex].id)
                     intent.putExtra("position", selectedTabIndex.toString())
                     startActivity(intent)
-                }else if (savedHeaderlist.size == 2){
+                } else if (savedHeaderlist.size == 2) {
                     val clickAccountType = currentTab.getBoolean(SessionManager.clickAccountType)
-                    if (clickAccountType){
-                        currentTab.setBoolean(SessionManager.clickAccountType,false)
-                        val intent = Intent(this@AccountMenuNewActivity, BudgetPlannerNewActivity::class.java)
+                    if (clickAccountType) {
+                        currentTab.setBoolean(SessionManager.clickAccountType, false)
+                        val intent = Intent(
+                            this@AccountMenuNewActivity, BudgetPlannerNewActivity::class.java
+                        )
                         intent.putExtra("SelectedItemMenu", savedHeaderlist[1].id)
                         intent.putExtra("position", "1")
                         startActivity(intent)
                         finish()
-                    }else{
-                        currentTab.setBoolean(SessionManager.clickAccountType,false)
-                        val intent = Intent(this@AccountMenuNewActivity, BudgetPlannerNewActivity::class.java)
+                    } else {
+                        currentTab.setBoolean(SessionManager.clickAccountType, false)
+                        val intent = Intent(
+                            this@AccountMenuNewActivity, BudgetPlannerNewActivity::class.java
+                        )
                         intent.putExtra("SelectedItemMenu", savedHeaderlist[selectedTabIndex].id)
                         intent.putExtra("position", selectedTabIndex.toString())
                         startActivity(intent)
@@ -336,9 +378,7 @@ class AccountMenuNewActivity :
 
                 } else {
                     Toast.makeText(
-                        this@AccountMenuNewActivity,
-                        "Select Account type!",
-                        Toast.LENGTH_SHORT
+                        this@AccountMenuNewActivity, "Select Account type!", Toast.LENGTH_SHORT
                     ).show()
                 }
             }
@@ -347,7 +387,7 @@ class AccountMenuNewActivity :
 
     }
 
-    fun clickOnOwnMenuTitle() {
+    private fun clickOnOwnMenuTitle(type: Int, name: String, id: String) {
         bottomSheetDialog =
             BottomSheetDialog(this@AccountMenuNewActivity, R.style.NoBackgroundDialogTheme)
         val view = LayoutInflater.from(this@AccountMenuNewActivity)
@@ -358,35 +398,75 @@ class AccountMenuNewActivity :
         val btnSubmit = view.findViewById<Button>(R.id.btn_submit)
         val edtCreateTitle = view.findViewById<EditText>(R.id.edt_create_title)
         val tvCreateOwn = view.findViewById<TextView>(R.id.tvCreateOwn)
+        val btnDeleteTitle = view.findViewById<AppCompatButton>(R.id.btnDeleteTitle)
 
         if (UiExtension.isDarkModeEnabled()) {
             view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.dark_mode)
             edtCreateTitle.setHintTextColor(ContextCompat.getColor(this, R.color.white))
             edtCreateTitle.setTextColor(ContextCompat.getColor(this, R.color.white))
             tvCreateOwn.setTextColor(ContextCompat.getColor(this, R.color.white))
-        }else{
+        } else {
             view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.white)
             edtCreateTitle.setHintTextColor(ContextCompat.getColor(this, R.color.grey))
             edtCreateTitle.setTextColor(ContextCompat.getColor(this, R.color.black))
             tvCreateOwn.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
         }
+        if (type == 2) {
+            edtCreateTitle.setText(name)
+            btnDeleteTitle.visibility = View.VISIBLE
+            tvCreateOwn.text = "UPDATE OWN TITLE"
+        } else {
+            btnDeleteTitle.visibility = View.GONE
+            tvCreateOwn.text = "CREATE OWN TITLE"
+        }
+
+        btnDeleteTitle.setOnClickListener {
+            val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+            viewModel.deleteCustomHeader(userToken, id).observe(this) {
+                viewModel.setDataInAccountTitleList(userToken)
+                bottomSheetDialog!!.dismiss()
+            }
+        }
 
         btnSubmit.setOnClickListener {
-            if (edtCreateTitle.text.toString().isNotEmpty()) {
+            if (type == 2) {
                 val userToken = sessionManager.getString(SessionManager.USERTOKEN)
-                viewModel.setDataInCreateOwnMenuTitleList(edtCreateTitle.text.toString(), userToken)
-                bottomSheetDialog!!.dismiss()
-            } else
-                edtCreateTitle.error = resources.getString(R.string.str_please_enter_your_title)
+                viewModel.updateCustomHeader(userToken, edtCreateTitle.text.toString(), id)
+                    .observe(this) {
+                        viewModel.setDataInAccountTitleList(userToken)
+                        bottomSheetDialog!!.dismiss()
+                    }
+            } else {
+                if (edtCreateTitle.text.toString().isNotEmpty()) {
+                    val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+                    viewModel.setDataInCreateOwnMenuTitleList(
+                        edtCreateTitle.text.toString(), userToken
+                    )
+                    bottomSheetDialog!!.dismiss()
+                } else edtCreateTitle.error =
+                    resources.getString(R.string.str_please_enter_your_title)
+            }
+
         }
+
     }
 
 
     private fun deleteConfirmationDialog(
-        list: com.bannking.app.model.retrofitResponseModel.accountListModel.Data, alertMsg: String, deleteType: String, callbacks: (() -> Unit)? = null
+        list: com.bannking.app.model.retrofitResponseModel.accountListModel.Data,
+        alertMsg: String,
+        deleteType: String,
+        headerTitle: String,
+        headerTitleId: String,
+        callbacks: (() -> Unit)? = null
     ) {
-
-        val finalMessage = "Are you sure you want to delete all created accounts related to ${list.userAccountTitle!!.name}?"
+        val headerTitleName = if (list.userAccountTitle != null) {
+            list.userAccountTitle!!.name
+        } else {
+            headerTitle
+        }
+        val finalMessage =
+            "Are you sure you want to delete all created accounts related to ${headerTitleName}?"
         val builder: AlertDialog.Builder = AlertDialog.Builder(this@AccountMenuNewActivity)
         builder.setMessage(finalMessage)
         builder.setTitle(resources.getString(R.string.str_alert))
@@ -395,7 +475,12 @@ class AccountMenuNewActivity :
         builder.setPositiveButton(
             resources.getString(R.string.str_confirm)
         ) { _: DialogInterface?, _: Int ->
-            setDataInDeleteBankAccount(list.id.toString(), type = deleteType) {
+            val accId = if (list.id.isNullOrEmpty()) {
+                ""
+            } else {
+                list.id.toString()
+            }
+            setDataInDeleteBankAccount(accId, type = deleteType,headerTitleId) {
                 callbacks?.invoke()
             }
         }
@@ -405,13 +490,13 @@ class AccountMenuNewActivity :
             dialog.cancel()
 
         }
-        Log.e("sdkjhfsdjfhds","${list.id}")
+        Log.e("sdkjhfsdjfhds", "${list.id}")
         val alertDialog: AlertDialog = builder.create()
         alertDialog.show()
     }
 
     fun setDataInDeleteBankAccount(
-        headerTitleID: String, type: String, callbacks: (() -> Unit)? = null
+        headerTitleID: String, type: String,headerTitleId:String, callbacks: (() -> Unit)? = null
     ) {
         viewModel.progressObservable.value = true
         FCM_TOKEN.let {
@@ -427,14 +512,16 @@ class AccountMenuNewActivity :
                 e.printStackTrace()
             }
             val userToken = sessionManager.getString(SessionManager.USERTOKEN)
-            val call = RetrofitClient.instance?.myApi?.deleteBankAccount(headerTitleID,type,"",userToken!!)
+            val call = RetrofitClient.instance?.myApi?.deleteBankAccount(
+                headerTitleID, type, "",headerTitleId, userToken!!
+            )
 
             call?.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     viewModel.progressObservable.value = false
                     if (response.isSuccessful) {
                         val model = gson.fromJson(response.body(), CommonResponseApi::class.java)
-                        if (model.status == 200 ) {
+                        if (model.status == 200) {
                             dialogClass.showSuccessfullyDialog(model.message.toString()) {
                                 callbacks?.invoke()
                             }
@@ -456,6 +543,68 @@ class AccountMenuNewActivity :
     override fun onResume() {
         super.onResume()
 //        binding!!.txtUpgrade.isVisible = !isPremium
+
+        binding!!.bottomNavHeader.selectedItemId = R.id.nav_header
+
+        binding!!.bottomNavHeader.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_account -> {
+                    val intent = Intent(this@AccountMenuNewActivity, MainActivity::class.java)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    finish()
+                }
+
+                R.id.nav_header -> {
+
+                }
+
+                R.id.nav_spending_plan -> {
+                    val intent =
+                        Intent(this@AccountMenuNewActivity, HeaderForBankActivity::class.java)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    finish()
+                }
+
+                R.id.nav_explore -> {
+                    startActivity(
+                        Intent(
+                            this@AccountMenuNewActivity, ExploreExpensesActivity::class.java
+                        )
+                    )
+                    overridePendingTransition(0, 0)
+                    finish()
+                }
+
+                R.id.nav_menu -> {
+                    val intent = Intent(this@AccountMenuNewActivity, ProfileActivity::class.java)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    finish()
+                }
+
+            }
+            true
+        }
+
+        val menu = binding!!.bottomNavHeader.menu
+        binding!!.bottomNavHeader.itemIconTintList = null
+        val menuItem = menu.findItem(R.id.nav_menu)
+        Glide.with(this).asBitmap().load(Constants.IMG_BASE_URL + userModel!!.image).apply(
+            RequestOptions.circleCropTransform().override(100, 100)
+                .placeholder(R.drawable.sample_user)
+        ).into(object : CustomTarget<Bitmap>() {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                menuItem?.icon = BitmapDrawable(resources, resource)
+            }
+
+            override fun onLoadCleared(placeholder: Drawable?) {
+
+            }
+
+        })
+
     }
 
     override fun onBackPressed() {
@@ -463,5 +612,12 @@ class AccountMenuNewActivity :
         intent.putExtra("MainToMenu", "True")
         setResult(RESULT_OK, intent)
         finish()
+    }
+
+    override fun editTitleOnClick(name: String?, id: String?) {
+        if (name != null && id != null) {
+            clickOnOwnMenuTitle(2, name, id)
+        }
+
     }
 }

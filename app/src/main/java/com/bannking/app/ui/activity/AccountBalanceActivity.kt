@@ -4,10 +4,12 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +17,8 @@ import com.bannking.app.adapter.BankTranAdapter
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.databinding.ActivityAccountBalanceBinding
 import com.bannking.app.model.GetBankBalanceSpendResponse
+import com.bannking.app.model.GetTransactionData
 import com.bannking.app.model.GetTransactionResponse
-import com.bannking.app.model.NewTransaction
 import com.bannking.app.model.viewModel.BankBalanceViewModel
 import com.bannking.app.utils.SessionManager
 import com.bannking.app.utils.SharedPref
@@ -39,6 +41,7 @@ class AccountBalanceActivity :
     private lateinit var pref: SharedPref
     private var isLoading = false
     private var pageCount = 1
+    private var searchText = ""
 
     private val handler = Handler(Looper.getMainLooper())
     private var searchRunnable: Runnable? = null
@@ -82,6 +85,9 @@ class AccountBalanceActivity :
                 }
             }
 
+            imageMoreBank.setOnClickListener {
+
+            }
 
             svTransactionManual.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
@@ -94,18 +100,33 @@ class AccountBalanceActivity :
                     if (!newText.isNullOrEmpty()) {
                         searchRunnable = Runnable {
                             pageCount = 1
+                            searchText = newText
+
                             hitApiForTransactionFilter("", pageCount, newText)
                         }
                         handler.postDelayed(searchRunnable!!, debounceDelay)
+                    } else {
+                        searchText = ""
+                        hitApiForTransactionFilter("", pageCount, "")
                     }
                     return false
                 }
             })
 
+
         }
+
         val hideTransactions = pref.getBoolean("HideTransactions")
         binding!!.switchHide.isChecked = hideTransactions
 
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val view = currentFocus
+        view?.let {
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
+        }
     }
 
     private fun syncImageViewAnimation() {
@@ -166,7 +187,7 @@ class AccountBalanceActivity :
     @SuppressLint("NotifyDataSetChanged")
     private fun hitApiForTransactionFilter(formattedDate: String, pageCount: Int, filter: String) {
         val userToken = sessionManager.getString(SessionManager.USERTOKEN)
-
+        hideKeyboard()
         viewModel.getBankTransactionFilterApi(
             userToken, accountId, institutionId, filter, formattedDate, pageCount.toString(), "10"
         ).observe(this) {
@@ -174,16 +195,16 @@ class AccountBalanceActivity :
             if (response.status == 200) {
                 if (pageCount == 1) {
                     isLoading = false
-                    setAdapter(response.data.new_transactions)
+                    setAdapter(response.data)
                 } else {
                     if (::bankTranAdapter.isInitialized) {
                         isLoading = false
-                        bankTranAdapter.getAddList().addAll(response.data.new_transactions)
+                        bankTranAdapter.getAddList().addAll(response.data)
                         bankTranAdapter.notifyDataSetChanged()
 
                     } else {
                         isLoading = false
-                        setAdapter(response.data.new_transactions)
+                        setAdapter(response.data)
                     }
                 }
             }
@@ -221,7 +242,6 @@ class AccountBalanceActivity :
         datePickerDialog.show()
     }
 
-
     private fun setCurrentTime(calendar: Calendar) {
         val currentTime = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, currentTime.get(Calendar.HOUR_OF_DAY))
@@ -254,8 +274,9 @@ class AccountBalanceActivity :
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setAdapter(newTransactions: ArrayList<NewTransaction>) {
+    private fun setAdapter(newTransactions: ArrayList<GetTransactionData>) {
         val hideTransactions = pref.getBoolean("HideTransactions")
+        hideKeyboard()
         Log.e("newTransactions", newTransactions.size.toString())
         if (newTransactions.size > 0) {
             if (hideTransactions) {
@@ -295,10 +316,10 @@ class AccountBalanceActivity :
 
     private fun loadMoreTransactions() {
         isLoading = true
-        // Simulate a network call or database fetch
+
         pageCount++
         Handler(Looper.getMainLooper()).postDelayed({
-            hitApiForTransactionFilter("", pageCount, "")
+            hitApiForTransactionFilter("", pageCount, searchText)
         }, 1000)
     }
 

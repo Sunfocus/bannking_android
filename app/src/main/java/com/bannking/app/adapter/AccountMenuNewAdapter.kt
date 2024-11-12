@@ -7,15 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bannking.app.R
 import com.bannking.app.UiExtension
 import com.bannking.app.UiExtension.drawable
+import com.bannking.app.model.EditHeaderTitle
 import com.bannking.app.model.retrofitResponseModel.accountMenuTitleModel.Data
 import com.bannking.app.ui.activity.AccountMenuNewActivity
-import com.bannking.app.utils.Constant
 import com.bannking.app.utils.DialogClass
 import com.bannking.app.utils.SessionManager
 
@@ -28,8 +29,10 @@ class AccountMenuNewAdapter : RecyclerView.Adapter<AccountMenuNewAdapter.ViewHol
     private var savedHeaderList: ArrayList<Data>? = null
     private var adapterNew: AccountMenuWithSavedAdapterNew? = null
     private var secondCardPosition = -1
+    private lateinit var onItemClickHeader: EditHeaderTitle
 
     private lateinit var currentTab: SessionManager
+
     constructor()
 
     constructor(
@@ -37,13 +40,15 @@ class AccountMenuNewAdapter : RecyclerView.Adapter<AccountMenuNewAdapter.ViewHol
         list: ArrayList<Data>?,
         dialogClass: DialogClass,
         savedHeaderlist: ArrayList<Data>,
-        adapterNew: AccountMenuWithSavedAdapterNew?
+        adapterNew: AccountMenuWithSavedAdapterNew?,
+        onItemClickHeader:EditHeaderTitle
     ) {
         this.context = context
         this.dialogClass = dialogClass
         this.list = list
         this.savedHeaderList = savedHeaderlist
         this.adapterNew = adapterNew
+        this.onItemClickHeader = onItemClickHeader
 
     }
 
@@ -54,30 +59,34 @@ class AccountMenuNewAdapter : RecyclerView.Adapter<AccountMenuNewAdapter.ViewHol
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccountMenuNewAdapter.ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): AccountMenuNewAdapter.ViewHolder {
         return ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.item_account_menu, parent, false)
         )
     }
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-//
-//        return ViewHolder(
-//            ItemAccountMenuBinding.inflate(
-//                LayoutInflater.from(context),
-//                parent,
-//                false
-//            )
-//        )
-//    }
+
 
     @SuppressLint("UseCompatLoadingForDrawables", "NotifyDataSetChanged")
     override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
         val model = list!![position]
 
         currentTab = SessionManager(context!!, SessionManager.currentTab)
-        Log.d("sdfdsfsdfsd",savedHeaderList.toString())
+        Log.d("sdfdsfsdfsd", savedHeaderList.toString())
 
         holder.txtTitle.text = list!![position].name
+        if (list!![position].type!!.toInt() == 2) {
+            holder.imEditCustom.visibility = View.VISIBLE
+        } else {
+            holder.imEditCustom.visibility = View.GONE
+        }
+
+        holder.imEditCustom.setOnClickListener {
+            onItemClickHeader.editTitleOnClick(model.name,model.id)
+        }
+
 
         if (UiExtension.isDarkModeEnabled()) {
             holder.txtTitle.setTextColor(ContextCompat.getColor(context!!, R.color.white))
@@ -106,45 +115,57 @@ class AccountMenuNewAdapter : RecyclerView.Adapter<AccountMenuNewAdapter.ViewHol
 
 
         holder.cvMenu.setOnClickListener {
-            currentTab.setBoolean(SessionManager.clickAccountType,true)
+            currentTab.setBoolean(SessionManager.clickAccountType, true)
             if (savedHeaderList!!.size < 2) {
                 if (model.isSelected) {
                     val name = model.name
                     val item = savedHeaderList?.find { it.name == name }
                     val index = savedHeaderList?.indexOf(item)
                     if (savedHeaderList?.get(index!!)?.isAccountCreated == 0) {
-/*                        model.isSelected = false
-                        index?.let {
-                            when (it) {
-                                0 -> {
-                                    savedHeaderlist?.remove(savedHeaderlist?.get(0))
-                                    adapterNew?.notifyItemRemoved(0)
-                                }
-                                1 -> {
-                                    savedHeaderlist?.remove(savedHeaderlist?.get(1))
-                                    adapterNew?.notifyItemRemoved(1)
-                                }
-                                else -> {}
-                            }
-                        }*/
+
                     } else {
-                        (context as AccountMenuNewActivity).dialogClass.showError((context as AccountMenuNewActivity).getString(R.string.str_account_created))
+                        (context as AccountMenuNewActivity).dialogClass.showError(
+                            (context as AccountMenuNewActivity).getString(
+                                R.string.str_account_created
+                            )
+                        )
                     }
 
                 } else {
                     if (savedHeaderList.isNullOrEmpty()) {
                         model.isSelected = true
-                        savedHeaderList!!.add(Data(id = model.id, name = model.name?.uppercase(), type = "1", isTitleMenuHasAccount = model.isTitleMenuHasAccount))
+                        savedHeaderList!!.add(
+                            Data(
+                                id = model.id,
+                                name = model.name?.uppercase(),
+                                type = "1",
+                                isTitleMenuHasAccount = model.isTitleMenuHasAccount
+                            )
+                        )
                         adapterNew?.notifyItemInserted(adapterNew!!.itemCount - 1)
                     } else {
                         if (savedHeaderList!![0].isAccountCreated == 0) {
                             clearAllSelection()
                             savedHeaderList!!.clear()
-                            savedHeaderList!!.add(Data(id = model.id, name = model.name?.uppercase(), type = "1", isTitleMenuHasAccount = model.isTitleMenuHasAccount))
+                            savedHeaderList!!.add(
+                                Data(
+                                    id = model.id,
+                                    name = model.name?.uppercase(),
+                                    type = "1",
+                                    isTitleMenuHasAccount = model.isTitleMenuHasAccount
+                                )
+                            )
                             adapterNew?.notifyDataSetChanged()
                         } else {
                             secondCardPosition = position
-                            savedHeaderList!!.add(Data(id = model.id, name = model.name?.uppercase(), type = "1", isTitleMenuHasAccount = model.isTitleMenuHasAccount))
+                            savedHeaderList!!.add(
+                                Data(
+                                    id = model.id,
+                                    name = model.name?.uppercase(),
+                                    type = "1",
+                                    isTitleMenuHasAccount = model.isTitleMenuHasAccount
+                                )
+                            )
                             adapterNew?.notifyItemInserted(adapterNew!!.itemCount - 1)
                         }
                         model.isSelected = true
@@ -153,9 +174,17 @@ class AccountMenuNewAdapter : RecyclerView.Adapter<AccountMenuNewAdapter.ViewHol
                 notifyDataSetChanged()
                 (context as AccountMenuNewActivity).checkSavedHeaderList()
             } else {
-                if (savedHeaderList!![0].isAccountCreated ==1  && savedHeaderList!![1].isAccountCreated ==0 && !model.isSelected) {
+                if (savedHeaderList!![0].isAccountCreated == 1 && savedHeaderList!![1].isAccountCreated == 0 && !model.isSelected) {
                     savedHeaderList?.removeAt(1)
-                    savedHeaderList!!.add(1, Data(id = model.id, name = model.name?.uppercase(), type = "1", isTitleMenuHasAccount = model.isTitleMenuHasAccount))
+                    savedHeaderList!!.add(
+                        1,
+                        Data(
+                            id = model.id,
+                            name = model.name?.uppercase(),
+                            type = "1",
+                            isTitleMenuHasAccount = model.isTitleMenuHasAccount
+                        )
+                    )
                     list!![secondCardPosition].isSelected = false
                     model.isSelected = true
                     adapterNew?.notifyItemChanged(1)
@@ -164,66 +193,33 @@ class AccountMenuNewAdapter : RecyclerView.Adapter<AccountMenuNewAdapter.ViewHol
                 } else {
                     if (model.isSelected) {
                         val name = model.name
-                        val item = savedHeaderList?.find { it.name!!.equals(name!!, ignoreCase = true) }
+                        val item =
+                            savedHeaderList?.find { it.name!!.equals(name!!, ignoreCase = true) }
                         val index = savedHeaderList?.indexOf(item)
                         if (savedHeaderList?.get(index!!)?.isAccountCreated == 1) {
-                            (context as AccountMenuNewActivity).dialogClass.showError((context as AccountMenuNewActivity).getString(R.string.str_account_created))
+                            (context as AccountMenuNewActivity).dialogClass.showError(
+                                (context as AccountMenuNewActivity).getString(
+                                    R.string.str_account_created
+                                )
+                            )
                         }
                     } else {
-                        currentTab.setBoolean(SessionManager.clickAccountType,false)
-                        /*                     if (!savedHeaderlist!![0].isAccountCreated && !savedHeaderlist!![1].isAccountCreated && !model.isSelected) {
-                                                 clearAllSelection()
-                                                 savedHeaderlist!!.clear()
-                                                 savedHeaderlist!!.add(Data(id = model.id, name = model.name?.uppercase(), type = "1", isTitleMenuHasAccount = model.isTitleMenuHasAccount))
-                                                 adapterNew?.notifyDataSetChanged()
-                                                 model.isSelected = true
-                                                 notifyDataSetChanged()
-                                             } else {
-                                                 (context as AccountMenuNewActivity).dialogClass.showError((context as AccountMenuNewActivity).getString(R.string.str_select_up_to_two))
+                        currentTab.setBoolean(SessionManager.clickAccountType, false)
 
-                                             }*/
-                        (context as AccountMenuNewActivity).dialogClass.showError((context as AccountMenuNewActivity).getString(R.string.str_select_up_to_two))
+                        (context as AccountMenuNewActivity).dialogClass.showError(
+                            (context as AccountMenuNewActivity).getString(
+                                R.string.str_select_up_to_two
+                            )
+                        )
                     }
                 }
 
 
             }
 
-/*                model.isSelected = false
-                val name = model.name
-                val item = savedHeaderlist?.find { it.name == name }
-                val index = savedHeaderlist?.indexOf(item)
-                index?.let {
-                    when (it) {
-                        0 -> {
-                            savedHeaderlist?.remove(savedHeaderlist?.get(0))
-                            adapterNew?.notifyItemRemoved(0)
-                        }
-                        1 -> {
-                            savedHeaderlist?.remove(savedHeaderlist?.get(1))
-                            adapterNew?.notifyItemRemoved(1)
-                        }
-                        else -> {}
-                    }
-                }*/
 
         }
     }
-
-    //            if (model.isSelected) {
-//                model.isSelected = false
-//                savedHeaderlist?.clear()
-//                adapterNew?.notifyDataSetChanged()
-//                notifyDataSetChanged()
-//            } else {
-//                clearAllSelection()
-//                model.isSelected = true
-//
-//                savedHeaderlist?.clear()
-//                savedHeaderlist!!.add(0, Data(model.id, model.name?.uppercase(), "1"))
-//                adapterNew?.notifyDataSetChanged()
-//                notifyDataSetChanged()
-//            }
 
     private fun clearAllSelection() {
         list?.forEach {
@@ -266,18 +262,19 @@ class AccountMenuNewAdapter : RecyclerView.Adapter<AccountMenuNewAdapter.ViewHol
         return position.toLong()
     }
 
-/*    inner class ViewHolder(itemView: ItemAccountMenuBinding) :
-        RecyclerView.ViewHolder(itemView.root) {
-        init {
-            setIsRecyclable(false)
-            mBinding = itemView
-        }
-    }*/
+    /*    inner class ViewHolder(itemView: ItemAccountMenuBinding) :
+            RecyclerView.ViewHolder(itemView.root) {
+            init {
+                setIsRecyclable(false)
+                mBinding = itemView
+            }
+        }*/
 
     inner class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
         val txtTitle: TextView = itemView.findViewById(R.id.txt_title)
         val tvSelected: TextView = itemView.findViewById(R.id.tvSelected)
         val cvMenu: CardView = itemView.findViewById(R.id.cvMenu)
+        val imEditCustom: AppCompatImageView = itemView.findViewById(R.id.imEditCustom)
 
 //        val btnCreate: AppCompatButton = itemView.findViewById(R.id.btn_create)
     }

@@ -2,13 +2,19 @@ package com.bannking.app.ui.activity
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.bannking.app.R
 import com.bannking.app.UiExtension
@@ -32,6 +38,8 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -47,8 +55,14 @@ class TranSectionDetailActivity :
     private var Id: String? = null
     private var icon: String? = null
     private var strAccountCode: String? = null
+    private var userAccountTitle: String? = null
     private var adapter: RecentTranSectionListAdapter? = null
     private lateinit var savedAdTime: SessionManager
+
+    private val handler = Handler(Looper.getMainLooper())
+    private var searchRunnable: Runnable? = null
+
+    private val debounceDelay: Long = 1200 // 1200 milliseconds delay
 
     //    private var bottomSheetDialog : BottomSheetDialog? = null
     lateinit var viewModel: RecentTransactionViewModel
@@ -75,48 +89,29 @@ class TranSectionDetailActivity :
         if (UiExtension.isDarkModeEnabled()) {
             binding!!.rlMainTD.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_mode))
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.white))
-            binding!!.txtTransactionName.setTextColor(ContextCompat.getColor(this, R.color.white))
-            binding!!.txtTransactionAmount.setTextColor(ContextCompat.getColor(this, R.color.white))
-            binding!!.txtPay.setTextColor(ContextCompat.getColor(this, R.color.white))
-            binding!!.txtTransfer.setTextColor(ContextCompat.getColor(this, R.color.white))
-            binding!!.txtCreatePayment.setTextColor(ContextCompat.getColor(this, R.color.white))
-            binding!!.txtTransactionNameSmall.setTextColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.white
-                )
-            )
-            binding!!.tvAvailTD.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.ivSort.setColorFilter(this.resources.getColor(R.color.white))
+            binding!!.ivCross.setColorFilter(this.resources.getColor(R.color.white))
+
+            binding!!.tvFilterAndDate.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.tvFilterDateShow.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding!!.svTransactionManualApp.setBackgroundResource(R.drawable.drawable_selected_night)
             binding!!.txtRecentTransaction.setTextColor(ContextCompat.getColor(this, R.color.white))
         } else {
-            binding!!.txtTransactionAmount.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
-            binding!!.txtPay.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
-            binding!!.txtTransfer.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
-            binding!!.txtCreatePayment.setTextColor(ContextCompat.getColor(this, R.color.clr_text_blu))
+            binding!!.svTransactionManualApp.setBackgroundResource(R.drawable.bg_corner)
+            binding!!.tvFilterAndDate.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding!!.tvFilterDateShow.setTextColor(ContextCompat.getColor(this, R.color.black))
             binding!!.rlMainTD.setBackgroundColor(
                 ContextCompat.getColor(
-                    this,
-                    R.color.clr_tab_frag
+                    this, R.color.clr_tab_frag
                 )
             )
             binding!!.imgBack.setColorFilter(this.resources.getColor(R.color.black))
-            binding!!.txtTransactionName.setTextColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.clr_text
-                )
-            )
-            binding!!.txtTransactionNameSmall.setTextColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.clr_text
-                )
-            )
-            binding!!.tvAvailTD.setTextColor(ContextCompat.getColor(this, R.color.clr_text))
+            binding!!.ivSort.setColorFilter(this.resources.getColor(R.color.black))
+            binding!!.ivCross.setColorFilter(this.resources.getColor(R.color.black))
+
             binding!!.txtRecentTransaction.setTextColor(
                 ContextCompat.getColor(
-                    this,
-                    R.color.clr_text
+                    this, R.color.clr_text
                 )
             )
 
@@ -141,13 +136,15 @@ class TranSectionDetailActivity :
             strAmount = intent.extras!!.getString("amount")  //amount
             strAccountMenuId = intent.extras!!.getString("accMenuId")  //acc_menu_id
             strAccountCode = intent.extras!!.getString("account_code")  // Account Code for print
+            userAccountTitle = intent.extras!!.getString("userAccountTitle")  // userAccountTitle
             Id = intent.extras!!.getString("Id")  //Account Id
             icon = intent.extras!!.getString("icon")  // currency icon
             val amount = formatMoney(strAmount!!.toDouble())
-            binding!!.txtTransactionName.text =
-                account.toString() + " ..." + strAccountCode.toString()
-            binding!!.txtTransactionNameSmall.text =
-                account.toString() + " ..." + strAccountCode.toString()
+
+            binding!!.txtTransactionNameSmall.text = "Total " + userAccountTitle.toString()
+            binding!!.tvSccountTypeData.text = account.toString()
+            binding!!.tvAccountNumberValue.text = "****$strAccountCode"
+
             binding!!.txtTransactionAmount.text = icon.toString() + amount.toString()
 
             if (getAmount(strAmount.toString()).startsWith("-")) {
@@ -156,23 +153,25 @@ class TranSectionDetailActivity :
                 binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_blue))
             }*/
             val userToken = sessionManager.getString(SessionManager.USERTOKEN)
-            viewModel.setDataInRecentTransactionListData(Id!!, userToken)
+            viewModel.setDataInRecentTransactionListData(Id!!, userToken, "", "")
         }
 
+    }
 
-        // Access the hint TextView and change its color of search view
-        val hintTextId: Int = binding!!.svTransactionManual.context.resources
-            .getIdentifier("android:id/search_src_text", null, null)
-        val hintText: TextView = binding!!.svTransactionManual.findViewById(hintTextId)
-        hintText.setHintTextColor(ContextCompat.getColor(this,R.color.view_color))
-
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val view = currentFocus
+        view?.let {
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
+        }
     }
 
     override fun setMethod() {
         setOnClickListener()
-        setAdapter()
+
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     override fun observe() {
         with(viewModel) {
@@ -181,18 +180,28 @@ class TranSectionDetailActivity :
                     if (transectionList.code in 199..299) {
                         if (transectionList.apiResponse != null) {
                             val mainModel = gson.fromJson(
-                                transectionList.apiResponse,
-                                TranSectionListModel::class.java
+                                transectionList.apiResponse, TranSectionListModel::class.java
                             )
                             if (mainModel.data.size != 0) {
 //                                val reverseList = utils.reverse(mainModel.data)
                                 list.clear()
                                 list = mainModel.data
-                                setAdapter()
-                                Log.d("sdfsdfdsfdsf", list.toString())
+                                setAdapter(mainModel.data)
+
+                                val onlySpentData =
+                                    mainModel.data.filter { it.type == "2" } as ArrayList
+                                val totalSpentAmount =
+                                    onlySpentData.sumOf { it.amount!!.toDouble() }
+
+                                binding!!.tvSpent.text =
+                                    "Spent(${getMonthNameFromDate(mainModel.data[0].transactionDate!!)})"
+
+                                binding!!.tvSpentBalance.text =
+                                    "${list[0].account_data!!.currency!!.icon}$totalSpentAmount"
+
+
                                 val amount = formatMoney(mainModel.extraData!!.toDouble())
-                                binding!!.txtTransactionAmount.text =
-                                    icon.toString() + amount
+                                binding!!.txtTransactionAmount.text = icon.toString() + amount
 
                                 if (getAmount(mainModel.extraData.toString()).startsWith("-")) {
                                     binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_red))
@@ -202,7 +211,15 @@ class TranSectionDetailActivity :
 
                                 strAmount = mainModel.data[0].totalAmount
 //                                adapter?.updateList(reverseList)
+                            } else {
+                                val emptyList =
+                                    ArrayList<com.bannking.app.model.retrofitResponseModel.tranSectionListModel.Data>()
+                                setAdapter(emptyList)
                             }
+                        } else {
+                            val emptyList =
+                                ArrayList<com.bannking.app.model.retrofitResponseModel.tranSectionListModel.Data>()
+                            setAdapter(emptyList)
                         }
                     }
                 }
@@ -236,12 +253,13 @@ class TranSectionDetailActivity :
                     if (transectionCreate.code in 199..299) {
                         if (transectionCreate.apiResponse != null) {
                             val model = gson.fromJson(
-                                transectionCreate.apiResponse,
-                                CommonResponseApi::class.java
+                                transectionCreate.apiResponse, CommonResponseApi::class.java
                             )
                             if (model.status == 200) {
                                 val userToken = sessionManager.getString(SessionManager.USERTOKEN)
-                                viewModel.setDataInRecentTransactionListData(Id!!, userToken)
+                                viewModel.setDataInRecentTransactionListData(
+                                    Id!!, userToken, "", ""
+                                )
 //                                val amount = formatMoney(model.amount!!.toDouble())
 //                                binding!!.txtTransactionAmount.text = icon.toString() + amount
 
@@ -263,8 +281,7 @@ class TranSectionDetailActivity :
                         }
                     } else {
                         val model = gson.fromJson(
-                            transectionCreate.apiResponse,
-                            CommonResponseApi::class.java
+                            transectionCreate.apiResponse, CommonResponseApi::class.java
                         )
                         dialogClass.showError(model.message.toString())
                     }
@@ -276,16 +293,18 @@ class TranSectionDetailActivity :
                     if (updateAccountListData.code in 199..299) {
                         if (updateAccountListData.apiResponse != null) {
                             val model = gson.fromJson(
-                                updateAccountListData.apiResponse,
-                                UpdateAccountModel::class.java
+                                updateAccountListData.apiResponse, UpdateAccountModel::class.java
                             )
                             if (model.status == 200) {
                                 val amount = formatMoney(model.data!!.amount!!.toDouble())
 
-                                binding!!.txtTransactionName.text =
-                                    "${model.data!!.account} ...${model.data!!.account_code}"
-                                binding!!.txtTransactionNameSmall.text =
-                                    "${model.data!!.account} ...${model.data!!.account_code}"
+
+
+                                binding!!.tvSccountTypeData.text = "${model.data!!.account}"
+
+                                binding!!.tvAccountNumberValue.text =
+                                    "****${model.data!!.account_code}"
+
                                 binding!!.txtTransactionAmount.text = "$icon${amount}"
 
                                 if (getAmount(model.data!!.toString()).startsWith("-")) {
@@ -311,25 +330,136 @@ class TranSectionDetailActivity :
 
             progressObservable.observe(this@TranSectionDetailActivity) { isProgress ->
                 if (isProgress != null) {
-                    if (isProgress)
-                        dialogClass.showLoadingDialog()
-                    else
-                        dialogClass.hideLoadingDialog()
+                    if (isProgress) dialogClass.showLoadingDialog()
+                    else dialogClass.hideLoadingDialog()
                 }
             }
         }
     }
 
-    private fun setAdapter() {
-        adapter = RecentTranSectionListAdapter(this@TranSectionDetailActivity, list)
-        binding!!.rvTransaction.adapter = adapter
-        binding!!.rvTransaction.setHasFixedSize(true)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getMonthNameFromDate(dateStr: String): String {
+        val formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy", Locale.getDefault())
+        val date = LocalDate.parse(dateStr, formatter)
+
+        // Get the month name
+        val monthName =
+            date.month.getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault())
+        return monthName
+    }
+
+    private fun setAdapter(data: ArrayList<com.bannking.app.model.retrofitResponseModel.tranSectionListModel.Data>) {
+        hideKeyboard()
+        Log.e("hdsgfshdgfsd", data.toString())
+        if (data.isNotEmpty()) {
+            binding!!.tvTransactionApp.visibility = View.GONE
+            binding!!.rvTransaction.visibility = View.VISIBLE
+            adapter = RecentTranSectionListAdapter(this@TranSectionDetailActivity, data)
+            binding!!.rvTransaction.adapter = adapter
+            binding!!.rvTransaction.setHasFixedSize(true)
+        } else {
+            binding!!.tvTransactionApp.visibility = View.VISIBLE
+            binding!!.rvTransaction.visibility = View.GONE
+        }
+    }
+
+
+    private fun openDatePicker() {
+        val calendar = Calendar.getInstance()
+
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, year, monthOfYear, dayOfMonth ->
+
+                calendar.set(Calendar.YEAR, year)
+                calendar.set(Calendar.MONTH, monthOfYear)
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                setCurrentTime(calendar)
+
+                val formattedDate = formatDateToISO8601(calendar.time)
+
+                Log.e("formattedDate", formattedDate)
+
+                binding!!.tvFilterAndDate.visibility = View.INVISIBLE
+                binding!!.tvFilterDateShow.visibility = View.VISIBLE
+                binding!!.ivSort.visibility = View.GONE
+                binding!!.ivCross.visibility = View.VISIBLE
+
+                binding!!.tvFilterDateShow.text = formattedDate
+
+
+                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+                viewModel.setDataInRecentTransactionListData(Id!!, userToken, "", formattedDate)
+
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+
+        datePickerDialog.show()
+    }
+
+    private fun setCurrentTime(calendar: Calendar) {
+        val currentTime = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, currentTime.get(Calendar.HOUR_OF_DAY))
+        calendar.set(Calendar.MINUTE, currentTime.get(Calendar.MINUTE))
+        calendar.set(Calendar.SECOND, currentTime.get(Calendar.SECOND))
+        calendar.set(Calendar.MILLISECOND, currentTime.get(Calendar.MILLISECOND))
+    }
+
+    private fun formatDateToISO8601(date: Date): String {
+        val iso8601Format = SimpleDateFormat("MM-dd-yyyy", Locale.getDefault())
+        iso8601Format.timeZone = TimeZone.getTimeZone("UTC")
+        return iso8601Format.format(date)
     }
 
     private fun setOnClickListener() {
+
         with(binding!!) {
             imgBack.setOnClickListener { finish() }
-            txtPay.setOnClickListener {
+
+            ivSort.setOnClickListener {
+                openDatePicker()
+            }
+
+            ivCross.setOnClickListener {
+                binding!!.tvFilterAndDate.visibility = View.VISIBLE
+                binding!!.tvFilterDateShow.visibility = View.GONE
+                binding!!.ivSort.visibility = View.VISIBLE
+                binding!!.ivCross.visibility = View.GONE
+                val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+                viewModel.setDataInRecentTransactionListData(Id!!, userToken, "", "")
+            }
+
+            svTransactionManualApp.setOnQueryTextListener(object :
+                androidx.appcompat.widget.SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return false
+                }
+
+                @RequiresApi(Build.VERSION_CODES.O)
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    searchRunnable?.let { handler.removeCallbacks(it) }
+
+                    if (!newText.isNullOrEmpty()) {
+                        searchRunnable = Runnable {
+                            hideKeyboard()
+                            hitApiForSearch(newText)
+
+                        }
+                        handler.postDelayed(searchRunnable!!, debounceDelay)
+                    } else {
+                        hitApiForSearch("")
+                    }
+                    return false
+                }
+
+            })
+
+            LLPay.setOnClickListener {
 
                 val intent = Intent(this@TranSectionDetailActivity, PaymentActivity::class.java)
                 intent.putExtra("Id", Id.toString())
@@ -340,7 +470,7 @@ class TranSectionDetailActivity :
                 payrRsultLauncher.launch(intent)
             }
 
-            txtTransfer.setOnClickListener {
+            LLTransfer.setOnClickListener {
                 val intent =
                     Intent(this@TranSectionDetailActivity, ScheduleTransferActivity::class.java)
                 intent.putExtra("Id", Id.toString())
@@ -351,11 +481,52 @@ class TranSectionDetailActivity :
 
             }
 
-            txtCreatePayment.setOnClickListener {
+            LLCreate.setOnClickListener {
                 onCreatePaymentBottomShit()
             }
+
             imgMore.setOnClickListener {
                 editAccountDetailBottomShit()
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun hitApiForSearch(newText: String) {
+        val userToken = sessionManager.getString(SessionManager.USERTOKEN)
+        viewModel.getBankTransactionFilterApi(
+            Id!!, userToken, newText, ""
+        ).observe(this@TranSectionDetailActivity) {
+            val response = it as TranSectionListModel
+            if (response.status == 200) {
+                if (response.data.size != 0) {
+                    list.clear()
+                    list = response.data
+                    setAdapter(response.data)
+
+                    val onlySpentData = response.data.filter { it.type == "2" } as ArrayList
+                    val totalSpentAmount = onlySpentData.sumOf { it.amount!!.toDouble() }
+
+                    binding!!.tvSpent.text =
+                        "Spent(${getMonthNameFromDate(response.data[0].transactionDate!!)})"
+
+                    binding!!.tvSpentBalance.text =
+                        "${response.data[0].account_data!!.currency!!.icon}$totalSpentAmount"
+
+                    Log.d("sdfsdfdsfdsf", list.toString())
+                    val amount = formatMoney(response.extraData!!.toDouble())
+                    binding!!.txtTransactionAmount.text = icon.toString() + amount
+
+                    if (getAmount(response.extraData.toString()).startsWith("-")) {
+                        binding!!.txtTransactionAmount.setTextColor(resources.getColor(R.color.clr_red))
+                    }
+                    strAmount = response.data[0].totalAmount
+                } else {
+                    val emptyList =
+                        ArrayList<com.bannking.app.model.retrofitResponseModel.tranSectionListModel.Data>()
+                    setAdapter(emptyList)
+                }
             }
         }
     }
@@ -376,15 +547,15 @@ class TranSectionDetailActivity :
                     }*/
                 }
                 val userToken = sessionManager.getString(SessionManager.USERTOKEN)
-                viewModel.setDataInRecentTransactionListData(Id!!, userToken)
+                viewModel.setDataInRecentTransactionListData(Id!!, userToken, "", "")
             }
         }
-
 
     private fun formatMoney(value: Double): String {
         val decimalFormat = DecimalFormat("#,###.00#")
         return decimalFormat.format(value)
     }
+
     private var payrRsultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val data: Intent? = result.data
@@ -403,7 +574,7 @@ class TranSectionDetailActivity :
                     }
                 }
                 val userToken = sessionManager.getString(SessionManager.USERTOKEN)
-                viewModel.setDataInRecentTransactionListData(Id!!, userToken)
+                viewModel.setDataInRecentTransactionListData(Id!!, userToken, "", "")
             }
         }
 
@@ -418,7 +589,6 @@ class TranSectionDetailActivity :
         val btnDone: Button = view.findViewById(R.id.btn_done)
         val chkAccount: CheckBox = view.findViewById(R.id.chk_account)
         val chkAccountCode: CheckBox = view.findViewById(R.id.chk_account_code)
-        val chkAmount: CheckBox = view.findViewById(R.id.chk_amount)
         val edtAccount: EditText = view.findViewById(R.id.edt_account)
         val edtAccountCode: EditText = view.findViewById(R.id.edt_account_code)
         val edtAmount: EasyMoneyEditText = view.findViewById(R.id.edt_amount)
@@ -443,9 +613,7 @@ class TranSectionDetailActivity :
         edtAccountCode.setText(strAccountCode)
         edtAmount.setText(utils.removeCurrencySymbol(strAmount.toString()))
 
-        chkAmount.setOnCheckedChangeListener { _, isChecked ->
-            edtAmount.isEnabled = isChecked
-        }
+
 
         chkAccountCode.setOnCheckedChangeListener { _, isChecked ->
             edtAccountCode.isEnabled = isChecked
@@ -474,16 +642,14 @@ class TranSectionDetailActivity :
                             edtAccount.text.toString(),
                             edtAccountCode.text.toString(),
                             edtAmount.valueString,
-                            strAccountMenuId.toString(), userToken
+                            strAccountMenuId.toString(),
+                            userToken
                         )
                         bottomSheetDialog.dismiss()
-                    } else
-                        edtAmount.error = resources.getString(R.string.str_enter_amount)
-                } else
-                    edtAccountCode.error =
-                        resources.getString(R.string.str_please_enter_account_code)
-            } else
-                edtAccount.error = resources.getString(R.string.str_please_enter_account_name)
+                    } else edtAmount.error = resources.getString(R.string.str_enter_amount)
+                } else edtAccountCode.error =
+                    resources.getString(R.string.str_please_enter_account_code)
+            } else edtAccount.error = resources.getString(R.string.str_please_enter_account_name)
 
         }
     }
@@ -495,8 +661,7 @@ class TranSectionDetailActivity :
         val bottomSheetDialog =
             BottomSheetDialog(this@TranSectionDetailActivity, R.style.NoBackgroundDialogTheme)
         val view = LayoutInflater.from(this@TranSectionDetailActivity).inflate(
-            R.layout.bottomshit_create_transaction_details,
-            findViewById(R.id.linearLayoutCT)
+            R.layout.bottomshit_create_transaction_details, findViewById(R.id.linearLayoutCT)
         )
         bottomSheetDialog.setContentView(view)
         bottomSheetDialog.show()
@@ -564,10 +729,7 @@ class TranSectionDetailActivity :
         spinnerTransactionType.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
-                    adapterView: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
+                    adapterView: AdapterView<*>?, view: View?, position: Int, id: Long
                 ) {
                     val transactionData: Data = adapterView?.selectedItem as Data
                     selectedTransactionType = transactionData.name.toString()
@@ -579,14 +741,14 @@ class TranSectionDetailActivity :
 
         txtDatePicker.setOnClickListener {
             val datePickerDialog = DatePickerDialog(
-                this,
-                { _, year, monthOfYear, dayOfMonth ->
+                this, { _, year, monthOfYear, dayOfMonth ->
                     val strNewDayOfMonth =
                         if (dayOfMonth < 10) "0$dayOfMonth" else dayOfMonth.toString()
                     val strNewMonthOfYear =
                         if ((monthOfYear + 1) < 10) "0" + (monthOfYear + 1).toString() else (monthOfYear + 1).toString()
 
-                    txtDatePicker.text= "$year-$strNewMonthOfYear-$strNewDayOfMonth".getDateMMMDDYYYY()
+                    txtDatePicker.text =
+                        "$year-$strNewMonthOfYear-$strNewDayOfMonth".getDateMMMDDYYYY()
 
                 }, mYear, mMonth, mDay
             )
@@ -602,9 +764,7 @@ class TranSectionDetailActivity :
             if (timeDifference > fiveMinutesInMillis) {
                 AdController.showInterAd(this@TranSectionDetailActivity, null, 0)
             }
-            if (selectedTransactionType
-                    .isNotEmpty() && selectedTransactionTypeId.isNotEmpty()
-            ) {
+            if (selectedTransactionType.isNotEmpty() && selectedTransactionTypeId.isNotEmpty()) {
                 if (txtTransactionAmount.valueString.isNotEmpty()) {
                     if (txtTransactionAmount.valueString.toDouble() > 0.0) {
                         val userToken = sessionManager.getString(SessionManager.USERTOKEN)
@@ -621,21 +781,19 @@ class TranSectionDetailActivity :
                             Id.toString(),
                             transitionTitle.text.toString(),
                             formattedDate!!,
-                            txtTransactionAmount.valueString, userToken
+                            txtTransactionAmount.valueString,
+                            userToken
                         )
                         bottomSheetDialog.dismiss()
-                    } else
-                        txtTransactionAmount.error =
-                            resources.getString(R.string.str_please_enter_amount_grater_then_zero)
-                } else
-                    txtTransactionAmount.error =
-                        resources.getString(R.string.str_transaction_amount_empty)
+                    } else txtTransactionAmount.error =
+                        resources.getString(R.string.str_please_enter_amount_grater_then_zero)
+                } else txtTransactionAmount.error =
+                    resources.getString(R.string.str_transaction_amount_empty)
 //                if (transitionTitle.text.toString().isNotEmpty()) {
 //
 //                } else
 //                    transitionTitle.error = resources.getString(R.string.str_transaction_text_empty)
-            } else
-                dialogClass.showError(resources.getString(R.string.str_please_select_any_type))
+            } else dialogClass.showError(resources.getString(R.string.str_please_select_any_type))
 //                Toast.makeText(this@TranSectionDetailActivity, , Toast.LENGTH_SHORT).show()
 
         }
@@ -650,7 +808,7 @@ class TranSectionDetailActivity :
         tvAccountCodeSUbBudeget: TextView,
         edtAccount: EditText,
         tvAccountSubBudeget: TextView,
-        ) {
+    ) {
         if (UiExtension.isDarkModeEnabled()) {
             view.backgroundTintList = ContextCompat.getColorStateList(this, R.color.dark_mode)
             iconAmount.setTextColor(ContextCompat.getColor(this, R.color.white))
@@ -726,8 +884,7 @@ class TranSectionDetailActivity :
             transitionTitle.setHintTextColor(ContextCompat.getColor(this, R.color.clr_dark_gray))
             txtTransactionAmount.setHintTextColor(
                 ContextCompat.getColor(
-                    this,
-                    R.color.clr_dark_gray
+                    this, R.color.clr_dark_gray
                 )
             )
             txtDatePicker.setHintTextColor(ContextCompat.getColor(this, R.color.clr_dark_gray))
@@ -745,15 +902,13 @@ class TranSectionDetailActivity :
     override fun onResume() {
         super.onResume()
 
-        Glide.with(this@TranSectionDetailActivity)
-            .asBitmap()
+        Glide.with(this@TranSectionDetailActivity).asBitmap()
             .load(Constants.IMG_BASE_URL + userModel!!.image)
             .placeholder(R.drawable.glide_dot) //<== will simply not work:
             .error(R.drawable.glide_warning) // <== is also useless
             .into(object : SimpleTarget<Bitmap?>() {
                 override fun onResourceReady(
-                    resource: Bitmap,
-                    transition: Transition<in Bitmap?>?
+                    resource: Bitmap, transition: Transition<in Bitmap?>?
                 ) {
                     binding!!.imgProfile.setImageBitmap(resource)
                 }

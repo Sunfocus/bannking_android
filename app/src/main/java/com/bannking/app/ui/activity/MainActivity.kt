@@ -69,10 +69,8 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
         with(viewModel) {
             progressObservable.observe(this@MainActivity) { isProgress ->
                 if (isProgress != null) {
-                    if (isProgress)
-                        dialogClass.showLoadingDialog()
-                    else
-                        dialogClass.hideLoadingDialog()
+                    if (isProgress) dialogClass.showLoadingDialog()
+                    else dialogClass.hideLoadingDialog()
                 }
             }
             deleteBankAccount.observe(this@MainActivity) { deleteAccount ->
@@ -80,17 +78,14 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
                     if (deleteAccount.code in 199..299) {
                         if (deleteAccount.apiResponse != null) {
                             val mainModel = gson.fromJson(
-                                deleteAccount.apiResponse,
-                                CommonResponseApi::class.java
+                                deleteAccount.apiResponse, CommonResponseApi::class.java
                             )
                             if (mainModel.status!! == 200) {
                                 dialogClass.showSuccessfullyDialog(mainModel.message.toString()) {
                                     deleteBankAccount.value = null
-                                    headerTitleList.value =
-                                        CommonResponseModel(
-                                            deleteAccount.apiResponse,
-                                            deleteAccount.code
-                                        )
+                                    headerTitleList.value = CommonResponseModel(
+                                        deleteAccount.apiResponse, deleteAccount.code
+                                    )
                                     recreate()
                                 }
                             } else {
@@ -234,8 +229,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
 
     fun loadAccountsFragment() {
         supportFragmentManager.beginTransaction().replace(
-            R.id.fragment_container,
-            AccountsFragment()
+            R.id.fragment_container, AccountsFragment()
         ).commit()
     }
 
@@ -248,29 +242,23 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
                             if (lifecycle.currentState == Lifecycle.State.RESUMED) {
                                 if (headerTitleCommonModel != null) {
                                     if (headerTitleCommonModel.code in 199..299) {
-                                        val headerModel =
-                                            gson.fromJson(
-                                                headerTitleList.value?.apiResponse,
-                                                HeaderModel::class.java
-                                            )
+                                        val headerModel = gson.fromJson(
+                                            headerTitleList.value?.apiResponse,
+                                            HeaderModel::class.java
+                                        )
                                         if (headerModel.data.isNotEmpty()) {
-                                            supportFragmentManager.beginTransaction()
-                                                .replace(
+                                            supportFragmentManager.beginTransaction().replace(
                                                     R.id.fragment_container,
                                                     AccountCreatedFragment()
                                                 ).commit()
                                         } else {
-                                            supportFragmentManager.beginTransaction()
-                                                .replace(
-                                                    R.id.fragment_container,
-                                                    AccountsFragment()
+                                            supportFragmentManager.beginTransaction().replace(
+                                                    R.id.fragment_container, AccountsFragment()
                                                 ).commit()
                                         }
                                     } else {
-                                        supportFragmentManager.beginTransaction()
-                                            .replace(
-                                                R.id.fragment_container,
-                                                AccountsFragment()
+                                        supportFragmentManager.beginTransaction().replace(
+                                                R.id.fragment_container, AccountsFragment()
                                             ).commit()
                                         dialogClass.showServerErrorDialog()
                                     }
@@ -281,27 +269,24 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
                 }
 
                 R.id.nav_header -> {
-                    val accountListModel =
-                        gson.fromJson(
+                    val accountListModel = gson.fromJson(
+                        viewModel.accountListData.value?.apiResponse, AccountListModel::class.java
+                    )
+                    if (accountListModel != null && accountListModel.data.isNotEmpty() && accountListModel.data != null) {
+
+                        val intent = Intent(this@MainActivity, AccountMenuNewActivity::class.java)
+                        val model = gson.fromJson(
+                            viewModel.headerTitleList.value?.apiResponse, HeaderModel::class.java
+                        )
+                        val accountList = gson.fromJson(
                             viewModel.accountListData.value?.apiResponse,
                             AccountListModel::class.java
                         )
-                    if (accountListModel.data.isNotEmpty() && accountListModel != null) {
-
-                        val intent = Intent(this@MainActivity, AccountMenuNewActivity::class.java)
-                        val model =
-                            gson.fromJson(
-                                viewModel.headerTitleList.value?.apiResponse,
-                                HeaderModel::class.java
-                            )
-                        val accountList =
-                            gson.fromJson(
-                                viewModel.accountListData.value?.apiResponse,
-                                AccountListModel::class.java
-                            )
                         intent.putExtra("Headermodel", model)
                         intent.putExtra("accountList", accountList)
+
                         resultLauncher.launch(intent)
+                        overridePendingTransition(0, 0)
 
 //                        val intent = Intent(this@MainActivity, AccountMenuActivity::class.java)
 //                        intent.putExtra("ComeFrom", "Navigation")
@@ -314,9 +299,9 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
                 }
 
                 R.id.nav_spending_plan -> {
-                    val intent = Intent(this@MainActivity, BankActivity::class.java)
+                    val intent = Intent(this@MainActivity, HeaderForBankActivity::class.java)
                     startActivity(intent)
-
+                    overridePendingTransition(0, 0)
                     /*Toast.makeText(
                         this@MainActivity,
                         "This feature is currently under development and will be available in a future update. Thank you for your patience!",
@@ -342,16 +327,20 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
                 }
 
 
-                R.id.nav_explore -> startActivity(
-                    Intent(
-                        this@MainActivity,
-                        ExploreExpensesActivity::class.java
+                R.id.nav_explore -> {
+                    startActivity(
+                        Intent(
+                            this@MainActivity, ExploreExpensesActivity::class.java
+                        )
                     )
-                )
+                    overridePendingTransition(0, 0)
+                }
+
 
                 R.id.nav_menu -> {
                     val intent = Intent(this@MainActivity, ProfileActivity::class.java)
                     startActivity(intent)
+                    overridePendingTransition(0, 0)
                 }
             }
             true
@@ -359,8 +348,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
         binding!!.imgProfile.setOnClickListener {
             startActivity(
                 Intent(
-                    this@MainActivity,
-                    ProfileActivity::class.java
+                    this@MainActivity, ProfileActivity::class.java
                 )
             )
         }
@@ -421,15 +409,12 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
             savedSessionManagerLanguage.setLanguage(userModel!!.language!!.name.toString())
         }
 
-        Glide.with(this@MainActivity)
-            .asBitmap()
-            .load(Constants.IMG_BASE_URL + userModel!!.image)
+        Glide.with(this@MainActivity).asBitmap().load(Constants.IMG_BASE_URL + userModel!!.image)
             .placeholder(R.drawable.glide_dot) //<== will simply not work:
             .error(R.drawable.glide_warning) // <== is also useless
             .into(object : SimpleTarget<Bitmap?>() {
                 override fun onResourceReady(
-                    resource: Bitmap,
-                    transition: Transition<in Bitmap?>?
+                    resource: Bitmap, transition: Transition<in Bitmap?>?
                 ) {
                     binding!!.imgProfile.setImageBitmap(resource)
                 }
@@ -439,16 +424,10 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
         val menu = binding!!.bottomNavigationBar.menu
         binding!!.bottomNavigationBar.itemIconTintList = null
         val menuItem = menu.findItem(R.id.nav_menu)
-        Glide.with(this)
-            .asBitmap()
-            .load(Constants.IMG_BASE_URL + userModel!!.image)
-            .apply(
-                RequestOptions
-                    .circleCropTransform()
-                    .override(100, 100)
+        Glide.with(this).asBitmap().load(Constants.IMG_BASE_URL + userModel!!.image).apply(
+                RequestOptions.circleCropTransform().override(100, 100)
                     .placeholder(R.drawable.sample_user)
-            )
-            .into(object : CustomTarget<Bitmap>() {
+            ).into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     menuItem?.icon = BitmapDrawable(resources, resource)
                 }
@@ -489,12 +468,15 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(MainViewMo
     var resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val data: Intent? = result.data
+            Log.d("sdfsdfsdfsdfdsfd",result.resultCode.toString())
             if (result.resultCode == 1011) {
                 val intent = Intent(this@MainActivity, BudgetPlannerActivity::class.java)
                 intent.putExtra("SelectedMenu", data?.getStringExtra("SelectedMenu"))
                 resultLauncher2.launch(intent)
+                overridePendingTransition(0, 0)
             }
         }
+
 
     private var resultLauncher2 =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- State when RadioButton is selected (checked) -->
+    <item android:drawable="@drawable/ic_radionbg" android:state_checked="true" />
+    <!-- State when RadioButton is not selected (unchecked) -->
+    <item android:drawable="@drawable/ic_unselectrb" android:state_checked="false" />
+</selector>

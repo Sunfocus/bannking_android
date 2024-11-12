@@ -2,11 +2,14 @@ package com.bannking.app.model.viewModel
 
 import android.app.Application
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.bannking.app.UiExtension.FCM_TOKEN
 import com.bannking.app.core.BaseActivity
 import com.bannking.app.core.BaseViewModel
 import com.bannking.app.core.CommonResponseModel
+import com.bannking.app.model.GetTransactionResponse
+import com.bannking.app.model.retrofitResponseModel.tranSectionListModel.TranSectionListModel
 import com.bannking.app.network.RetrofitClient
 import com.bannking.app.utils.Constants
 import com.google.gson.JsonObject
@@ -25,7 +28,34 @@ class RecentTransactionViewModel(val App: Application) : BaseViewModel(App) {
     var progressObservable: MutableLiveData<Boolean> = MutableLiveData(null)
 
 
-    fun setDataInRecentTransactionListData(accountId: String, userToken: String?) {
+
+    fun getBankTransactionFilterApi(
+        accountId: String, userToken: String?,searchText:String,sortDate:String
+    ): LiveData<TranSectionListModel> {
+        progressObservable.value = true
+        val mutableLiveData = MutableLiveData<TranSectionListModel>()
+
+     val call = RetrofitClient.instance!!.myApi.transactionListLive(accountId,searchText,sortDate,userToken!!)
+        call.enqueue(object : Callback<TranSectionListModel> {
+            override fun onResponse(
+                call: Call<TranSectionListModel>, response: Response<TranSectionListModel>
+            ) {
+                progressObservable.value = false
+                if (response.isSuccessful) {
+                    if (response.code() in 199..299) {
+                        mutableLiveData.postValue(response.body())
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<TranSectionListModel>, t: Throwable) {
+                progressObservable.value = false
+            }
+        })
+        return mutableLiveData
+    }
+
+    fun setDataInRecentTransactionListData(accountId: String, userToken: String?,searchText:String,sortDate:String ) {
         Log.e("userToken", "setDataInRecentTransactionListData: $userToken", )
         App.FCM_TOKEN.let {
             val apiBody = JsonObject()
@@ -39,7 +69,7 @@ class RecentTransactionViewModel(val App: Application) : BaseViewModel(App) {
             }
 
             progressObservable.value = true
-            val call = RetrofitClient.instance!!.myApi.transactionList(accountId,userToken!!)
+            val call = RetrofitClient.instance!!.myApi.transactionList(accountId,searchText,sortDate,userToken!!)
             call.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     progressObservable.value = false

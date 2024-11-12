@@ -30,6 +30,66 @@
             android:textStyle="bold"
             app:drawableEndCompat="@drawable/ic_information" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="Amount"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/_14ssp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/iconAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                android:fontFamily="@font/source_sans_regular"
+                android:text="$"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14ssp" />
+
+            <com.bannking.app.utils.EasyMoneyEditText
+                android:id="@+id/txt_transaction_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:fontFamily="@font/source_sans_regular"
+                android:hint="@string/str_enter_amount"
+                android:inputType="numberDecimal"
+                android:padding="@dimen/_3sdp"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingVertical="@dimen/_8sdp"
+                android:textAlignment="viewStart"
+                android:textColor="@color/black"
+                android:textColorHint="@color/clr_dark_gray"
+                android:textDirection="anyRtl"
+                android:textSize="@dimen/_14ssp"
+
+                app:show_commas="true"
+                app:show_currency="false" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/viewFourth"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:background="@color/view_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/LLFourth" />
+
+
         <TableLayout
             android:id="@+id/tableCT"
             android:layout_width="match_parent"
@@ -50,7 +110,7 @@
                     android:id="@+id/tvTP"
                     android:layout_width="0dp"
                     android:layout_gravity="center"
-                    android:layout_weight="0.6"
+                    android:layout_weight="0.7"
                     android:background="@color/white"
                     android:fontFamily="@font/source_sans_regular"
                     android:padding="3dp"
@@ -87,7 +147,7 @@
                     android:id="@+id/tvTitle"
                     android:layout_width="0dp"
                     android:layout_gravity="center"
-                    android:layout_weight="0.6"
+                    android:layout_weight="0.7"
                     android:background="@color/white"
                     android:fontFamily="@font/source_sans_regular"
                     android:padding="3dp"
@@ -116,7 +176,6 @@
 
             </TableRow>
 
-
             <TableRow
                 android:divider="@drawable/table_divider"
                 android:paddingHorizontal="10dp"
@@ -127,7 +186,7 @@
                     android:id="@+id/tvDate"
                     android:layout_width="0dp"
                     android:layout_gravity="center"
-                    android:layout_weight="0.6"
+                    android:layout_weight="0.7"
                     android:background="@color/white"
                     android:fontFamily="@font/source_sans_regular"
                     android:padding="3dp"
@@ -161,61 +220,37 @@
                 android:weightSum="2">
 
                 <TextView
-                    android:id="@+id/tvAmount"
+                    android:id="@+id/tvRepeatTran"
                     android:layout_width="0dp"
                     android:layout_gravity="center"
-                    android:layout_weight="0.6"
+                    android:layout_weight="0.7"
                     android:background="@color/white"
                     android:fontFamily="@font/source_sans_regular"
                     android:padding="3dp"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="8dp"
-                    android:text="@string/str_amount"
+                    android:text="@string/repeat_transaction"
                     android:textColor="@color/black" />
 
-                <androidx.appcompat.widget.LinearLayoutCompat
+                <Switch
+                    android:id="@+id/switchDayNight"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_8sdp"
                     android:layout_weight="1.3"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/iconAmount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:fontFamily="@font/source_sans_regular"
-                        android:text="$"
-                        android:textAlignment="viewStart"
-                        android:textColor="@color/black"
-                        android:textDirection="anyRtl" />
-
-                    <com.bannking.app.utils.EasyMoneyEditText
-                        android:id="@+id/txt_transaction_amount"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/white"
-                        android:fontFamily="@font/source_sans_regular"
-                        android:hint="@string/str_enter_amount"
-                        android:inputType="numberDecimal"
-                        android:padding="3dp"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="8dp"
-                        android:textAlignment="viewStart"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/clr_dark_gray"
-                        android:textDirection="anyRtl"
-                        android:textSize="14sp"
-                        app:show_commas="true"
-                        app:show_currency="false" />
-
-
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
+                    android:checked="true"
+                    android:minHeight="0dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="10dp"
+                    android:thumb="@drawable/switch_custom_thumb"
+                    android:track="@drawable/switch_custom_track"
+                    tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
 
             </TableRow>
 
         </TableLayout>
+
 
         <Button
             android:id="@+id/btn_done"
@@ -228,4 +263,5 @@
             android:text="@string/str_done"
             android:textAllCaps="true" />
     </LinearLayout>
+
 </RelativeLayout>

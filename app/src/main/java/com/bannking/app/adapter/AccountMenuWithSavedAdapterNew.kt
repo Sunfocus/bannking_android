@@ -56,7 +56,7 @@ class AccountMenuWithSavedAdapterNew(
 
         /*        if (model!!.isAccountCreated) {
                     holder.btnCreate.text = context?.getString(R.string.str_created)
-                    holder.btnCreate.background.setTint(context!!.getColor(R.color.clr_green))
+                    holder.btnCreate.background.setTint(context!!.getColor(R.color.clr_text_blue))
                     holder.cardAccount.setCardBackgroundColor(context!!.getColor(R.color.clr_semi_dark_gray))
                     holder.txtSelectedBugPlanner.isClickable = false
                     holder.txtSelectedBugPlanner.isEnabled = false

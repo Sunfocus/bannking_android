@@ -53,7 +53,7 @@ class BankAdapter(
             notifyDataSetChanged()
         }
 
-        val childAdapter = SubBankAdapter(mContext,
+     /*   val childAdapter = SubBankAdapter(mContext,
             model[position].accountsData,
             model[position].institutionId,
             object : ItemClicked {
@@ -71,7 +71,7 @@ class BankAdapter(
                 }
 
             })
-        holder.rvChildSubBankType.adapter = childAdapter
+        holder.rvChildSubBankType.adapter = childAdapter*/
 
         holder.tvBankName.text = model[position].institutionName
         holder.tvBankNameUpdatedOn.text = "Last updated Oct 8,2024"

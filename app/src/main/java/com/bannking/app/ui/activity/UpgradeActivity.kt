@@ -229,10 +229,10 @@ class UpgradeActivity :
                     this@UpgradeActivity, R.drawable.shape_upgrade_background
                 )
 
-
                 /* billingConnector.subscribe(
                      this@UpgradeActivity, Constants.six_month_subscription_id
                  )*/
+
             }
 
             /*            btnBuySix.setOnClickListener {

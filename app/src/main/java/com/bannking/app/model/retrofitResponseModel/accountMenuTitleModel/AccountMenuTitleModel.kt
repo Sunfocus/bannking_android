@@ -24,6 +24,7 @@ data class Data(
     var budgetId: String? = null,
     var isFillUp: Boolean = false,
     var isSelected: Boolean = false,
+    var isChecked: Boolean = false,
     var isAccountCreated: Int = 0,
     @SerializedName("isTitleMenuHasAccount") var isTitleMenuHasAccount: Boolean = false,
     @SerializedName("accountType") var accountType: String = Constants.ACCOUNT_NORMAL
